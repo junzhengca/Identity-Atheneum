@@ -1,0 +1,34 @@
+{
+  "name": "identity-atheneum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm -v",
+    "flow": "flow",
+    "flow:check": "flow check ./src/",
+    "flow:build": "flow-remove-types ./src/ -d ./lib/ --all --pretty",
+    "flow:deps": "flow-typed install",
+    "flow:coverage": "flow-coverage-report --config .flowcoverage.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/junthehacker/Identity-Atheneum.git"
+  },
+  "author": "Jun Zheng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/junthehacker/Identity-Atheneum/issues"
+  },
+  "homepage": "https://github.com/junthehacker/Identity-Atheneum#readme",
+  "devDependencies": {
+    "flow-bin": "^0.82.0",
+    "flow-coverage-report": "^0.6.0",
+    "flow-remove-types": "^1.2.3",
+    "flow-typed": "^2.5.1"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "js-yaml": "^3.12.0"
+  }
+}

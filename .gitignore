@@ -1,0 +1,5 @@
+flow-coverage
+.DS_Store
+.idea
+flow-typed
+node_modules
