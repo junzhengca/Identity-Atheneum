@@ -1,0 +1,8 @@
+language: node_js
+install:
+  - npm install
+before_script:
+  - npm run flow:check
+  - npm run flow:coverage
+script:
+  - npm run flow:build
