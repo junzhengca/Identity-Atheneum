@@ -9,3 +9,4 @@ before_script:
   - npm run flow:coverage
 script:
   - npm run flow:build
+  - npm run test
