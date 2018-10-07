@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm -v",
+    "test": "flow-remove-types ./src/ -d ./lib/ --all --pretty && mocha",
     "flow": "flow",
     "flow:check": "flow check ./src/",
     "flow:build": "flow-remove-types ./src/ -d ./lib/ --all --pretty",
@@ -22,10 +22,13 @@
   },
   "homepage": "https://github.com/junthehacker/Identity-Atheneum#readme",
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "flow-bin": "^0.82.0",
     "flow-coverage-report": "^0.6.0",
     "flow-remove-types": "^1.2.3",
-    "flow-typed": "^2.5.1"
+    "flow-typed": "^2.5.1",
+    "mocha": "^5.2.0",
+    "mocha-lcov-reporter": "^1.3.0"
   },
   "dependencies": {
     "express": "^4.16.3",
