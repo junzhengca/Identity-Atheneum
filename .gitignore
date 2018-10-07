@@ -3,3 +3,4 @@ flow-coverage
 .idea
 flow-typed
 node_modules
+lib
