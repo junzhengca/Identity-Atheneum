@@ -1,1 +1,16 @@
 port: 3000
+redis:
+  - host: localhost
+  - port: 6379
+mongo:
+  url: mongodb://localhost:27017/ia
+app_secret: my_secret
+
+identity_providers:
+  - type: local
+    name: local_provider
+
+  - type: saml
+    name: uoft_shibboleth
+    config:
+      - link: test
