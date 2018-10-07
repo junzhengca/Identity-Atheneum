@@ -2,6 +2,6 @@
   "concurrentFiles": 1,
   "excludeGlob": ["node_modules/**", "flow-typed/**"],
   "includeGlob": ["src/**/*.js"],
-  "threshold": 90,
+  "threshold": 0,
   "type": ["text", "html"]
 }
