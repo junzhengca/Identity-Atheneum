@@ -4,6 +4,11 @@ const Version = require('./resources/Version');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const mongoose = require('mongoose');
+const path = require('path');
+const flash = require('connect-flash');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const LocalIdentityProvider = require('./IdentityProvider/LocalIdentityProvider');
 
 /**
@@ -25,6 +30,12 @@ class App<Number> {
     run() {
         this.app = express();
 
+        this.app.set('views', path.join(__dirname, '/views'));
+        this.app.set('view engine', 'ejs');
+
+        this.app.use(cookieParser());
+        this.app.use(bodyParser.urlencoded({ extended: false }));
+
         this.app.use(session({
             store: new RedisStore({
                 host: this.config.redis.host,
@@ -35,7 +46,10 @@ class App<Number> {
             secret: this.config.app_secret
         }));
 
-        mongoose.connect(this.config.mongo.url, {useNewUrlParser: true});
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
+
+        this.app.use(flash());
 
         // Mount all identity providers within the configuration file
         this.config.identity_providers.forEach(idp => {
@@ -50,6 +64,7 @@ class App<Number> {
             }
         });
 
+        mongoose.connect(this.config.mongo.url, {useNewUrlParser: true});
         this.app.listen(this.config.port, () => {
             console.log("\n========================================");
             // $FlowFixMe

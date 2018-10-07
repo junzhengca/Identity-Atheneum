@@ -9,6 +9,7 @@ app_secret: my_secret
 identity_providers:
   - type: local
     name: local_provider
+    display_name: Local Identity Provider
 
   - type: saml
     name: uoft_shibboleth
