@@ -25,6 +25,10 @@ describe('YamlConfigFile', () => {
             const file = new YamlConfigFile('test/sample.yml');
             const data = file.parse();
             assert.deepEqual(data, {port: 3000});
+        });
+        it('should throw error if yaml not valid', () => {
+            const file = new YamlConfigFile('test/invalid.yml');
+            assert.throws(file.parse, Error);
         })
     })
 });

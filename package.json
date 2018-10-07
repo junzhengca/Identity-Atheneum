@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test:coverage": "nyc mocha",
     "test": "flow-remove-types ./src/ -d ./lib/ --all --pretty && mocha",
     "flow": "flow",
     "flow:check": "flow check ./src/",
@@ -29,7 +30,8 @@
     "flow-typed": "^2.5.1",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
-    "mocha-lcov-reporter": "^1.3.0"
+    "mocha-lcov-reporter": "^1.3.0",
+    "nyc": "^13.0.1"
   },
   "dependencies": {
     "express": "^4.16.3",
