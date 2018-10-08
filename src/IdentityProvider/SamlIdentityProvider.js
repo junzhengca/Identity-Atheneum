@@ -3,6 +3,8 @@ const passport = require('passport');
 const SamlStrategy = require('passport-saml').Strategy;
 const express = require('express');
 const fs = require('fs');
+const User = require('../models/User');
+const sanitizeKeysForMongo = require('../util/sanitizeKeysForMongo');
 
 class SamlIdentityProvider extends IdentityProvider {
     initialize() {
@@ -20,8 +22,28 @@ class SamlIdentityProvider extends IdentityProvider {
                 identifierFormat: this.config.config.identifier_format
             },
             (profile, done) => {
-                console.log(profile);
-                done(null, false);
+                // Ensure a user with nameID exist within the database
+                User.findOne({ username: profile.nameID, idp: this.config.name })
+                    .then(user => {
+                        if(user) {
+                            done(null, user);
+                        } else {
+                            // Otherwise we create the user
+                            console.log(sanitizeKeysForMongo(profile));
+                            let newUser = new User({
+                                username: profile.nameID,
+                                idp: this.config.name,
+                                attributes: sanitizeKeysForMongo(profile)
+                            });
+                            return newUser.save();
+                        }
+                    })
+                    .then(user => {
+                        if(user) {
+                            done(null, user);
+                        }
+                    })
+                    .catch(e => done(e));
             }
         );
 
@@ -36,7 +58,7 @@ class SamlIdentityProvider extends IdentityProvider {
         router.get('/login',
             passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
             function (req, res) {
-                res.redirect('/');
+                res.redirect("/session");
             }
         );
 
@@ -49,7 +71,7 @@ class SamlIdentityProvider extends IdentityProvider {
         router.post('/login',
             passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
             function(req, res) {
-                res.send("Login successful");
+                res.redirect("/session");
             }
         );
 

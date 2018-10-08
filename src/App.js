@@ -11,6 +11,17 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const LocalIdentityProvider = require('./IdentityProvider/LocalIdentityProvider');
 const SamlIdentityProvider = require('./IdentityProvider/SamlIdentityProvider');
+const User = require('./models/User');
+
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
+});
+
+passport.deserializeUser(function(user, done) {
+    User.findOne({id: user._id}, function(err, user) {
+        done(err, user);
+    });
+});
 
 /**
  * The primary class used to run the app
@@ -68,6 +79,9 @@ class App<Number> {
                 provider.mount(this.app);
             }
         });
+
+        // Mount web routes
+        require('./routes/web')(this);
 
         mongoose.connect(this.config.mongo.url, {useNewUrlParser: true});
         this.app.listen(this.config.port, () => {

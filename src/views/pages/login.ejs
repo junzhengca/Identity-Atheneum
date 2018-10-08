@@ -1,0 +1,21 @@
+<% include ../partials/header %>
+<div class="container">
+    <br><br>
+    <h1>Login</h1>
+    <div class="alert alert-warning" role="alert">
+        You must authenticate before accessing this resource. Please choose a login method below.
+    </div>
+    <div class="row">
+    <% for(var i = 0; i < idps.length; i++) { %>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><%= idps[i].display_name %></h5>
+                    <a href="<%= "/idps/" + idps[i].name + "/login"  %>" class="btn btn-primary">Go</a>
+                </div>
+            </div>
+        </div>
+    <% } %>
+    </div>
+    <% include ../partials/footer %>
+</div>
