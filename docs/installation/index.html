@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Installation - Identity Atheneum</title>
+    <link href="../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Installation", url: "#_top", children: [
+              {title: "System Requirement", url: "#system-requirement" },
+              {title: "Build", url: "#build" },
+              {title: "Basic Configurations", url: "#basic-configurations" },
+          ]},
+        ];
+
+    </script>
+    <script src="../js/base.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="configuration/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="configuration/" class="btn btn-xs btn-link">
+        Configuration
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="" class="btn btn-xs btn-link">
+        Home
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="installation">Installation</h1>
+<h2 id="system-requirement">System Requirement</h2>
+<p>Before we begin the installation, make sure you satisfy the system requirement.</p>
+<h3 id="operating-system">Operating System</h3>
+<p>Any Linux or macOS distribution is fine, however the following are recommended, as they are thoroughly tested.</p>
+<ul>
+<li>Ubuntu 16.04</li>
+<li>macOS 10.13 High Sierra</li>
+</ul>
+<h3 id="redis">Redis</h3>
+<p>Redis is <strong>required</strong> for the system to function.</p>
+<p>Any version of Redis should be fine, but it is recommended to get the latest 4.0 version.</p>
+<p><em>Make sure Redis is not password protected, and is only visible on internal network.</em></p>
+<h3 id="mongodb">MongoDB</h3>
+<p>MongoDB is <strong>required</strong> for the system to function.</p>
+<p>We support MongoDB 3.6.x, however 4.0 should also work.</p>
+<p><em>Make sure MongoDB is not password protected, and is only visible on internal network.</em></p>
+<h3 id="nodejs">Node.js</h3>
+<p>Node.js 8.x is required.</p>
+<h2 id="build">Build</h2>
+<p>Awesome! You now have the system requirement satisfied, let's build the application.</p>
+<h3 id="install-dependencies">Install Dependencies</h3>
+<p>First we need to install some dependencies, you can do it by simply running</p>
+<pre><code>$ npm install
+</code></pre>
+
+<h3 id="unit-test-optional">Unit Test (Optional)</h3>
+<p>You can run an unit test just to make sure everything is working.</p>
+<pre><code>$ npm run test
+</code></pre>
+
+<p>You should see something like the following if test passes</p>
+<pre><code>  ConfigFile
+    #constructor()
+      ✓ should set file path
+    #read()
+      ✓ should read the file content and return it as string
+
+  YamlConfigFile
+    #parse()
+      ✓ should parse the yaml content
+      ✓ should throw error if yaml not valid
+
+
+  4 passing (12ms)
+</code></pre>
+
+<h3 id="compile-javascript">Compile JavaScript</h3>
+<p>Before we can run the server, we need to compile the scripts to strip out all type definitions.</p>
+<pre><code>$ npm run flow:build
+</code></pre>
+
+<p>You should now see a new folder called <code>/lib</code>. Congratulations! Everything is built.</p>
+<h2 id="basic-configurations">Basic Configurations</h2>
+<p>We now need to do some basic configurations, open <code>config.yml</code>, and put following content.</p>
+<pre><code class="yml">port: # Which port you wish to listen on
+host_root: # Host root url, for example: https://example.com
+redis:
+  - host: # Redis host
+  - port: # Redis port
+mongo:
+  url: # MongoDB connection URL, for example: mongodb://localhost:27017/ia
+app_secret: # Choose a random string, this is used to encrypt sessions
+</code></pre>
+
+<p>Now try to run the server using command:</p>
+<pre><code>$ node ./lib
+</code></pre>
+
+<p>You will see an error saying <code>identity_providers</code> is undefined. This is because we haven't defined a list of IdPs to use yet, to do so, please follow Identity Provider Configurations</p>
+
+  <br>
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="configuration/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="configuration/" class="btn btn-xs btn-link">
+        Configuration
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="" class="btn btn-xs btn-link">
+        Home
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="col-md-12 wm-page-content">
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
