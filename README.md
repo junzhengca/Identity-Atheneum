@@ -49,6 +49,7 @@ Before running the service, you must have a valid configuration file, located at
     * port: Redis server port
 * mongo:
     * url: MongoDB connection url, for example mongodb://localhost/27017/ia (make sure you include the db name)
+* master_key: A random password, used for administrative access.
 * identity_providers: A list of IdP configurations, please see [IdP Configurations](#idp-configurations) for more detail.
 
 ### Run
@@ -150,3 +151,9 @@ It is useful to have a xml metadata file when registering with your IdP. To obta
 ```
 <host_root>/idps/<name>/metadata
 ```
+
+## CLI
+
+I.A. comes with a command line tool. You can find it under `/cli` directory.
+
+It is a Node.js app, you can run it by first `npm install`, then `node index.js`.
