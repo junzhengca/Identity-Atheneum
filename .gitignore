@@ -5,3 +5,4 @@ flow-typed
 node_modules
 lib
 .nyc_output
+keys/*

@@ -1,4 +1,5 @@
 port: 3000
+host_root: http://localhost:3000
 redis:
   - host: localhost
   - port: 6379
@@ -12,6 +13,13 @@ identity_providers:
     display_name: Local Identity Provider
 
   - type: saml
-    name: uoft_shibboleth
+    name: testshib
+    display_name: TestShib
     config:
-      - link: test
+      callback_url: http://localhost:3000/idps/uoft_shibboleth/login
+      entry_point: https://idp.testshib.org/idp/profile/SAML2/Redirect/SSO
+      identifier_format: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+      issuer: my_issuer
+      public_cert: keys/certificate.crt
+      private_key: keys/mykey.key
+      signature_algo: sha256

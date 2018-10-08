@@ -10,6 +10,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const LocalIdentityProvider = require('./IdentityProvider/LocalIdentityProvider');
+const SamlIdentityProvider = require('./IdentityProvider/SamlIdentityProvider');
 
 /**
  * The primary class used to run the app
@@ -56,6 +57,10 @@ class App<Number> {
             let provider;
             if(idp.type === 'local') {
                 provider = new LocalIdentityProvider(idp);
+            } else if(idp.type === 'saml') {
+                // Saml requires host_root to function
+                idp.host_root = this.config.host_root;
+                provider = new SamlIdentityProvider(idp);
             }
 
             if(provider) {
