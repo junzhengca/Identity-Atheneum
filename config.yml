@@ -6,6 +6,7 @@ redis:
 mongo:
   url: mongodb://localhost:27017/ia
 app_secret: my_secret
+master_key: localmaster
 
 identity_providers:
   - type: local

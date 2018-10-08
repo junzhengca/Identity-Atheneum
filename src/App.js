@@ -80,8 +80,13 @@ class App<Number> {
             }
         });
 
+        this.app.use(require('./middlewares/masterAuthMiddleware')(this));
+
         // Mount web routes
         require('./routes/web')(this);
+
+        // Mount API routes
+        require('./routes/api')(this);
 
         mongoose.connect(this.config.mongo.url, {useNewUrlParser: true});
         this.app.listen(this.config.port, () => {
