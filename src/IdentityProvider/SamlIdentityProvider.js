@@ -11,13 +11,12 @@ class SamlIdentityProvider extends IdentityProvider {
 
         this.strategy = new SamlStrategy(
             {
-                callbackUrl: this.config.host_root + "/idps/" + this.config.name + "/login",
+                callbackUrl: this.config.config.callback_url,
                 entryPoint: this.config.config.entry_point,
                 issuer: this.config.config.issuer,
                 signatureAlgorithm: this.config.config.signature_algo,
                 // TODO: Validate signature of the IdP
-                // cert: fs.readFileSync(this.config.config.cert, 'utf8'),
-                cert: "MIIE9zCCA9+gAwIBAgIJAIV1yBiJ3t2eMA0GCSqGSIb3DQEBCwUAMIGtMQswCQYDVQQGEwJDQTEQMA4GA1UECBMHT250YXJpbzEQMA4GA1UEBxMHVG9yb250bzEeMBwGA1UEChMVVW5pdmVyc2l0eSBvZiBUb3JvbnRvMSwwKgYDVQQLEyNJbmZvcm1hdGlvbiBhbmQgVGVjaG5vbG9neSBTZXJ2aWNlczEsMCoGA1UEAxMjVVRPUmF1dGggU0FNTCBNZXRhZGF0YSBWZXJpZmljYXRpb24wHhcNMTIwMjE2MTgzMTQ1WhcNMzIwMjExMTgzMTQ1WjCBrTELMAkGA1UEBhMCQ0ExEDAOBgNVBAgTB09udGFyaW8xEDAOBgNVBAcTB1Rvcm9udG8xHjAcBgNVBAoTFVVuaXZlcnNpdHkgb2YgVG9yb250bzEsMCoGA1UECxMjSW5mb3JtYXRpb24gYW5kIFRlY2hub2xvZ3kgU2VydmljZXMxLDAqBgNVBAMTI1VUT1JhdXRoIFNBTUwgTWV0YWRhdGEgVmVyaWZpY2F0aW9uMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwT0WOAnibkG9oXky5+R3lvvsSQfpg35FdO2bV+o8ig4cl3yVLKmvEvn3vCHPhxRkXn9fBId3gNdGh3h/gh0+rJzmYepJK85dpkv/luXxhH7i+D8Zkdo8VpzKYUtmFIhAGNL4HCgWujOPTorM7C1WSgI+rCwJHcOXzqqOeHsYV0njOWzeZA6LpD6AdmgoLmBoYJgkS/OeGWnRHm2pyZ+I+Zdhrl0SAESHDRDNTuxnH7IpGQFrWONL03P7W8vb+LYB5KIQ89uLSwXw4Enkm1dTg2bCY/J68OxO7UfkD/vl7eMy+U9xgparwPWjki3SroW+Nyy5nNagLcdbYKjzyMzZKQIDAQABo4IBFjCCARIwHQYDVR0OBBYEFMzi/Z2BjknKpEPWAYV1VFFe+KfdMIHiBgNVHSMEgdowgdeAFMzi/Z2BjknKpEPWAYV1VFFe+KfdoYGzpIGwMIGtMQswCQYDVQQGEwJDQTEQMA4GA1UECBMHT250YXJpbzEQMA4GA1UEBxMHVG9yb250bzEeMBwGA1UEChMVVW5pdmVyc2l0eSBvZiBUb3JvbnRvMSwwKgYDVQQLEyNJbmZvcm1hdGlvbiBhbmQgVGVjaG5vbG9neSBTZXJ2aWNlczEsMCoGA1UEAxMjVVRPUmF1dGggU0FNTCBNZXRhZGF0YSBWZXJpZmljYXRpb26CCQCFdcgYid7dnjAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAOr4EuSjpSK89/8TL7TXFn8aOzQi+SdxdwqJbce/zMttTTLg3K0uIKwLIJXVhB4izDbusNR0jndH9suBCR81wYYRogVJasT8y/Raq3LOYYNot5CojY9MrJqVVEoTEwKyq6zJUHwScPz94c6SPsjLRtvaEPfJktHUf/9JgVTZtuUj4oIkp5YtK1vmVOCuSSyOk+Ds5Xw5tbK3Y+++2hnSzSNPE32TXIuhN2Xy+oSZb1i7LoZjWXhpxnQd4Bk+uJX4ls4q4cfip4JXxKqUAXk5g+J1S/yVXztwXrZrYHaI5way/21jLQNR3mgmOLJIU1r6g0Mea4+cQpjnjHihZuiSyc",
+                cert: fs.readFileSync(this.config.config.cert, 'utf8'),
                 privateCert: fs.readFileSync(this.config.config.private_key, 'utf8'),
                 decryptionPvk: fs.readFileSync(this.config.config.private_key, 'utf8'),
                 identifierFormat: this.config.config.identifier_format,
