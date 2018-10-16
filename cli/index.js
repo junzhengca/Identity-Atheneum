@@ -30,7 +30,7 @@ async function start() {
         try {
             await program.run();
         } catch(e) {
-            console.error("ERROR");
+            console.error("ERROR:", e);
         }
 
     }

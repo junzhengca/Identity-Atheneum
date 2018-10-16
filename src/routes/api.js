@@ -10,6 +10,8 @@ module.exports = (app) => {
 
     router.get("/users", UserController.list);
     router.get("/users/:id", UserController.get);
+    router.get("/users/:id/groups", UserController.getGroups);
+    router.post("/users/:id/groups", UserController.addGroup);
 
     app.app.use('/api', router);
 };

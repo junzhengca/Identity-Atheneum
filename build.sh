@@ -7,7 +7,7 @@ flow-remove-types ./src/ -d ./lib/ --all --pretty &>/dev/null
 echo "$(date) JavaScript Transpiled."
 
 echo "$(date) Copying views..."
-cp src/views lib/views &>/dev/null
+cp -r src/views lib/views &>/dev/null
 echo "$(date) Views copied."
 
 echo "$(date) Building static assets..."

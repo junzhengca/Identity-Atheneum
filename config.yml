@@ -13,26 +13,27 @@ identity_providers:
     name: local_provider
     display_name: Local Identity Provider
 
-#  - type: saml
-#    name: testshib
-#    display_name: TestShib
-#    config:
-#      callback_url: http://localhost:3000/idps/testshib/login
-#      entry_point: https://idp.testshib.org/idp/profile/SAML2/Redirect/SSO
-#      identifier_format: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
-#      issuer: my_issuer
-#      public_cert: keys/certificate.crt
-#      private_key: keys/mykey.key
-#      signature_algo: sha256
-
   - type: saml
-    name: utoronto
-    display_name: UofT Web Login
+    name: testshib
+    display_name: TestShib
     config:
-      callback_url: https://tracademic.utsc.utoronto.ca:3000/idps/testshib/login
-      entry_point: https://idpz.utorauth.utoronto.ca/idp/profile/SAML2/Redirect/SSO
+      callback_url: http://localhost:3000/idps/testshib/login
+      entry_point: https://idp.testshib.org/idp/profile/SAML2/Redirect/SSO
       identifier_format: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
-      issuer: https://tracademic.utsc.utoronto.ca/shibboleth
-      public_cert: keys/ut-certificate.crt
-      private_key: keys/ut-mykey.key
-      signature_algo: sha1
+      id_key: urn:oid:0.9.2342.19200300.100.1.1
+      issuer: my_issuer
+      public_cert: keys/certificate.crt
+      private_key: keys/mykey.key
+      signature_algo: sha256
+
+#  - type: saml
+#    name: utoronto
+#    display_name: UofT Web Login
+#    config:
+#      callback_url: https://tracademic.utsc.utoronto.ca:3000/idps/testshib/login
+#      entry_point: https://idpz.utorauth.utoronto.ca/idp/profile/SAML2/Redirect/SSO
+#      identifier_format: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+#      issuer: https://tracademic.utsc.utoronto.ca/shibboleth
+#      public_cert: keys/ut-certificate.crt
+#      private_key: keys/ut-mykey.key
+#      signature_algo: sha1

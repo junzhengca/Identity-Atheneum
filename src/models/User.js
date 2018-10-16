@@ -9,6 +9,7 @@ const userSchema = new Schema({
     salt: String,
     password: String,
     emailAddress: String,
+    groups: [String],
     attributes: Schema.Types.Mixed
 }, {timestamps: true});
 

@@ -16,7 +16,7 @@ class SamlIdentityProvider extends IdentityProvider {
                 issuer: this.config.config.issuer,
                 signatureAlgorithm: this.config.config.signature_algo,
                 // TODO: Validate signature of the IdP
-                cert: fs.readFileSync(this.config.config.cert, 'utf8'),
+                // cert: fs.readFileSync(this.config.config.cert, 'utf8'),
                 privateCert: fs.readFileSync(this.config.config.private_key, 'utf8'),
                 decryptionPvk: fs.readFileSync(this.config.config.private_key, 'utf8'),
                 identifierFormat: this.config.config.identifier_format,
@@ -24,15 +24,15 @@ class SamlIdentityProvider extends IdentityProvider {
             },
             (profile, done) => {
                 // Ensure a user with nameID exist within the database
-                User.findOne({ username: profile.nameID, idp: this.config.name })
+                User.findOne({ username: profile[this.config.config.id_key], idp: this.config.name })
                     .then(user => {
                         if(user) {
                             done(null, user);
                         } else {
                             // Otherwise we create the user
-                            console.log(sanitizeKeysForMongo(profile));
+                            console.log(profile);
                             let newUser = new User({
-                                username: profile.nameID,
+                                username: profile[this.config.config.id_key],
                                 idp: this.config.name,
                                 attributes: sanitizeKeysForMongo(profile)
                             });
