@@ -1,5 +1,5 @@
 port: 3000
-host_root: http://localhost:3000
+host_root: http://tracademic.utsc.utoronto.ca:3000
 redis:
   - host: localhost
   - port: 6379
@@ -13,14 +13,26 @@ identity_providers:
     name: local_provider
     display_name: Local Identity Provider
 
+#  - type: saml
+#    name: testshib
+#    display_name: TestShib
+#    config:
+#      callback_url: http://localhost:3000/idps/testshib/login
+#      entry_point: https://idp.testshib.org/idp/profile/SAML2/Redirect/SSO
+#      identifier_format: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+#      issuer: my_issuer
+#      public_cert: keys/certificate.crt
+#      private_key: keys/mykey.key
+#      signature_algo: sha256
+
   - type: saml
-    name: testshib
-    display_name: TestShib
+    name: utoronto
+    display_name: UofT Web Login
     config:
-      callback_url: http://localhost:3000/idps/uoft_shibboleth/login
-      entry_point: https://idp.testshib.org/idp/profile/SAML2/Redirect/SSO
+      callback_url: https://tracademic.utsc.utoronto.ca:3000/idps/testshib/login
+      entry_point: https://idpz.utorauth.utoronto.ca/idp/profile/SAML2/Redirect/SSO
       identifier_format: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
-      issuer: my_issuer
-      public_cert: keys/certificate.crt
-      private_key: keys/mykey.key
-      signature_algo: sha256
+      issuer: https://tracademic.utsc.utoronto.ca/shibboleth
+      public_cert: keys/ut-certificate.crt
+      private_key: keys/ut-mykey.key
+      signature_algo: sha1

@@ -10,7 +10,8 @@
     "flow:check": "flow check ./src/",
     "flow:build": "flow-remove-types ./src/ -d ./lib/ --all --pretty",
     "flow:deps": "flow-typed install",
-    "flow:coverage": "flow-coverage-report --config .flowcoverage.json"
+    "flow:coverage": "flow-coverage-report --config .flowcoverage.json",
+    "build": "flow-remove-types ./src/ -d ./lib/ --all --pretty && cp -r src/views lib/views"
   },
   "repository": {
     "type": "git",
