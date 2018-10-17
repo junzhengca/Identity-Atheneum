@@ -2,7 +2,12 @@
 <div class="container">
     <br><br>
     <h1>Session</h1>
-    <a href="/logout"><button class="btn btn-primary">Logout</button></a>
+    <%if(user.isDeveloper()){%>
+    <a href="/developer">
+        <button class="btn btn-primary">Developer Dashboard</button>
+    </a>
+    <%}%>
+    <a href="/logout"><button class="btn btn-link">Logout</button></a>
     <br><br>
     <pre><%= JSON.stringify(session, null, 2) %></pre>
     <h3>User</h3>

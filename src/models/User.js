@@ -28,4 +28,11 @@ userSchema.methods.verifyPassword = function (password) {
     });
 };
 
+userSchema.methods.isDeveloper = function(){
+    if(this.groups && this.groups.indexOf("developer") > -1) {
+        return true;
+    }
+    return false;
+};
+
 module.exports  = mongoose.model('User', userSchema);

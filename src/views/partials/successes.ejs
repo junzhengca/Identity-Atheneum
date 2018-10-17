@@ -1,0 +1,10 @@
+<%if (success.length > 0) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%for(let i = 0; i < success.length; i++){%>
+    <%= success[i] %><br>
+    <%}%>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<% } %>

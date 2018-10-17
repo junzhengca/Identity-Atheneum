@@ -1,0 +1,27 @@
+<% include ../partials/header.ejs %>
+
+<div class="container">
+    <br>
+    <h2>Register New Application</h2>
+    <% include ../partials/errors.ejs %>
+    <p>Fill out your application details below.</p>
+    <form method="post">
+        <label>
+            Application Name<br>
+            <small>Give your application a name, this is just for display on the dashboard.</small>
+        </label>
+
+        <input type="text" class="form-control" placeholder="My First App" name="name" />
+        <br>
+        <label>
+            Assertion Endpoint<br>
+            <small>After successful authentication, we will POST to this URL with necessary authentication details.</small>
+        </label>
+
+        <input type="text" class="form-control" name="assertion_endpoint" placeholder="https://example.com/SSO/Login" />
+
+        <br>
+        <button class="btn btn-primary">Register</button>
+    </form>
+    <% include ../partials/footer.ejs %>
+</div>
