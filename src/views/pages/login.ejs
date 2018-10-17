@@ -2,16 +2,27 @@
 <div class="container">
     <br><br>
     <h1>Login</h1>
-    <div class="alert alert-warning" role="alert">
-        You must authenticate before accessing this resource. Please choose a login method below.
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">Authentication Request</h4>
+        <p>
+            <% if(application){ %>
+                <%= application.name %> requested login, upon authorization, the service will have full access to your account.<br>
+            Authorized assertion <code><%= application.assertionEndpoint %></code>.
+            <% } else { %>
+                I.A. Root requested login, upon authorization, you will be redirected to session info page.
+            <% } %>
+        </p>
+        <hr>
+        <p class="mb-0">By logging in, you authorize above application to access all your information.</p>
     </div>
+    <p class="text-muted">Please choose an identity provider:</p>
     <div class="row">
     <% for(var i = 0; i < idps.length; i++) { %>
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title"><%= idps[i].display_name %></h5>
-                    <a href="<%= "/idps/" + idps[i].name + "/login"  %>" class="btn btn-primary">Go</a>
+                    <a href="<%= "/idps/" + idps[i].name + "/login"  %>" class="btn btn-primary">Login <i class="fa fa-caret-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>

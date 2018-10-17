@@ -1,6 +1,7 @@
 const express = require('express');
 const ApplicationController = require('../controllers/web/ApplicationController');
 const DeveloperDashboardController = require('../controllers/web/DeveloperDashboardController');
+const Application = require('../models/Application');
 
 module.exports = (app) => {
 
@@ -14,14 +15,20 @@ module.exports = (app) => {
     app.app.use("/developer", developerDashboardRouter);
 
 
-    app.app.get("/login", (req, res) => {
+    app.app.get("/login", (req, res, next) => {
         if(req.user) {
             res.redirect("/session");
         } else {
-            res.render('pages/login', {
-                title: "Login",
-                idps: app.config.identity_providers
-            });
+            // If we actually have a requested app id
+            Application.findOne({_id: req.query.id})
+                .then(application => {
+                    res.render('pages/login', {
+                        title: "Login",
+                        application,
+                        idps: app.config.identity_providers
+                    });
+                })
+                .catch(e => next(e));
         }
     });
 
