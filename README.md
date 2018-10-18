@@ -157,3 +157,76 @@ It is useful to have a xml metadata file when registering with your IdP. To obta
 I.A. comes with a command line tool. You can find it under `/cli` directory.
 
 It is a Node.js app, you can run it by first `npm install`, then `node index.js`.
+
+## Integration
+
+I have a I.A. development instance setup on my personal server, the location is: `https://ia.junthehacker.com`
+
+### Register Your App
+
+Before you start developing, you must register your application.
+
+#### Obtain an Developer Account
+
+* Please first register an SSOCircle (https://www.ssocircle.com/en/) account.
+* Login at https://ia.junthehacker.com/login.
+* Email me (me at jackzh dot com) with your username, I will add you as a developer.
+
+#### Login to Developer Dashboard
+
+* Login with your SSOCircle account at https://ia.junthehacker.com/login, if you are a developer, you should see a Developer Dashboard button.
+
+#### Create New Registration
+
+* Click Create New Registration to create a new app.
+* Give your app a name, can be anything.
+* Assertion Endpoint is the url we will send the bearer token to, for example https://myapp.com/ia/login.
+
+
+### Code!
+
+#### Node.js
+
+```javascript
+const express = require('express');
+const app = express();
+const session = require('express-session');
+const axios = require('axios');
+const port = 3000;
+const ia = 'https://ia.junthehacker.com';
+const appId = '<Your IA App ID>';
+
+this.app.use(session({/* Your session config */}));
+
+// Authentication middleware
+app.use((req, res, next) => {
+    axios.get(`${ia}/api/user`, {
+        headers: {
+            authorization: `Bearer ${req.session.token}`
+        }
+    }).then(data => {
+        req.user = data.data;
+        next();
+    }).catch(e => {
+        next(e);
+    })
+})
+
+// Assertion endpoint
+app.get('/ia/login', (req, res) => {
+    req.session.token = req.query.token;
+    res.redirect('/account');
+})
+
+// Protected resource
+app.get('/account', (req, res) => {
+    if(!req.user) {
+        res.redirect(`${ia}/login?id=${appId}`);
+    } else {
+        res.send(`<h1>Hi! ${user._id}</h1>`);
+    }
+})
+
+
+app.listen(port, () => console.log(`App listening on port ${port}!`))
+```
