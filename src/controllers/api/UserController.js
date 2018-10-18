@@ -89,6 +89,9 @@ class UserController {
         }
     }
 
+    static getCurrent(req, res, next) {
+        res.send(JSON.stringify(req.user));
+    }
 
 }
 

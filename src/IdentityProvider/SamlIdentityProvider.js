@@ -72,7 +72,7 @@ class SamlIdentityProvider extends IdentityProvider {
         router.post('/login',
             passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
             function(req, res) {
-                res.redirect("/session");
+                res.redirect("/login_success");
             }
         );
 

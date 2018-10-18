@@ -35,7 +35,7 @@ class LocalIdentityProvider extends IdentityProvider {
         router.post('/login',
             passport.authenticate('local', { failureRedirect: '/idps/' + this.config.name + '/login', failureFlash: true }),
             (req, res) => {
-                res.send("Login successful");
+                res.redirect("/login_success");
             });
 
         app.use('/idps/' + this.config.name, router);
