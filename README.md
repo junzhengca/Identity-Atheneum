@@ -166,7 +166,7 @@ I have a I.A. development instance setup on my personal server, the location is:
 
 Before you start developing, you must register your application.
 
-#### Obtain an Developer Account
+#### Obtain a Developer Account
 
 * Please first register an SSOCircle (https://www.ssocircle.com/en/) account.
 * Login at https://ia.junthehacker.com/login.
