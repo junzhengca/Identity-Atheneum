@@ -1,6 +1,0 @@
-site_name: Identity Atheneum
-theme: windmill
-nav:
-  - Home: index.html
-  - Installation: installation.md
-  - Configuration: configuration.md

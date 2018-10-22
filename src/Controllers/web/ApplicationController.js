@@ -1,5 +1,5 @@
-const Application = require('../../models/Application');
-const getRealUrl = require('../../util/getRealUrl');
+const Application = require('../../Models/Application');
+const getRealUrl = require('../../Util/getRealUrl');
 
 class ApplicationController {
 

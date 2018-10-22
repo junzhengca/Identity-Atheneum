@@ -1,4 +1,4 @@
-const Application = require('../../models/Application');
+const Application = require('../../Models/Application');
 
 class DeveloperDashboardController {
     /**

@@ -1,9 +1,9 @@
 const IdentityProvider = require('./IdentityProvider');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/User');
+const User = require('../Models/User');
 const express = require('express');
-const getRealUrl = require('../util/getRealUrl');
+const getRealUrl = require('../Util/getRealUrl');
 
 class LocalIdentityProvider extends IdentityProvider {
     initialize() {

@@ -1,5 +1,5 @@
-const AuthToken = require('../models/AuthToken');
-const User = require('../models/User');
+const AuthToken = require('../Models/AuthToken');
+const User = require('../Models/User');
 
 module.exports = function() {
     return function(req, res, next) {

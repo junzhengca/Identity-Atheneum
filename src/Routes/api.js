@@ -1,6 +1,6 @@
 const express = require('express');
-const UserController = require('../controllers/api/UserController');
-const bearerAuthMiddleware = require('../middlewares/bearerAuthMiddleware')();
+const UserController = require('../Controllers/api/UserController');
+const bearerAuthMiddleware = require('../Middlewares/bearerAuthMiddleware')();
 
 
 module.exports = (app) => {

@@ -1,6 +1,6 @@
 // @flow
 const express = require('express');
-const Version = require('./resources/Version');
+const Version = require('./Resources/Version');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const mongoose = require('mongoose');
@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const LocalIdentityProvider = require('./IdentityProvider/LocalIdentityProvider');
 const SamlIdentityProvider = require('./IdentityProvider/SamlIdentityProvider');
-const User = require('./models/User');
+const User = require('./Models/User');
 
 passport.serializeUser(function(user, done) {
     done(null, user._id);
@@ -81,13 +81,13 @@ class App<Number> {
             }
         });
 
-        this.app.use(require('./middlewares/masterAuthMiddleware')(this));
+        this.app.use(require('./Middlewares/masterAuthMiddleware')(this));
 
-        // Mount web routes
-        require('./routes/web')(this);
+        // Mount web Routes
+        require('./Routes/web')(this);
 
-        // Mount API routes
-        require('./routes/api')(this);
+        // Mount API Routes
+        require('./Routes/api')(this);
 
         mongoose.connect(this.config.mongo.url, {useNewUrlParser: true});
         this.app.listen(this.config.port, () => {

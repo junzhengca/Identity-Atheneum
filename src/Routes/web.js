@@ -1,15 +1,15 @@
 const express = require('express');
-const ApplicationController = require('../controllers/web/ApplicationController');
-const DeveloperDashboardController = require('../controllers/web/DeveloperDashboardController');
-const Application = require('../models/Application');
+const ApplicationController = require('../Controllers/web/ApplicationController');
+const DeveloperDashboardController = require('../Controllers/web/DeveloperDashboardController');
+const Application = require('../Models/Application');
 const uuidv4 = require('uuid/v4');
-const AuthToken = require('../models/AuthToken');
+const AuthToken = require('../Models/AuthToken');
 
 module.exports = (app) => {
 
-    // Developer dashboard routes
+    // Developer dashboard Routes
     const developerDashboardRouter = express.Router();
-    developerDashboardRouter.use(require('../middlewares/developerAuthMiddleware')());
+    developerDashboardRouter.use(require('../Middlewares/developerAuthMiddleware')());
     developerDashboardRouter.get("/", DeveloperDashboardController.homePage);
     developerDashboardRouter.get("/add_registration", ApplicationController.addPage);
     developerDashboardRouter.post("/add_registration", ApplicationController.add);
