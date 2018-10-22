@@ -5,6 +5,7 @@ const express = require('express');
 const fs = require('fs');
 const User = require('../models/User');
 const sanitizeKeysForMongo = require('../util/sanitizeKeysForMongo');
+const getRealUrl = require('../util/getRealUrl');
 
 class SamlIdentityProvider extends IdentityProvider {
     initialize() {
@@ -57,9 +58,9 @@ class SamlIdentityProvider extends IdentityProvider {
         const router = express.Router();
 
         router.get('/login',
-            passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+            passport.authenticate('saml', { failureRedirect: getRealUrl('/'), failureFlash: true }),
             function (req, res) {
-                res.redirect("/session");
+                res.redirect(getRealUrl('/session'));
             }
         );
 
@@ -70,9 +71,12 @@ class SamlIdentityProvider extends IdentityProvider {
 
 
         router.post('/login',
-            passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+            passport.authenticate('saml', {
+                failureRedirect: getRealUrl('/'),
+                failureFlash: true
+            }),
             function(req, res) {
-                res.redirect("/login_success");
+                res.redirect(getRealUrl('/login_success'));
             }
         );
 

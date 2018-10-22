@@ -1,13 +1,11 @@
 // @flow
-const YamlConfigFile = require('./ConfigFile/YamlConfigFile');
 const App = require('./App');
 // $FlowFixMe
 const colors = require('colors');
 
 // First read the configuration file
 
-const configFile = new YamlConfigFile("config.yml");
-const config = configFile.parse();
+const config = require('./config');
 
 // console.log(config);
 

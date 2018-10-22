@@ -1,13 +1,14 @@
 const Application = require('../../models/Application');
+const getRealUrl = require('../../util/getRealUrl');
 
 class ApplicationController {
 
     static _backToAddPage(res) {
-        res.redirect("/developer/add_registration");
+        res.redirect(getRealUrl("/developer/add_registration"));
     }
 
     static _backToDashboard(res) {
-        res.redirect("/developer");
+        res.redirect(getRealUrl("/developer"));
     }
 
     /**
@@ -40,7 +41,7 @@ class ApplicationController {
             app.save()
                 .then(app => {
                     req.flash('success', 'Application created with ID ' + app._id.toString());
-                    res.redirect('/developer');
+                    res.redirect(getRealUrl('/developer'));
                 })
                 .catch(e => {
                     req.flash('error', 'Unknown Error: ' + JSON.stringify(e));

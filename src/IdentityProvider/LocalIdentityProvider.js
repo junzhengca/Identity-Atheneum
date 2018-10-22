@@ -3,6 +3,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/User');
 const express = require('express');
+const getRealUrl = require('../util/getRealUrl');
 
 class LocalIdentityProvider extends IdentityProvider {
     initialize() {
@@ -33,9 +34,12 @@ class LocalIdentityProvider extends IdentityProvider {
         });
 
         router.post('/login',
-            passport.authenticate('local', { failureRedirect: '/idps/' + this.config.name + '/login', failureFlash: true }),
+            passport.authenticate('local', {
+                failureRedirect: getRealUrl('/idps/' + this.config.name + '/login'),
+                failureFlash: true
+            }),
             (req, res) => {
-                res.redirect("/login_success");
+                res.redirect(getRealUrl('/login_success'));
             });
 
         app.use('/idps/' + this.config.name, router);
