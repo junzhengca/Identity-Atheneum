@@ -138,7 +138,7 @@ class App<Number> {
         this._configureViews();
         this._mountAllRoutesAndMiddlewares();
         this._connectDatabase();
-        
+
         this._bindPort();
     }
 }
