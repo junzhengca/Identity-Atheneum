@@ -53,6 +53,11 @@ class ApplicationController {
         }
     }
 
+    /**
+     * Remove an application registration
+     * @param req
+     * @param res
+     */
     static remove(req, res) {
         if(req.body.id) {
             // Find the app

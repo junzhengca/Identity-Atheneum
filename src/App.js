@@ -42,7 +42,7 @@ class App<Number> {
     run() {
         this.app = express();
 
-        this.app.set('views', path.join(__dirname, '/views'));
+        this.app.set('views', path.join(__dirname, '/Views'));
         this.app.set('view engine', 'ejs');
 
         this.app.use(cookieParser());

@@ -13,6 +13,11 @@ const userSchema = new Schema({
     attributes: Schema.Types.Mixed
 }, {timestamps: true});
 
+/**
+ * Returns a promise that resolves if the password match with database record
+ * @param password
+ * @returns {Promise<any>}
+ */
 userSchema.methods.verifyPassword = function (password) {
     return new Promise((resolve, reject) => {
         pbkdf2(password, this.salt, 1, 32, 'sha512')
@@ -28,11 +33,20 @@ userSchema.methods.verifyPassword = function (password) {
     });
 };
 
-userSchema.methods.isDeveloper = function(){
-    if(this.groups && this.groups.indexOf("developer") > -1) {
-        return true;
-    }
-    return false;
+/**
+ * Check if current user is a developer
+ * @returns {*[]|{[p: string]: string}|Array|boolean}
+ */
+userSchema.methods.isDeveloper = function() {
+    return this.groups && this.groups.indexOf("developer") > -1;
+};
+
+/**
+ * Check if current user is admin
+ * @returns {*[]|{[p: string]: string}|Array|boolean}
+ */
+userSchema.methods.isAdmin = function() {
+    return this.groups && this.groups.indexOf("admin") > -1;
 };
 
 module.exports  = mongoose.model('User', userSchema);
