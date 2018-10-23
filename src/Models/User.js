@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const util = require('util');
 const pbkdf2 = util.promisify(require('pbkdf2').pbkdf2);
+const uuidv4 = require('uuid/v4');
 
 const userSchema = new Schema({
     idp: String,
@@ -12,6 +13,37 @@ const userSchema = new Schema({
     groups: [String],
     attributes: Schema.Types.Mixed
 }, {timestamps: true});
+
+/**
+ * Create a new user
+ * @param idp
+ * @param username
+ * @param password
+ * @param emailAddress
+ * @param groups
+ * @param attributes
+ * @returns {Promise<any>}
+ */
+userSchema.statics.create = function(idp, username, password, emailAddress, groups, attributes) {
+    return new Promise((resolve, reject) => {
+        let salt = uuidv4();
+        let hashedPassword;
+        pbkdf2(password, salt, 1, 32, 'sha512')
+            .then(hashed => {
+                hashedPassword = hashed.toString('hex');
+            })
+            .then(() => {
+                let user = new this({
+                    idp, username, salt, password: hashedPassword, emailAddress, groups, attributes
+                });
+                return user.save();
+            })
+            .then(user => {
+                resolve(user);
+            })
+            .catch(e => reject(e));
+    })
+};
 
 /**
  * Returns a promise that resolves if the password match with database record

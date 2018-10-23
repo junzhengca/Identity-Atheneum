@@ -9,8 +9,10 @@ class LocalIdentityProvider extends IdentityProvider {
     initialize() {
         passport.use(new LocalStrategy((username, password, done) => {
             // Find the user
+            let user;
             User.findOne({username, idp: this.config.name})
-                .then(user => {
+                .then(result => {
+                    user = result;
                     if(user) {
                         return user.verifyPassword(password);
                     } else {

@@ -12,6 +12,8 @@ const bodyParser = require('body-parser');
 const LocalIdentityProvider = require('./IdentityProvider/LocalIdentityProvider');
 const SamlIdentityProvider = require('./IdentityProvider/SamlIdentityProvider');
 const User = require('./Models/User');
+const Input = require('prompt-input');
+const randStr = require('./Util/randStr');
 
 passport.serializeUser(function(user, done) {
     done(null, user._id);
@@ -34,6 +36,21 @@ class App<Number> {
 
     constructor(config: mixed) {
         this.config = config;
+    }
+
+    /**
+     * Get default(first) local provider
+     * @returns {*}
+     * @private
+     */
+    _getDefaultLocalProvider() {
+        let provider;
+        for(let i = 0; i < this.config.identity_providers.length; i++) {
+            if(this.config.identity_providers[i].type === 'local') {
+                provider = this.config.identity_providers[i];
+            }
+        }
+        return provider;
     }
 
     /**
@@ -131,6 +148,52 @@ class App<Number> {
     }
 
     /**
+     * Resolve once setup has already been done or finished
+     * @returns {Promise<any>}
+     * @private
+     */
+    _firstRunSetup() {
+        return new Promise((resolve, reject) => {
+            let defaultProvider = this._getDefaultLocalProvider();
+            if(!defaultProvider) {
+                console.warn("[WARNING] Unable to find default local provider, cannot run setup, system will start without default local IdP.");
+                resolve();
+            } else {
+                let password;
+                User.find({idp: defaultProvider.name})
+                    .then(users => {
+                        if(users.length === 0) {
+                            // Run setup
+                            console.log("Seems like you don't have a user in your local provider yet, let's create one!");
+                            console.warn("[WARNING] New user will have admin privilege to the system.");
+                            const usernameInput = new Input({
+                                name: 'username',
+                                message: 'What will be the username for this user?'
+                            });
+                            usernameInput.run()
+                                .then(answer => {
+                                    password = randStr(16);
+                                    let username = answer;
+                                    // Create a new user
+                                    return User.create(defaultProvider.name, username, password, "", ["admin"], {});
+                                })
+                                .then(user => {
+                                    console.log("Admin user created with following credentials:");
+                                    console.log("* Username: " + user.username);
+                                    console.log("* Password: " + password);
+                                    resolve();
+                                })
+                                .catch(e => reject(e));
+                        } else {
+                            resolve();
+                        }
+                    })
+                    .catch(e => reject(e));
+            }
+        })
+    }
+
+    /**
      * Start the application
      */
     run() {
@@ -139,7 +202,10 @@ class App<Number> {
         this._mountAllRoutesAndMiddlewares();
         this._connectDatabase();
 
-        this._bindPort();
+        this._firstRunSetup()
+            .then(() => this._bindPort())
+            .catch(e => {throw new Error(e)});
+
     }
 }
 

@@ -50,6 +50,7 @@
     "passport-local": "^1.0.0",
     "passport-saml": "^0.35.0",
     "pbkdf2": "^3.0.17",
+    "prompt-input": "^3.0.0",
     "uuid": "^3.3.2"
   }
 }

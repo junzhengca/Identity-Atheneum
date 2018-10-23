@@ -7,6 +7,13 @@ const colors = require('colors');
 
 const config = require('./config');
 
+process.on('SIGINT', function() {
+    console.log('Interrupted');
+    process.exit();
+});
+
 // Run the app
 const app = new App(config);
 app.run();
+
+
