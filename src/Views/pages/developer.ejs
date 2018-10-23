@@ -3,13 +3,13 @@
 <div class="container">
     <br>
     <h2>Welcome! <%= user.username %>
-        <a href="/logout"><button class="btn btn-link"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</button></a>
+        <a href="<%=getRealUrl('/logout')%>"><button class="btn btn-link"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</button></a>
     </h2>
     <% include ../partials/errors.ejs %>
     <% include ../partials/successes.ejs %>
     <h4>Application Registrations</h4>
     <p>You must configure each application for I.A. to work.</p>
-    <a href="/developer/add_registration"><button class="btn btn-primary">
+    <a href="<%=getRealUrl('/developer/add_registration')%>"><button class="btn btn-primary">
         <i class="fa fa-plus" aria-hidden="true"></i> Create New Registration
     </button></a>
     <%for(let i = 0; i < applications.length; i++){%>
@@ -22,7 +22,7 @@
                 Assertion Endpoint: <code><%= applications[i].assertionEndpoint %></code><br>
                 Application ID: <code><%= applications[i]._id %></code>
             </p>
-            <form method="post" action="/developer/remove_registration">
+            <form method="post" action="<%=getRealUrl('/developer/remove_registration')%>">
                 <input type="hidden" value="<%= applications[i]._id %>" name="id" />
                 <button class="btn btn-danger">Remove Registration</button>
             </form>

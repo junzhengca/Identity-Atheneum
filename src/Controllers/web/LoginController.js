@@ -12,19 +12,35 @@ class LoginController {
      * @param next
      */
     static loginPage(req, res, next) {
+        if(req.query.id && !req.query.id.match(/^[0-9a-fA-F]{24}$/)) {
+            res.render('pages/errors/loginRequestError', {
+                title: "Malformed Request - Invalid Application ID",
+                message: "The request contains an invalid application ID."
+            });
+            return;
+        }
         // If we actually have a requested app id
         Application.findOne({_id: req.query.id})
             .then(application => {
+                // If we have a query, however the application is not found...
+                if(req.query.id && !application) {
+                    res.render('pages/errors/loginRequestError', {
+                        title: "Malformed Request - Application Not Found",
+                        message: "We are unable to find the application you are referring to."
+                    });
+                    return;
+                }
                 if(application) {
                     req.session.applicationId = application._id.toString();
                     console.log("Session initiated...", req.session.applicationId);
                 }
                 if(req.user) {
-                    res.redirect(getRealUrl('/login_success"'));
+                    res.redirect(getRealUrl('/login_success'));
                 } else {
                     res.render('pages/login', {
                         title: "Login",
                         application,
+                        getRealUrl,
                         idps: config.identity_providers
                     });
                 }

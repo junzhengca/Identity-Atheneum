@@ -32,7 +32,12 @@ class LocalIdentityProvider extends IdentityProvider {
         const router = express.Router();
 
         router.get('/login', (req, res) => {
-            res.render('pages/localLogin', {config: this.config, title: "Login"});
+            res.render('pages/localLogin', {
+                config: this.config,
+                title: "Login",
+                success: req.flash('success'),
+                error: req.flash('errors').concat(req.flash('error'))
+            });
         });
 
         router.post('/login',

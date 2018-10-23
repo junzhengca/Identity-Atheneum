@@ -3,11 +3,16 @@
     <br><br>
     <h1>Session</h1>
     <%if(user.isDeveloper()){%>
-    <a href="/developer">
+    <a href="<%=getRealUrl('/developer')%>">
         <button class="btn btn-primary">Developer Dashboard</button>
     </a>
     <%}%>
-    <a href="/logout"><button class="btn btn-link">Logout</button></a>
+    <%if(user.isAdmin()){%>
+    <a href="<%=getRealUrl('/admin')%>">
+        <button class="btn btn-primary">Admin Dashboard</button>
+    </a>
+    <%}%>
+    <a href="<%=getRealUrl('/logout')%>"><button class="btn btn-link">Logout</button></a>
     <br><br>
     <pre><%= JSON.stringify(session, null, 2) %></pre>
     <h3>User</h3>

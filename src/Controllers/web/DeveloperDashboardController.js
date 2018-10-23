@@ -1,4 +1,5 @@
 const Application = require('../../Models/Application');
+const getRealUrl = require('../../Util/getRealUrl');
 
 class DeveloperDashboardController {
     /**
@@ -14,6 +15,7 @@ class DeveloperDashboardController {
                     title: "Developer Dashboard",
                     user: req.user,
                     applications,
+                    getRealUrl,
                     success: req.flash('success'),
                     error: req.flash('errors')
                 })

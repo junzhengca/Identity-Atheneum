@@ -11,7 +11,8 @@ class SessionController {
             res.render('pages/session', {
                 title: "Current Session",
                 session: req.session,
-                user: req.user
+                user: req.user,
+                getRealUrl
             });
         } else {
             res.redirect(getRealUrl('/login'));

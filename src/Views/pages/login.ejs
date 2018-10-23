@@ -22,7 +22,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title"><%= idps[i].display_name %></h5>
-                    <a href="<%= "/idps/" + idps[i].name + "/login"  %>" class="btn btn-primary">Login <i class="fa fa-caret-right" aria-hidden="true"></i></a>
+                    <a href="<%= getRealUrl("/idps/" + idps[i].name + "/login")  %>" class="btn btn-primary">Login <i class="fa fa-caret-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>

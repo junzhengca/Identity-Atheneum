@@ -1,12 +1,15 @@
 <% include ../partials/header %>
 <div class="container">
+    <br/><br/>
     <h1>Login</h1>
+    <% include ../partials/errors.ejs %>
+    <% include ../partials/successes.ejs %>
     <p>
         Attempting to login to <%= config.display_name %>.
     </p>
     <form method="post">
-        <input type="text" placeholder="Username" class="form-control" name="username" />
-        <input type="password" placeholder="Password" class="form-control" name="password" />
+        <input type="text" placeholder="Username" class="form-control" name="username" /><br/>
+        <input type="password" placeholder="Password" class="form-control" name="password" /><br/>
         <button class="btn btn-primary">Login</button>
     </form>
 </div>
