@@ -7,8 +7,6 @@ const colors = require('colors');
 
 const config = require('./config');
 
-// console.log(config);
-
 // Run the app
 const app = new App(config);
 app.run();

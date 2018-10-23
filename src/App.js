@@ -37,14 +37,27 @@ class App<Number> {
     }
 
     /**
-     * Start the application
+     * Initialize a new express app
+     * @private
      */
-    run() {
+    _initExpress() {
         this.app = express();
+    }
 
+    /**
+     * Configure views directory
+     * @private
+     */
+    _configureViews() {
         this.app.set('views', path.join(__dirname, '/Views'));
         this.app.set('view engine', 'ejs');
+    }
 
+    /**
+     * Mount all routes and middlewares for the application
+     * @private
+     */
+    _mountAllRoutesAndMiddlewares() {
         this.app.use(cookieParser());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
@@ -88,8 +101,21 @@ class App<Number> {
 
         // Mount API Routes
         require('./Routes/api')(this);
+    }
 
+    /**
+     * Connect to database
+     * @private
+     */
+    _connectDatabase() {
         mongoose.connect(this.config.mongo.url, {useNewUrlParser: true});
+    }
+
+    /**
+     * Bind and listen to port
+     * @private
+     */
+    _bindPort() {
         this.app.listen(this.config.port, () => {
             console.log("\n========================================");
             // $FlowFixMe
@@ -102,6 +128,18 @@ class App<Number> {
     \\|__\\|__|\\|__|\\|__\\|__|   ${Version.versionName}
     `.bold.red)
         })
+    }
+
+    /**
+     * Start the application
+     */
+    run() {
+        this._initExpress();
+        this._configureViews();
+        this._mountAllRoutesAndMiddlewares();
+        this._connectDatabase();
+        
+        this._bindPort();
     }
 }
 
