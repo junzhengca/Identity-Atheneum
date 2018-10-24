@@ -1,0 +1,28 @@
+<%- include('../../partials/header.ejs', {
+    title: "System - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">System</li>
+        </ol>
+    </nav>
+
+    <h2>System Status</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <label>System Time</label>
+    <input type="text" disabled class="form-control" value="<%=new Date()%>" />
+    <label class="mt-2">Node.js Version</label>
+    <input type="text" disabled class="form-control" value="<%=process.version%>" />
+    <label class="mt-2">Environment Variables</label>
+    <pre class="form-control" disabled style="font-family: monospace; height: 200px;"><%=JSON.stringify(process.env, null, 2)%></pre>
+    <label class="mt-2">Loaded Configuration</label>
+    <pre class="form-control" disabled style="font-family: monospace; height: 200px;"><%=JSON.stringify(config, null, 2)%></pre>
+    <% include ../../partials/footer.ejs %>
+</div>

@@ -33,6 +33,8 @@ module.exports = (app) => {
     adminDashboardRouter.get("/applications", AdminDashboardController.applicationsPage);
     adminDashboardRouter.post("/applications/:id/delete", AdminDashboardController.deleteApplication);
 
+    adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
+
     app.app.use("/admin", adminDashboardRouter);
 
     // Authentication routes

@@ -3,6 +3,7 @@ const Application = require('../../Models/Application');
 const getRealUrl = require('../../Util/getRealUrl');
 const isValidGroupName = require('../../Util/isValidGroupName');
 const flattenFlashMessages = require('../../Util/flattenFlashMessages');
+const config = require('../../config');
 
 module.exports = class AdminDashboardController {
     /**
@@ -272,5 +273,18 @@ module.exports = class AdminDashboardController {
                 req.flash("errors", e.message);
                 res.redirect(getRealUrl('/admin/applications'));
             })
+    }
+
+    /**
+     * Get systems page
+     * @param req
+     * @param res
+     */
+    static systemPage(req, res) {
+        res.render('pages/admin/system', {
+            getRealUrl,
+            config,
+            ...flattenFlashMessages(req)
+        });
     }
 };
