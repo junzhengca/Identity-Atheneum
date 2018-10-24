@@ -1,0 +1,63 @@
+<%- include('../../partials/header.ejs', {
+title: "Container Detail - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/containers') %>">Containers</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Container Detail</li>
+        </ol>
+    </nav>
+    <h2><%= container.name %> Detail</h2>
+
+    <a href="<%= getRealUrl("/admin/containers/detail/" + container.name + "/export/json") %>" class="btn btn-primary">Export JSON</a>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <hr/>
+    <h4>Permissions</h4>
+    <label>
+        Read Groups<br/>
+        <small class="text-muted">Groups that can read this container. (Regex)</small>
+    </label>
+    <input type="text" class="form-control" value="<%= container.readGroups %>"/>
+    <label class="mt-2">
+        Write Groups<br/>
+        <small class="text-muted">Groups that can write to this container. (Regex)</small>
+    </label>
+    <input type="text" class="form-control" value="<%= container.writeGroups %>"/>
+    <label class="mt-2">
+        Delete Groups<br/>
+        <small class="text-muted">Groups that can delete from this container. (Regex)</small>
+    </label>
+    <input type="text" class="form-control" value="<%= container.deleteGroups %>"/>
+
+    <br/>
+    <button class="btn btn-primary">Save</button>
+
+    <br/><br/>
+    <h4>Data</h4>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Key</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for(let key in container.content){ %>
+        <tr>
+            <th scope="row"><%= key %></th>
+            <td><%= container.content[key] %></td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+    <% include ../../partials/footer.ejs %>
+</div>

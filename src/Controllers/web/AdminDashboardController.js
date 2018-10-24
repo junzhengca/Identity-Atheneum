@@ -1,5 +1,6 @@
 const User = require('../../Models/User');
 const Application = require('../../Models/Application');
+const Container = require('../../Models/Container');
 const getRealUrl = require('../../Util/getRealUrl');
 const isValidGroupName = require('../../Util/isValidGroupName');
 const flattenFlashMessages = require('../../Util/flattenFlashMessages');
@@ -29,8 +30,8 @@ module.exports = class AdminDashboardController {
      */
     static usersPage(req, res) {
         User.find({
-            idp: { $regex: req.query.idp || /.*/ },
-            groups: { $regex: req.query.group || /.*/ }
+            idp: {$regex: req.query.idp || /.*/},
+            groups: {$regex: req.query.group || /.*/}
         })
             .then(users => {
                 res.render('pages/admin/users', {
@@ -63,17 +64,17 @@ module.exports = class AdminDashboardController {
      */
     static createUsers(req, res) {
         // First get all users
-        if(!req.body.users) {
+        if (!req.body.users) {
             req.flash("errors", "You must have at least one user.");
             res.redirect(getRealUrl('/admin/users/create_users'));
         } else {
             let chain = [];
             // Parse every user
             let input = req.body.users.split(/\r?\n/);
-            for(let i = 0; i < input.length; i++) {
+            for (let i = 0; i < input.length; i++) {
                 let line = input[i].split(/\s+/);
                 chain.push(new Promise((resolve, reject) => {
-                    if(line.length < 3) {
+                    if (line.length < 3) {
                         req.flash("errors", `Error on line ${i}, invalid number of arguments.`);
                         return resolve();
                     }
@@ -124,7 +125,7 @@ module.exports = class AdminDashboardController {
     static userDetailPage(req, res, next) {
         User.findByIdentifier(req.params.identifier)
             .then(user => {
-                if(user) {
+                if (user) {
                     res.render('pages/admin/userDetail', {
                         title: user.getReadableId() + " Detail - Admin Dashboard",
                         req, getRealUrl, user,
@@ -147,8 +148,8 @@ module.exports = class AdminDashboardController {
     static addGroupToUser(req, res, next) {
         User.findByIdentifier(req.params.identifier)
             .then(user => {
-                if(user) {
-                    if(!req.body.name) {
+                if (user) {
+                    if (!req.body.name) {
                         throw new Error("You must enter a group name.");
                     } else if (!isValidGroupName(req.body.name)) {
                         throw new Error("Group name invalid, can only contain a-z, 0-9 and .");
@@ -182,8 +183,8 @@ module.exports = class AdminDashboardController {
     static deleteGroupFromUser(req, res, next) {
         User.findByIdentifier(req.params.identifier)
             .then(user => {
-                if(user) {
-                    if(!req.body.name) {
+                if (user) {
+                    if (!req.body.name) {
                         throw new Error("You must enter a group name.");
                     } else if (user.groups.indexOf(req.body.name) < 0) {
                         throw new Error("Group does not exist.");
@@ -216,7 +217,7 @@ module.exports = class AdminDashboardController {
     static deleteUser(req, res, next) {
         User.findByIdentifier(req.params.identifier)
             .then(user => {
-                if(user) {
+                if (user) {
                     return user.remove();
                 } else {
                     throw new Error("User not found.");
@@ -259,7 +260,7 @@ module.exports = class AdminDashboardController {
     static deleteApplication(req, res) {
         Application.findOne({_id: req.params.id})
             .then(app => {
-                if(!app) {
+                if (!app) {
                     throw new Error("Application not found.");
                 } else {
                     return app.remove();
@@ -276,6 +277,7 @@ module.exports = class AdminDashboardController {
     }
 
     /**
+     * GET /system
      * Get systems page
      * @param req
      * @param res
@@ -286,5 +288,91 @@ module.exports = class AdminDashboardController {
             config,
             ...flattenFlashMessages(req)
         });
+    }
+
+    /**
+     * GET /containers
+     * Render containers page
+     * @param req
+     * @param res
+     */
+    static containersPage(req, res) {
+        Container.find({})
+            .then(containers => {
+                res.render('pages/admin/containers', {
+                    getRealUrl,
+                    containers,
+                    ...flattenFlashMessages(req)
+                })
+            });
+    }
+
+    /**
+     * GET /containers/create_container
+     * Render create container page
+     * @param req
+     * @param res
+     */
+    static createContainerPage(req, res) {
+        res.render('pages/admin/createContainer', {
+            getRealUrl,
+            ...flattenFlashMessages(req)
+        })
+    }
+
+    /**
+     * POST /containers/create_container
+     * Create a new container
+     * @param req
+     * @param res
+     */
+    static createContainer(req, res) {
+        Container.create(req.body.name, req.body.read_groups, req.body.write_groups, req.body.delete_groups)
+            .then(container => {
+                req.flash("success", "Container created " + container._id + ".");
+                res.redirect(getRealUrl('/admin/containers'));
+            })
+            .catch(e => {
+                req.flash("errors", e.message);
+                res.redirect(getRealUrl('/admin/containers'));
+            })
+    }
+
+    /**
+     * GET /containers/detail/:name
+     * Render container details page
+     * @param req
+     * @param res
+     */
+    static containerDetailPage(req, res) {
+        Container.findOne({name: req.params.name})
+            .then(container => {
+                if(container) {
+                    res.render('pages/admin/containerDetail', {
+                        getRealUrl,
+                        container,
+                        ...flattenFlashMessages(req)
+                    });
+                } else {
+                    res.send("Container not found.");
+                }
+            })
+    }
+
+    /**
+     * Export container into JSON format
+     * @param req
+     * @param res
+     */
+    static exportContainerJSON(req, res) {
+        Container.findOne({name: req.params.name})
+            .then(container => {
+                if(container) {
+                    res.header('content-type', 'application/json');
+                    res.send(JSON.stringify(container));
+                } else {
+                    res.send("Container not found.");
+                }
+            })
     }
 };

@@ -1,0 +1,52 @@
+<%- include('../../partials/header.ejs', {
+title: "Create Container - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/containers') %>">Containers</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create Container</li>
+        </ol>
+    </nav>
+
+    <h2>Create Container</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <h4>Basic Information</h4>
+
+    <form method="post">
+        <label>
+            Name<br/>
+            <small class="text-muted">Can only contain 0-9 a-z .</small>
+        </label>
+        <input type="text" class="form-control" name="name" placeholder="csc148f18"/>
+
+        <br/>
+        <h4>Permission</h4>
+
+        <label>
+            Read Group<br/>
+            <small class="text-muted">Groups that can read this container. (Regex)</small>
+        </label>
+        <input type="text" class="form-control" name="read_groups" placeholder="csc148.f18"/>
+        <label class="mt-2">
+            Write Group<br/>
+            <small class="text-muted">Groups that can write to this container. (Regex)</small>
+        </label>
+        <input type="text" class="form-control" name="write_groups" placeholder="csc148.f18.(ta|instructor)"/>
+        <label class="mt-2">
+            Delete Group<br/>
+            <small class="text-muted">Groups that can delete items from this container. (Regex)</small>
+        </label>
+        <input type="text" class="form-control" name="delete_groups" placeholder="csc148.f18.instructor"/>
+
+        <br/>
+        <button class="btn btn-primary">Create</button>
+    </form>
+    <% include ../../partials/footer.ejs %>
+</div>

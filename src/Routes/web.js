@@ -35,6 +35,13 @@ module.exports = (app) => {
 
     adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
 
+    adminDashboardRouter.get("/containers", AdminDashboardController.containersPage);
+    adminDashboardRouter.get("/containers/create_container", AdminDashboardController.createContainerPage);
+    adminDashboardRouter.post("/containers/create_container", AdminDashboardController.createContainer);
+    adminDashboardRouter.get("/containers/detail/:name", AdminDashboardController.containerDetailPage);
+    adminDashboardRouter.get("/containers/detail/:name/export/json", AdminDashboardController.exportContainerJSON);
+
+
     app.app.use("/admin", adminDashboardRouter);
 
     // Authentication routes
