@@ -1,0 +1,80 @@
+<% include ../../partials/header.ejs %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/users') %>">Users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">User Detail</li>
+        </ol>
+    </nav>
+    <h2><%= user.getReadableId() %> Detail</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <hr/>
+
+    <h4>Account Information</h4>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label>
+                Username<br/>
+                <small class="text-muted">Paired with IdP, can be used to uniquely identify an user.</small>
+            </label>
+            <input type="text" class="form-control" disabled value="<%= user.username %>"/>
+        </div>
+        <div class="col-md-6">
+            <label>
+                Identity Provider<br/>
+                <small class="text-muted">Which IdP namespace does this user belong to.</small>
+            </label>
+            <input type="text" class="form-control" disabled value="<%= user.idp %>"/>
+        </div>
+    </div>
+
+    <br/>
+    <h4>Groups</h4>
+    <small class="text-muted">Groups are used to determine which resource an account can access. Subgroups inherits
+        parent permissions.
+    </small>
+    <br/>
+    <label style="padding-top: 10px;">
+        Assign Group<br/>
+        <small class="text-muted">Add this user to a new group.</small>
+    </label>
+    <form action="<%= getRealUrl('/admin/users/detail/' + user.getReadableId() + '/groups') %>" method="post">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="name" placeholder="cscb07f18.student">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Add</button>
+            </div>
+        </div>
+    </form>
+    <ul class="list-group">
+        <% for(let i = 0; i < user.groups.length; i++){ %>
+        <li class="list-group-item">
+            <%= user.groups[i] %>
+            <button class="btn btn-sm btn-outline-danger float-md-right">Remove</button>
+        </li>
+        <% } %>
+    </ul>
+
+    <br/>
+    <h4>Full Data</h4>
+    <small class="text-muted">Full account data in JSON format.</small>
+    <br/><br/>
+    <pre><code><%= JSON.stringify(user, null, 2) %></code></pre>
+
+    <br/>
+    <h4>Danger Zone</h4>
+    <div class="alert alert-danger" role="alert">
+        Once an user is deleted, its data cannot be recovered. If user belongs to a third-party IdP, it will be created
+        upon next login, however all data and group information will be lost.
+    </div>
+    <button class="btn btn-danger">Delete User</button>
+
+    <% include ../../partials/footer.ejs %>
+</div>

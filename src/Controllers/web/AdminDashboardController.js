@@ -1,5 +1,6 @@
 const User = require('../../Models/User');
 const getRealUrl = require('../../Util/getRealUrl');
+const isValidGroupName = require('../../Util/isValidGroupName');
 
 module.exports = class AdminDashboardController {
     /**
@@ -39,7 +40,7 @@ module.exports = class AdminDashboardController {
      * @param res
      */
     static createNewUsersPage(req, res) {
-        res.render('pages/adminCreateNewUsers', {
+        res.render('pages/admin/createUsers', {
             title: "Create New Users - Admin Dashboard",
             getRealUrl,
             success: req.flash('success'),
@@ -56,7 +57,7 @@ module.exports = class AdminDashboardController {
         // First get all users
         if(!req.body.users) {
             req.flash("errors", "You must have at least one user.");
-            res.redirect(getRealUrl('/admin/create_users'));
+            res.redirect(getRealUrl('/admin/users/create_users'));
         } else {
             let chain = [];
             // Parse every user
@@ -82,10 +83,10 @@ module.exports = class AdminDashboardController {
             }
             Promise.all(chain)
                 .then(() => {
-                    res.redirect(getRealUrl('/admin/create_users'));
+                    res.redirect(getRealUrl('/admin/users/create_users'));
                 })
                 .catch(e => {
-                    res.redirect(getRealUrl('/admin/create_users'));
+                    res.redirect(getRealUrl('/admin/users/create_users'));
                 })
         }
     }
@@ -103,5 +104,63 @@ module.exports = class AdminDashboardController {
                 res.send(JSON.stringify(users));
             })
             .catch(e => next(e));
+    }
+
+    /**
+     * GET /users/detail/:identifier
+     * Get user details page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static userDetailPage(req, res, next) {
+        User.findByIdentifier(req.params.identifier)
+            .then(user => {
+                if(user) {
+                    res.render('pages/admin/userDetail', {
+                        title: user.getReadableId() + " Detail - Admin Dashboard",
+                        req, getRealUrl, user,
+                        success: req.flash('success'),
+                        error: req.flash('errors')
+                    })
+                } else {
+                    res.send("User not found.");
+                }
+            })
+            .catch(e => next(e));
+    }
+
+    /**
+     * POST /users/detail/:identifier/groups
+     * @param req
+     * @param res
+     * @param next
+     */
+    static addGroupToUser(req, res, next) {
+        User.findByIdentifier(req.params.identifier)
+            .then(user => {
+                if(user) {
+                    if(!req.body.name) {
+                        throw new Error("You must enter a group name.");
+                    } else if (!isValidGroupName(req.body.name)) {
+                        throw new Error("Group name invalid, can only contain a-z, 0-9 and .");
+                    } else if (user.groups.indexOf(req.body.name) >= 0) {
+                        throw new Error("Group already exist.");
+                    } else {
+                        user.groups.push(req.body.name);
+                        return user.save();
+                    }
+                } else {
+                    throw new Error("User not found.");
+                }
+            })
+            .then(() => {
+                req.flash("success", "Group added.");
+                res.redirect(getRealUrl('/admin/users/detail/' + req.params.identifier));
+            })
+            .catch(e => {
+                req.flash("errors", e.message);
+                res.redirect(getRealUrl('/admin/users/detail/' + req.params.identifier));
+            })
     }
 };

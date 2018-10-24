@@ -10,10 +10,10 @@
     </nav>
 
     <h2>Manage Users</h2>
-    <a href="<%= getRealUrl("/admin/create_users") %>" class="btn btn-primary">
+    <a href="<%= getRealUrl("/admin/users/create_users") %>" class="btn btn-primary">
         Create New Users
     </a>
-    <a href="<%= getRealUrl("/admin/export_users/json") %>" class="btn btn-primary">
+    <a href="<%= getRealUrl("/admin/users/export_users/json") %>" class="btn btn-primary">
         Export JSON
     </a>
     <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#filter-panel"
@@ -68,7 +68,7 @@
             <td><%= JSON.stringify(users[i].groups) %></td>
             <td><%= users[i].idp %></td>
             <td>
-                <button class="btn btn-danger">Delete</button>
+                <a href="<%= getRealUrl('/admin/users/detail/' + users[i].getReadableId()) %>" class="btn btn-primary">Detail</a>
             </td>
         </tr>
         <% } %>

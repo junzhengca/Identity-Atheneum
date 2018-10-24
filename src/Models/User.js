@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const util = require('util');
 const pbkdf2 = util.promisify(require('pbkdf2').pbkdf2);
 const uuidv4 = require('uuid/v4');
+const isValidMongoID = require('../Util/isValidMongoID');
 
 const userSchema = new Schema({
     idp: String,
@@ -21,7 +22,23 @@ const userSchema = new Schema({
  */
 userSchema.statics.findByIdentifier = function(id) {
     return new Promise((resolve, reject) => {
-
+        // First check if it is a mongo ID
+        if(isValidMongoID(id)) {
+            // If it is, then we search using mongo id
+            this.findOne({_id: id})
+                .then(user => resolve(user))
+                .catch(e => reject(e));
+        } else {
+            // Otherwise, parse the ID
+            id = id.split(".");
+            if(id.length !== 2) {
+                return reject("ID format is invalid, it must be either Mongo ID or idp.username.");
+            } else {
+                this.findOne({username: id[1], idp: id[0]})
+                    .then(user => resolve(user))
+                    .catch(e => reject(e));
+            }
+        }
     })
 };
 
@@ -60,6 +77,14 @@ userSchema.statics.create = function(idp, username, password, emailAddress, grou
             })
             .catch(e => reject(e));
     })
+};
+
+/**
+ * Get human readable ID
+ * @returns {string}
+ */
+userSchema.methods.getReadableId = function() {
+    return this.idp + "." + this.username;
 };
 
 /**

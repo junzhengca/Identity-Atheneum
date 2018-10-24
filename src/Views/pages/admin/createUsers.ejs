@@ -1,11 +1,17 @@
-<% include ../partials/header.ejs %>
+<% include ../../partials/header.ejs %>
 
 <div class="container">
     <br/>
-    <a href="<%=getRealUrl('/admin')%>"><button class="btn btn-link">Back</button></a>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/users') %>">Users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create Users</li>
+        </ol>
+    </nav>
     <h2>Create Users</h2>
-    <% include ../partials/errors.ejs %>
-    <% include ../partials/successes.ejs %>
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
     <p>
         In the following box, type users you wish to add, each line represents one user.<br/>
         The format is <code>idp_name username password group_1 group_2 ...</code><br/>
@@ -24,7 +30,7 @@ saml_idp admin2 adminpwd admin</pre>
             Preview
         </button>
     </form>
-    <% include ../partials/footer.ejs %>
+    <% include ../../partials/footer.ejs %>
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="preview-modal" aria-hidden="true">

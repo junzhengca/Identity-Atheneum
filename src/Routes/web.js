@@ -22,9 +22,12 @@ module.exports = (app) => {
     adminDashboardRouter.use(require('../Middlewares/adminAuthMiddleware')());
     adminDashboardRouter.get("/", AdminDashboardController.homePage);
     adminDashboardRouter.get("/users", AdminDashboardController.usersPage);
-    adminDashboardRouter.get("/create_users", AdminDashboardController.createNewUsersPage);
-    adminDashboardRouter.post("/create_users", AdminDashboardController.createUsers);
-    adminDashboardRouter.get("/export_users/json", AdminDashboardController.exportUsersJSON);
+    adminDashboardRouter.get("/users/create_users", AdminDashboardController.createNewUsersPage);
+    adminDashboardRouter.post("/users/create_users", AdminDashboardController.createUsers);
+    adminDashboardRouter.get("/users/export_users/json", AdminDashboardController.exportUsersJSON);
+    adminDashboardRouter.get("/users/detail/:identifier", AdminDashboardController.userDetailPage);
+    adminDashboardRouter.post("/users/detail/:identifier/groups", AdminDashboardController.addGroupToUser);
+
     app.app.use("/admin", adminDashboardRouter);
 
     // Authentication routes
