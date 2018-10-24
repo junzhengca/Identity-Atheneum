@@ -30,6 +30,9 @@ module.exports = (app) => {
     adminDashboardRouter.post("/users/detail/:identifier/delete_group", AdminDashboardController.deleteGroupFromUser);
     adminDashboardRouter.post("/users/detail/:identifier/delete", AdminDashboardController.deleteUser);
 
+    adminDashboardRouter.get("/applications", AdminDashboardController.applicationsPage);
+    adminDashboardRouter.post("/applications/:id/delete", AdminDashboardController.deleteApplication);
+
     app.app.use("/admin", adminDashboardRouter);
 
     // Authentication routes

@@ -1,0 +1,36 @@
+<% include ../../partials/header.ejs %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Applications</li>
+        </ol>
+    </nav>
+
+    <h2>Manage Applications</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+
+    <%for(let i = 0; i < applications.length; i++){%>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><%= applications[i].name %> <span class="badge badge-light"><i class="fa fa-unlock" aria-hidden="true"></i> Encryption Disabled</span></h5>
+            <p class="card-text">
+                Registered on <%= applications[i].createdAt %><br>
+                Assertion Endpoint: <code><%= applications[i].assertionEndpoint %></code><br>
+                Application ID: <code><%= applications[i]._id %></code>
+            </p>
+            <form method="post" action="<%=getRealUrl('/admin/applications/' + applications[i]._id + '/delete')%>">
+                <button class="btn btn-danger">Revoke Registration</button>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <%}%>
+
+    <% include ../../partials/footer.ejs %>
+</div>

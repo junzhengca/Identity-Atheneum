@@ -1,4 +1,5 @@
 const User = require('../../Models/User');
+const Application = require('../../Models/Application');
 const getRealUrl = require('../../Util/getRealUrl');
 const isValidGroupName = require('../../Util/isValidGroupName');
 const flattenFlashMessages = require('../../Util/flattenFlashMessages');
@@ -20,6 +21,11 @@ module.exports = class AdminDashboardController {
             });
     }
 
+    /**
+     * Render user listing page
+     * @param req
+     * @param res
+     */
     static usersPage(req, res) {
         User.find({
             idp: { $regex: req.query.idp || /.*/ },
@@ -222,6 +228,49 @@ module.exports = class AdminDashboardController {
             .catch(e => {
                 req.flash("errors", e.message);
                 res.redirect(getRealUrl('/admin/users'));
+            })
+    }
+
+    /**
+     * Render applications page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static applicationsPage(req, res, next) {
+        Application.find({})
+            .then(applications => {
+                res.render('pages/admin/applications', {
+                    title: "Applications - Admin Dashboard",
+                    applications,
+                    req,
+                    getRealUrl,
+                    ...flattenFlashMessages(req)
+                });
+            });
+    }
+
+    /**
+     * Delete an application
+     * @param req
+     * @param res
+     */
+    static deleteApplication(req, res) {
+        Application.findOne({_id: req.params.id})
+            .then(app => {
+                if(!app) {
+                    throw new Error("Application not found.");
+                } else {
+                    return app.remove();
+                }
+            })
+            .then(() => {
+                req.flash("success", "Application removed.");
+                res.redirect(getRealUrl('/admin/applications'));
+            })
+            .catch(e => {
+                req.flash("errors", e.message);
+                res.redirect(getRealUrl('/admin/applications'));
             })
     }
 };
