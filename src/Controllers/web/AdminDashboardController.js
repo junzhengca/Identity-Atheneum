@@ -1,6 +1,7 @@
 const User = require('../../Models/User');
 const getRealUrl = require('../../Util/getRealUrl');
 const isValidGroupName = require('../../Util/isValidGroupName');
+const flattenFlashMessages = require('../../Util/flattenFlashMessages');
 
 module.exports = class AdminDashboardController {
     /**
@@ -43,8 +44,7 @@ module.exports = class AdminDashboardController {
         res.render('pages/admin/createUsers', {
             title: "Create New Users - Admin Dashboard",
             getRealUrl,
-            success: req.flash('success'),
-            error: req.flash('errors')
+            ...flattenFlashMessages(req)
         })
     }
 
@@ -120,8 +120,7 @@ module.exports = class AdminDashboardController {
                     res.render('pages/admin/userDetail', {
                         title: user.getReadableId() + " Detail - Admin Dashboard",
                         req, getRealUrl, user,
-                        success: req.flash('success'),
-                        error: req.flash('errors')
+                        ...flattenFlashMessages(req)
                     })
                 } else {
                     res.send("User not found.");
@@ -131,7 +130,8 @@ module.exports = class AdminDashboardController {
     }
 
     /**
-     * POST /users/detail/:identifier/groups
+     * POST /users/detail/:identifier/add_group
+     * Add a new group to user
      * @param req
      * @param res
      * @param next
@@ -156,6 +156,40 @@ module.exports = class AdminDashboardController {
             })
             .then(() => {
                 req.flash("success", "Group added.");
+                res.redirect(getRealUrl('/admin/users/detail/' + req.params.identifier));
+            })
+            .catch(e => {
+                req.flash("errors", e.message);
+                res.redirect(getRealUrl('/admin/users/detail/' + req.params.identifier));
+            })
+    }
+
+    /**
+     * POST /users/detail/:identifier/delete_group
+     * Remove a group from user
+     * @param req
+     * @param res
+     * @param next
+     */
+    static deleteGroupFromUser(req, res, next) {
+        User.findByIdentifier(req.params.identifier)
+            .then(user => {
+                if(user) {
+                    if(!req.body.name) {
+                        throw new Error("You must enter a group name.");
+                    } else if (user.groups.indexOf(req.body.name) < 0) {
+                        throw new Error("Group does not exist.");
+                    } else {
+                        let index = user.groups.indexOf(req.body.name);
+                        user.groups.splice(index, 1);
+                        return user.save();
+                    }
+                } else {
+                    throw new Error("User not found.");
+                }
+            })
+            .then(() => {
+                req.flash("success", "Group removed.");
                 res.redirect(getRealUrl('/admin/users/detail/' + req.params.identifier));
             })
             .catch(e => {

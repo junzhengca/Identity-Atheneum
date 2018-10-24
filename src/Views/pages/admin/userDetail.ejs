@@ -45,11 +45,11 @@
         Assign Group<br/>
         <small class="text-muted">Add this user to a new group.</small>
     </label>
-    <form action="<%= getRealUrl('/admin/users/detail/' + user.getReadableId() + '/groups') %>" method="post">
+    <form action="<%= getRealUrl('/admin/users/detail/' + user.getReadableId() + '/add_group') %>" method="post">
         <div class="input-group mb-3">
             <input type="text" class="form-control" name="name" placeholder="cscb07f18.student">
             <div class="input-group-append">
-                <button class="btn btn-primary" type="button">Add</button>
+                <button class="btn btn-primary" type="submit">Add</button>
             </div>
         </div>
     </form>
@@ -57,7 +57,12 @@
         <% for(let i = 0; i < user.groups.length; i++){ %>
         <li class="list-group-item">
             <%= user.groups[i] %>
-            <button class="btn btn-sm btn-outline-danger float-md-right">Remove</button>
+            <form class="float-md-right"
+                  action="<%= getRealUrl('/admin/users/detail/' + user.getReadableId() + '/delete_group') %>"
+                  method="post">
+                <input type="hidden" name="name" value="<%= user.groups[i] %>"/>
+                <button class="btn btn-sm btn-outline-danger">Remove</button>
+            </form>
         </li>
         <% } %>
     </ul>
