@@ -15,6 +15,17 @@ const userSchema = new Schema({
 }, {timestamps: true});
 
 /**
+ * Find user by identifier, id can be mongodb id, or idp.username format.
+ * @param id
+ * @returns {Promise<any>}
+ */
+userSchema.statics.findByIdentifier = function(id) {
+    return new Promise((resolve, reject) => {
+
+    })
+};
+
+/**
  * Create a new user
  * @param idp
  * @param username
@@ -28,7 +39,13 @@ userSchema.statics.create = function(idp, username, password, emailAddress, grou
     return new Promise((resolve, reject) => {
         let salt = uuidv4();
         let hashedPassword;
-        pbkdf2(password, salt, 1, 32, 'sha512')
+        this.findOne({username, idp})
+            .then(user => {
+                if(user) {
+                    throw new Error("Username already exists.");
+                }
+                return pbkdf2(password, salt, 1, 32, 'sha512');
+            })
             .then(hashed => {
                 hashedPassword = hashed.toString('hex');
             })

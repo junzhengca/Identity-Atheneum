@@ -1,0 +1,78 @@
+<% include ../../partials/header.ejs %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Users</li>
+        </ol>
+    </nav>
+
+    <h2>Manage Users</h2>
+    <a href="<%= getRealUrl("/admin/create_users") %>" class="btn btn-primary">
+        Create New Users
+    </a>
+    <a href="<%= getRealUrl("/admin/export_users/json") %>" class="btn btn-primary">
+        Export JSON
+    </a>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#filter-panel"
+            aria-expanded="false" aria-controls="filter-panel">
+        Filter Users
+    </button>
+
+    <div class="collapse <% if(req.query.idp || req.query.group){ %>show<% } %>" id="filter-panel">
+        <br/>
+        <form>
+            <label class="text-muted">You can use regex as filters.</label>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">IdP</span>
+                        </div>
+                        <input type="text" class="form-control" name="idp" value="<%= req.query.idp %>">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Group</span>
+                        </div>
+                        <input type="text" class="form-control" name="group" value="<%= req.query.group %>">
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <button class="btn btn-light">Apply Filter</button>
+        </form>
+    </div>
+
+    <hr/>
+
+    <table class="table table-light">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Groups</th>
+            <th scope="col">Identity Provider</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for(let i = 0; i < users.length; i++){ %>
+        <tr>
+            <th scope="row"><%= users[i]._id %></th>
+            <td><%= users[i].username %></td>
+            <td><%= JSON.stringify(users[i].groups) %></td>
+            <td><%= users[i].idp %></td>
+            <td>
+                <button class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% include ../../partials/footer.ejs %>
+</div>

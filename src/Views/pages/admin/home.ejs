@@ -1,0 +1,41 @@
+<% include ../../partials/header.ejs %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Home</li>
+        </ol>
+    </nav>
+    <h2>Admin Dashboard</h2>
+    <a href="<%= getRealUrl('/logout') %>">
+        <button class="btn btn-danger">Logout</button>
+    </a>
+    <hr/>
+    <h4 class="text-muted">Please choose one option...</h4>
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text">
+                        Manage all users within the system.
+                    </p>
+                    <a href="<%= getRealUrl('/admin/users') %>" class="btn btn-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">Containers</h5>
+                    <p class="card-text">
+                        Manage all storage containers within the system.
+                    </p>
+                    <a href="#" class="btn btn-primary">Manage Containers</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% include ../../partials/footer.ejs %>
+</div>

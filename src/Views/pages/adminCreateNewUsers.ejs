@@ -1,0 +1,58 @@
+<% include ../partials/header.ejs %>
+
+<div class="container">
+    <br/>
+    <a href="<%=getRealUrl('/admin')%>"><button class="btn btn-link">Back</button></a>
+    <h2>Create Users</h2>
+    <% include ../partials/errors.ejs %>
+    <% include ../partials/successes.ejs %>
+    <p>
+        In the following box, type users you wish to add, each line represents one user.<br/>
+        The format is <code>idp_name username password group_1 group_2 ...</code><br/>
+        For example:
+    </p>
+    <pre>local_idp testuser1 mypassword admin developer student
+saml_idp admin2 adminpwd admin</pre>
+    <p>
+        If you are pre-filling users for SAML IdP, password doesn't matter, just type anything you wish.
+    </p>
+    <form id="main-form" method="post">
+        <textarea class="form-control" id="users-input" name="users" style="font-family: monospace;" form="main-form"></textarea>
+        <br/>
+        <button class="btn btn-primary" type="submit">Add</button>
+        <button class="btn btn-primary" type="button" onclick="previewAllUsers();" data-toggle="modal" data-target="#preview-modal">
+            Preview
+        </button>
+    </form>
+    <% include ../partials/footer.ejs %>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="preview-modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <pre id="preview-content"></pre>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewAllUsers() {
+        let input = $("#users-input").val();
+        let users = [];
+        input = input.split("\n");
+        for (let i = 0; i < input.length; i++) {
+            let line = input[i].split(/\s+/);
+            if (line.length < 3) {
+                alert("Invalid input, all users must have at least 3 properties: username, password, idp_name");
+                return;
+            }
+            users.push({
+                idp: line[0],
+                username: line[1],
+                password: line[2],
+                groups: line.splice(3)
+            })
+        }
+        $("#preview-content").html(JSON.stringify(users, null, 2));
+    }
+</script>

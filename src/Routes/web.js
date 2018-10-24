@@ -1,6 +1,7 @@
 const express = require('express');
 const ApplicationController = require('../Controllers/web/ApplicationController');
 const DeveloperDashboardController = require('../Controllers/web/DeveloperDashboardController');
+const AdminDashboardController = require('../Controllers/web/AdminDashboardController');
 const LoginController = require('../Controllers/web/LoginController');
 const LogoutController = require('../Controllers/web/LogoutController');
 const SessionController = require('../Controllers/web/SessionController');
@@ -15,6 +16,16 @@ module.exports = (app) => {
     developerDashboardRouter.post("/add_registration", ApplicationController.add);
     developerDashboardRouter.post("/remove_registration", ApplicationController.remove);
     app.app.use("/developer", developerDashboardRouter);
+
+    // Admin dashboard Routes
+    const adminDashboardRouter = express.Router();
+    adminDashboardRouter.use(require('../Middlewares/adminAuthMiddleware')());
+    adminDashboardRouter.get("/", AdminDashboardController.homePage);
+    adminDashboardRouter.get("/users", AdminDashboardController.usersPage);
+    adminDashboardRouter.get("/create_users", AdminDashboardController.createNewUsersPage);
+    adminDashboardRouter.post("/create_users", AdminDashboardController.createUsers);
+    adminDashboardRouter.get("/export_users/json", AdminDashboardController.exportUsersJSON);
+    app.app.use("/admin", adminDashboardRouter);
 
     // Authentication routes
     app.app.get("/login", LoginController.loginPage);
