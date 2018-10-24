@@ -7,7 +7,7 @@ npm run flow:build >/dev/null
 echo "$(date) JavaScript Transpiled."
 
 echo "$(date) Copying views..."
-cp -r src/views lib/views &>/dev/null
+cp -r src/Views lib/Views &>/dev/null
 echo "$(date) Views copied."
 
 echo "$(date) Building static assets..."
