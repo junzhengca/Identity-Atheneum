@@ -3,7 +3,7 @@
 echo "$(date) Begin build..."
 
 echo "$(date) Transpiling JavaScript..."
-flow-remove-types ./src/ -d ./lib/ --all --pretty &>/dev/null
+npm run flow:build >/dev/null
 echo "$(date) JavaScript Transpiled."
 
 echo "$(date) Copying views..."
