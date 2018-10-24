@@ -30,7 +30,8 @@ module.exports = class AdminDashboardController {
                     title: "Users - Admin Dashboard",
                     users,
                     req,
-                    getRealUrl
+                    getRealUrl,
+                    ...flattenFlashMessages(req)
                 });
             });
     }
@@ -195,6 +196,32 @@ module.exports = class AdminDashboardController {
             .catch(e => {
                 req.flash("errors", e.message);
                 res.redirect(getRealUrl('/admin/users/detail/' + req.params.identifier));
+            })
+    }
+
+    /**
+     * POST /users/detail/:identifier/delete
+     * Delete an user
+     * @param req
+     * @param res
+     * @param next
+     */
+    static deleteUser(req, res, next) {
+        User.findByIdentifier(req.params.identifier)
+            .then(user => {
+                if(user) {
+                    return user.remove();
+                } else {
+                    throw new Error("User not found.");
+                }
+            })
+            .then(() => {
+                req.flash("success", "User removed.");
+                res.redirect(getRealUrl('/admin/users'));
+            })
+            .catch(e => {
+                req.flash("errors", e.message);
+                res.redirect(getRealUrl('/admin/users'));
             })
     }
 };

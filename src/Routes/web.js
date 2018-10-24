@@ -28,6 +28,7 @@ module.exports = (app) => {
     adminDashboardRouter.get("/users/detail/:identifier", AdminDashboardController.userDetailPage);
     adminDashboardRouter.post("/users/detail/:identifier/add_group", AdminDashboardController.addGroupToUser);
     adminDashboardRouter.post("/users/detail/:identifier/delete_group", AdminDashboardController.deleteGroupFromUser);
+    adminDashboardRouter.post("/users/detail/:identifier/delete", AdminDashboardController.deleteUser);
 
     app.app.use("/admin", adminDashboardRouter);
 

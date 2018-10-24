@@ -79,7 +79,9 @@
         Once an user is deleted, its data cannot be recovered. If user belongs to a third-party IdP, it will be created
         upon next login, however all data and group information will be lost.
     </div>
-    <button class="btn btn-danger">Delete User</button>
+    <form action="<%= getRealUrl('/admin/users/detail/' + user.getReadableId() + '/delete') %>" method="post">
+        <button class="btn btn-danger">Delete User</button>
+    </form>
 
     <% include ../../partials/footer.ejs %>
 </div>

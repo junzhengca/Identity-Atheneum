@@ -10,6 +10,10 @@
     </nav>
 
     <h2>Manage Users</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
     <a href="<%= getRealUrl("/admin/users/create_users") %>" class="btn btn-primary">
         Create New Users
     </a>
