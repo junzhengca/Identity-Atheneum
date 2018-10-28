@@ -31,9 +31,10 @@ module.exports = class AdminDashboardController {
     static usersPage(req, res) {
         User.find({
             idp: {$regex: req.query.idp || /.*/},
-            groups: {$regex: req.query.group || /.*/}
+            groups: req.query.group ? {$regex: req.query.group || /.*/} : {$exists: true}
         })
             .then(users => {
+                console.log(users);
                 res.render('pages/admin/users', {
                     title: "Users - Admin Dashboard",
                     users,

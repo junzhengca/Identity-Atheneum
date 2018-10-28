@@ -69,7 +69,7 @@
         <tr>
             <th scope="row"><%= users[i]._id %></th>
             <td><%= users[i].username %></td>
-            <td><%= JSON.stringify(users[i].groups) %></td>
+            <td><%= JSON.stringify(users[i].groups, null, 2) %></td>
             <td><%= users[i].idp %></td>
             <td>
                 <a href="<%= getRealUrl('/admin/users/detail/' + users[i].getReadableId()) %>" class="btn btn-primary">Detail</a>
