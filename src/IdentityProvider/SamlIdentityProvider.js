@@ -67,6 +67,18 @@ class SamlIdentityProvider extends IdentityProvider {
             }
         );
 
+        // If we have special binding
+        if(this.config.config.callback_binding) {
+            app.post(this.config.config.callback_binding,
+                passport.authenticate('saml', {
+                    failureRedirect: getRealUrl('/'),
+                    failureFlash: true
+                }),
+                function(req, res) {
+                    res.redirect(getRealUrl('/login_success'));
+                });
+        }
+
         router.get('/metadata', (req, res) => {
             res.setHeader('content-type', 'application/xml');
             res.send(this.strategy.generateServiceProviderMetadata(fs.readFileSync(this.config.config.public_cert, 'utf8')));
