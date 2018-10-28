@@ -28,7 +28,12 @@ class SamlIdentityProvider extends IdentityProvider {
                 User.findOne({ username: profile[this.config.config.id_key], idp: this.config.name })
                     .then(user => {
                         if(user) {
-                            done(null, user);
+                            // If we have a user, then let's update its attribute
+                            user.attributes = {
+                                ...user.attributes,
+                                ...sanitizeKeysForMongo(profile)
+                            };
+                            return user.save();
                         } else {
                             // Otherwise we create the user
                             console.log(profile);
