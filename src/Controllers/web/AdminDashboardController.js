@@ -244,7 +244,6 @@ module.exports = class AdminDashboardController {
         Application.find({})
             .then(applications => {
                 res.render('pages/admin/applications', {
-                    title: "Applications - Admin Dashboard",
                     applications,
                     req,
                     getRealUrl,
@@ -368,12 +367,70 @@ module.exports = class AdminDashboardController {
     static exportContainerJSON(req, res) {
         Container.findOne({name: req.params.name})
             .then(container => {
-                if(container) {
+                if (container) {
                     res.header('content-type', 'application/json');
                     res.send(JSON.stringify(container));
                 } else {
                     res.send("Container not found.");
                 }
             })
+    }
+
+    /**
+     * Render import application page
+     * @param req
+     * @param res
+     */
+    static importApplicationPage(req, res) {
+        res.render('pages/admin/importApplication', {
+            getRealUrl,
+            ...flattenFlashMessages(req)
+        });
+    }
+
+    /**
+     * Actually import the application
+     * @param req
+     * @param res
+     */
+    static importApplication(req, res) {
+        let data;
+        try {
+            data = JSON.parse(req.body.data);
+        } catch (e) {
+            req.flash("error", "Invalid JSON. Please check your request and try again.");
+            return res.redirect(getRealUrl('/admin/applications/import'));
+        }
+        // Check data
+        if(!data.name || !data.assertion_endpoint) {
+            req.flash("error", "Invalid request. Please check your request and try again.");
+            return res.redirect(getRealUrl('/admin/applications/import'));
+        }
+        // Actually have the valid request, attempt to create one with no group
+        Application.create(req.user._id, data.name, data.assertion_endpoint, [])
+            .then(app => {
+                req.flash("success", "Application " + app._id + " registered.");
+                return res.redirect(getRealUrl('/admin/applications'));
+            })
+            .catch(e => {
+                req.flash("error", e.message);
+                return res.redirect(getRealUrl('/admin/applications/import'));
+            })
+    }
+
+    /**
+     * Get the courses page
+     * @param req
+     * @param res
+     */
+    static coursesPage(req, res) {
+        Container.getAllCourses()
+            .then(containers => {
+                res.render('pages/admin/courses', {
+                    containers,
+                    getRealUrl,
+                    ...flattenFlashMessages(req)
+                });
+            });
     }
 };

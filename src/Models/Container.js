@@ -37,5 +37,16 @@ containerSchema.statics.create = function(name, readGroups, writeGroups, deleteG
     })
 };
 
+containerSchema.statics.getAllCourses = function() {
+    return this.find({
+        name: {$regex: /^course\..*$/}
+    })
+};
+
+containerSchema.methods.getVersion = function() {
+    return this.content._v;
+}
+
+
 
 module.exports  = mongoose.model('Container', containerSchema);

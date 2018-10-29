@@ -1,0 +1,23 @@
+<%- include('../../partials/header.ejs', {
+title: "Courses - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Courses</li>
+        </ol>
+    </nav>
+
+    <h2>Manage Courses</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <a href="<%=getRealUrl('/admin/courses/create')%>" class="btn btn-primary">Create Course</a>
+
+
+    <% include ../../partials/footer.ejs %>
+</div>

@@ -2,6 +2,7 @@ const express = require('express');
 const ApplicationController = require('../Controllers/web/ApplicationController');
 const DeveloperDashboardController = require('../Controllers/web/DeveloperDashboardController');
 const AdminDashboardController = require('../Controllers/web/AdminDashboardController');
+const AdminDashboardIFCATController = require('../Controllers/web/AdminDashboardIFCATController');
 const LoginController = require('../Controllers/web/LoginController');
 const LogoutController = require('../Controllers/web/LogoutController');
 const SessionController = require('../Controllers/web/SessionController');
@@ -32,6 +33,10 @@ module.exports = (app) => {
 
     adminDashboardRouter.get("/applications", AdminDashboardController.applicationsPage);
     adminDashboardRouter.post("/applications/:id/delete", AdminDashboardController.deleteApplication);
+    adminDashboardRouter.get("/applications/import", AdminDashboardController.importApplicationPage);
+    adminDashboardRouter.post("/applications/import", AdminDashboardController.importApplication);
+
+    adminDashboardRouter.get("/courses", AdminDashboardController.coursesPage);
 
     adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
 
@@ -40,6 +45,14 @@ module.exports = (app) => {
     adminDashboardRouter.post("/containers/create_container", AdminDashboardController.createContainer);
     adminDashboardRouter.get("/containers/detail/:name", AdminDashboardController.containerDetailPage);
     adminDashboardRouter.get("/containers/detail/:name/export/json", AdminDashboardController.exportContainerJSON);
+
+    // IFCAT Management Routes
+    const adminDashboardIFCATRouter = express.Router();
+
+    adminDashboardIFCATRouter.use("/:id/ifcat*", require('../Middlewares/ensureIFCATMiddleware')());
+    adminDashboardIFCATRouter.get("/:id/ifcat", AdminDashboardIFCATController.homePage);
+
+    adminDashboardRouter.use("/applications", adminDashboardIFCATRouter);
 
 
     app.app.use("/admin", adminDashboardRouter);

@@ -1,4 +1,6 @@
-<% include ../../partials/header.ejs %>
+<%- include('../../partials/header.ejs', {
+title: "Applications - Admin Dashboard"
+}) %>
 
 <div class="container">
     <br/>
@@ -14,6 +16,11 @@
     <% include ../../partials/errors.ejs %>
     <% include ../../partials/successes.ejs %>
 
+    <a href="<%= getRealUrl("/admin/applications/import") %>" class="btn btn-primary">
+        Import Registration Request
+    </a>
+
+    <hr/>
 
     <%for(let i = 0; i < applications.length; i++){%>
     <div class="card">
@@ -24,7 +31,14 @@
                 Assertion Endpoint: <code><%= applications[i].assertionEndpoint %></code><br>
                 Application ID: <code><%= applications[i]._id %></code>
             </p>
-            <form method="post" action="<%=getRealUrl('/admin/applications/' + applications[i]._id + '/delete')%>">
+
+            <%if(applications[i].isPreset()){%>
+                <hr/>
+                <p>Seems like this is <%=applications[i].getPresetName()%>. Management dashboard available.</p>
+                <a href="<%=getRealUrl('/admin/applications/' + applications[i]._id + '/' + applications[i].getPresetType())%>" class="btn btn-primary">Manage <%=applications[i].getPresetName()%></a>
+            <%}%>
+
+            <form method="post" style="display: inline-block" action="<%=getRealUrl('/admin/applications/' + applications[i]._id + '/delete')%>">
                 <button class="btn btn-danger">Revoke Registration</button>
             </form>
         </div>

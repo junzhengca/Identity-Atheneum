@@ -1,0 +1,44 @@
+<%- include('../../partials/header.ejs', {
+title: "Import Application - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/applications') %>">Applications</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Import Application Request</li>
+        </ol>
+    </nav>
+
+    <h2>Import Application</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <label>
+        Paste your application's registration request below. If you are using an I.A. enabled application, you
+        should be able to find the registration request at <code>APP_ROOT/ia/registration</code>.
+    </label>
+
+    <form method="post" id="import-form">
+        <input type="hidden" id="import-input-hidden" name="data" />
+    <div class="form-control" style="height: 300px; width: 100%;" id="import-input"></div>
+
+    <br/>
+    <button class="btn btn-primary" onclick="submitForm();">Import</button>
+    </form>
+
+    <% include ../../partials/footer.ejs %>
+</div>
+
+<script>
+    let editor = ace.edit("import-input");
+    editor.setTheme("ace/theme/github");
+    editor.session.setMode("ace/mode/json");
+    function submitForm() {
+        $("#import-input-hidden").val(editor.getValue());
+        $("#import-form").submit();
+    }
+</script>
