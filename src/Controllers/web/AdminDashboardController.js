@@ -484,6 +484,7 @@ module.exports = class AdminDashboardController {
      * Render container details page
      * @param req
      * @param res
+     * @param next
      */
     static courseDetailPage(req, res, next) {
         let container, tutorials;
@@ -540,10 +541,11 @@ module.exports = class AdminDashboardController {
     }
 
     /**
-     * GET /courses/detail/:name
+     * GET /courses/detail/:name/tutorials/create
      * Render container details page
      * @param req
      * @param res
+     * @param next
      */
     static courseCreateTutorialPage(req, res, next) {
         let container;
@@ -559,6 +561,48 @@ module.exports = class AdminDashboardController {
                 } else {
                     throw new Error("Course not found.");
                 }
+            })
+            .catch(e => next(e));
+    }
+
+    /**
+     * POST /courses/detail/:name/tutorials/create
+     * Render container details page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static courseCreateTutorial(req, res, next) {
+        if(!req.body.code.match(/^[a-z0-9]+$/)) {
+            req.flash("error", "Invalid tutorial code.");
+            return res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name + '/tutorials/create'));
+        }
+        if(!req.body.name) {
+            req.flash("error", "Invalid tutorial name.");
+            return res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name + '/tutorials/create'));
+        }
+        let container;
+        Container.findOne({name: req.params.name})
+            .then(result => {
+                container = result;
+                if(container && container.isCourse()) {
+                    // Create the tutorial container
+                    return Container.create(
+                        container.name + ".tutorial." + req.body.code,
+                        "admin", "admin", "admin",
+                        {
+                            _v: 1,
+                            _name: req.body.code,
+                            _displayName: req.body.name
+                        }
+                    );
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .then(container => {
+                req.flash("success", "Container created with ID " + container._id);
+                res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name));
             })
             .catch(e => next(e));
     }

@@ -44,7 +44,7 @@ containerSchema.statics.create = function(name, readGroups, writeGroups, deleteG
  */
 containerSchema.statics.getAllCourses = function() {
     return this.find({
-        name: {$regex: /^course\..*$/}
+        name: {$regex: /^course\.((?!\.).)*$/}
     })
 };
 
@@ -78,7 +78,7 @@ containerSchema.methods.getDisplayName = function() {
  * @returns {*}
  */
 containerSchema.methods.isCourse = function() {
-    return this.name.match(/^course\..*$/);
+    return this.name.match(/^course\.((?!\.).)*$/);
 };
 
 /**
