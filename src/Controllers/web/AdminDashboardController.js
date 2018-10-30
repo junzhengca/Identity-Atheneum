@@ -419,6 +419,7 @@ module.exports = class AdminDashboardController {
     }
 
     /**
+     * GET /courses
      * Get the courses page
      * @param req
      * @param res
@@ -435,6 +436,7 @@ module.exports = class AdminDashboardController {
     }
 
     /**
+     * GET /courses/create
      * Render create course page
      * @param req
      * @param res
@@ -447,6 +449,7 @@ module.exports = class AdminDashboardController {
     }
 
     /**
+     * POST /courses/create
      * Create all resources for a new course
      * @param req
      * @param res
@@ -474,5 +477,57 @@ module.exports = class AdminDashboardController {
                 return res.redirect(getRealUrl('/admin/courses/create'));
             })
 
+    }
+
+    /**
+     * GET /courses/detail/:name
+     * Render container details page
+     * @param req
+     * @param res
+     */
+    static courseDetailPage(req, res) {
+        Container.findOne({name: req.params.name})
+            .then(container => {
+                if(container && container.isCourse()) {
+                    res.render('pages/admin/courseDetail', {
+                        getRealUrl,
+                        container,
+                        ...flattenFlashMessages(req)
+                    });
+                } else {
+                    res.send("Course not found.");
+                }
+            })
+    }
+
+    /**
+     * POST /courses/detail/:name
+     * Update an course
+     * @param req
+     * @param res
+     */
+    static updateCourseDetail(req, res) {
+        Container.findOne({name: req.params.name})
+            .then(container => {
+                if(container && container.isCourse()) {
+                    if(req.body.name) {
+                        container.content = {
+                            ...container.content,
+                            _displayName: req.body.name
+                        };
+                    }
+                    return container.save();
+                } else {
+                    res.send("Course not found.");
+                }
+            })
+            .then(container => {
+                req.flash("success", "Course updated.");
+                res.redirect(getRealUrl('/admin/courses/detail/' + container.name));
+            })
+            .catch(e => {
+                req.flash("error", e.message);
+                res.redirect(getRealUrl('/admin/courses/detail/' + container.name));
+            })
     }
 };

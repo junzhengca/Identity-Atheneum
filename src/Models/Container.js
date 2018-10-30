@@ -73,5 +73,13 @@ containerSchema.methods.getDisplayName = function() {
     return this.content ? this.content._displayName || "Unknown" : "Unknown";
 };
 
+/**
+ * Return if this container is a course container
+ * @returns {*}
+ */
+containerSchema.methods.isCourse = function() {
+    return this.name.match(/^course\..*$/);
+};
+
 
 module.exports  = mongoose.model('Container', containerSchema);
