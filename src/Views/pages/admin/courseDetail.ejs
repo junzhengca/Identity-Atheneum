@@ -8,7 +8,7 @@ title: container.getName() + " Detail - Admin Dashboard"
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
             <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/courses') %>">Courses</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Course Detail</li>
+            <li class="breadcrumb-item active" aria-current="page"><%=container.getName()%></li>
         </ol>
     </nav>
 
@@ -49,7 +49,7 @@ title: container.getName() + " Detail - Admin Dashboard"
                         <%=tutorials[i].getName()%><br/>
                         <small class="text-muted"><%=tutorials[i].getDisplayName()%></small>
                     </h5>
-                    <a href="<%=getRealUrl('/admin/courses/detail/' + tutorials[i].name)%>" class="btn btn-primary">Manage</a>
+                    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/detail/' + tutorials[i].name)%>" class="btn btn-primary">Manage</a>
                     <a href="<%=getRealUrl('/admin/containers/detail/' + tutorials[i].name)%>" class="btn btn-light">View Container</a><br/><br/>
                 </div>
                 <div class="col-md-6">

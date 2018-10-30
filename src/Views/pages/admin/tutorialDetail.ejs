@@ -1,0 +1,42 @@
+<%- include('../../partials/header.ejs', {
+title: tutorial.getName() + " Detail - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/courses') %>">Courses</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/courses/detail/' + course.name) %>"><%=course.getName()%></a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%=tutorial.getName()%></li>
+        </ol>
+    </nav>
+
+    <h2><%=tutorial.getName()%> Detail</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <hr/>
+    <h4>Basic Information</h4>
+
+    <form method="post">
+        <label>
+            Container Name<br/>
+            <small class="text-muted">Container's name for this tutorial.</small>
+        </label>
+        <input type="text" class="form-control" value="<%=tutorial.name%>" disabled/>
+        <label class="mt-2">
+            Course Name<br/>
+            <small class="text-muted">Display name for the tutorial.</small>
+        </label>
+        <input type="text" class="form-control" value="<%=tutorial.getDisplayName()%>" name="name"/>
+
+        <br/>
+        <button class="btn btn-primary">Save</button>
+    </form>
+
+
+    <% include ../../partials/footer.ejs %>
+</div>

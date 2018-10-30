@@ -606,4 +606,44 @@ module.exports = class AdminDashboardController {
             })
             .catch(e => next(e));
     }
+
+
+    /**
+     * Render tutorial details page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static tutorialDetailPage(req, res, next) {
+        // First find the course
+        let course, tutorial;
+        Container.findOne({name: req.params.name})
+            .then(result => {
+                course = result;
+                if(course && course.isCourse()) {
+                    return course.getAllTutorials();
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .then(tutorials => {
+                for(let i = 0; i < tutorials.length; i++) {
+                    if(tutorials[i].name === req.params.tutorial_name) {
+                        tutorial = tutorials[i];
+                        break;
+                    }
+                }
+                if(tutorial) {
+                    res.render('pages/admin/tutorialDetail', {
+                        getRealUrl,
+                        course,
+                        tutorial,
+                        ...flattenFlashMessages(req)
+                    });
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .catch(e => next(e));
+    }
 };

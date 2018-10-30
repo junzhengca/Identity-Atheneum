@@ -82,6 +82,14 @@ containerSchema.methods.isCourse = function() {
 };
 
 /**
+ * Return if this container is a tutorial container
+ * @returns {*}
+ */
+containerSchema.methods.isTutorial = function() {
+    return this.name.match(/^course\..*\.tutorial\..*$/);
+};
+
+/**
  * Find all tutorials
  * @returns {Promise<any>}
  */
