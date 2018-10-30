@@ -18,6 +18,29 @@ title: "Courses - Admin Dashboard"
 
     <a href="<%=getRealUrl('/admin/courses/create')%>" class="btn btn-primary">Create Course</a>
 
+    <%for(let i = 0; i < containers.length; i++){%>
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">
+                        <%=containers[i].getName()%><br/>
+                        <small class="text-muted"><%=containers[i].getDisplayName()%></small>
+                    </h5>
+                    <a href="<%=getRealUrl('/admin/courses/detail/' + containers[i].name)%>" class="btn btn-primary">Manage</a>
+                    <a href="<%=getRealUrl('/admin/containers/detail/' + containers[i].name)%>" class="btn btn-light">View Container</a><br/><br/>
+                </div>
+                <div class="col-md-6">
+                    <b>Version: </b> <%=containers[i].getVersion()%>
+                </div>
+                <div class="col-md-12">
+                    <small class="text-muted">Created At <%=containers[i].createdAt%></small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%}%>
+
 
     <% include ../../partials/footer.ejs %>
 </div>

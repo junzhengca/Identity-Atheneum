@@ -433,4 +433,46 @@ module.exports = class AdminDashboardController {
                 });
             });
     }
+
+    /**
+     * Render create course page
+     * @param req
+     * @param res
+     */
+    static createCoursePage(req, res) {
+        res.render('pages/admin/createCourse', {
+            getRealUrl,
+            ...flattenFlashMessages(req)
+        })
+    }
+
+    /**
+     * Create all resources for a new course
+     * @param req
+     * @param res
+     */
+    static createCourse(req, res) {
+        if(!req.body.code.match(/^[a-z0-9]+$/)) {
+            req.flash("error", "Invalid course code.");
+            return res.redirect(getRealUrl('/admin/courses/create'));
+        }
+        if(!req.body.name) {
+            req.flash("error", "Invalid course name.");
+            return res.redirect(getRealUrl('/admin/courses/create'));
+        }
+        Container.create("course." + req.body.code, "admin", "admin", "admin", {
+            _v: 1,
+            _name: req.body.code,
+            _displayName: req.body.name
+        })
+            .then(container => {
+                req.flash("success", "Container created with ID " + container._id);
+                res.redirect(getRealUrl('/admin/courses'));
+            })
+            .catch(e => {
+                req.flash("error", e.message);
+                return res.redirect(getRealUrl('/admin/courses/create'));
+            })
+
+    }
 };

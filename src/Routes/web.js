@@ -37,7 +37,10 @@ module.exports = (app) => {
     adminDashboardRouter.post("/applications/import", AdminDashboardController.importApplication);
 
     adminDashboardRouter.get("/courses", AdminDashboardController.coursesPage);
-
+    adminDashboardRouter.get("/courses/create", AdminDashboardController.createCoursePage);
+    adminDashboardRouter.post("/courses/create", AdminDashboardController.createCourse);
+    
+    
     adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
 
     adminDashboardRouter.get("/containers", AdminDashboardController.containersPage);

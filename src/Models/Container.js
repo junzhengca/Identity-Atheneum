@@ -15,9 +15,10 @@ const containerSchema = new mongoose.Schema({
  * @param writeGroups
  * @param readGroups
  * @param deleteGroups
+ * @param content
  * @returns {Promise<any>}
  */
-containerSchema.statics.create = function(name, readGroups, writeGroups, deleteGroups) {
+containerSchema.statics.create = function(name, readGroups, writeGroups, deleteGroups, content = {}) {
     return new Promise((resolve, reject) => {
         if(!name.match(/^[0-9a-z.]+$/)) {
             return reject(new Error("Invalid container name."));
@@ -27,7 +28,7 @@ containerSchema.statics.create = function(name, readGroups, writeGroups, deleteG
                 if(container) {
                     throw new Error("Container already exists.");
                 }
-                let newContainer = new this({name, writeGroups, readGroups, deleteGroups, content: {}});
+                let newContainer = new this({name, writeGroups, readGroups, deleteGroups, content});
                 return newContainer.save();
             })
             .then(container => {
@@ -37,16 +38,40 @@ containerSchema.statics.create = function(name, readGroups, writeGroups, deleteG
     })
 };
 
+/**
+ * Fetch all containers starts with course.
+ * @returns {*}
+ */
 containerSchema.statics.getAllCourses = function() {
     return this.find({
         name: {$regex: /^course\..*$/}
     })
 };
 
+/**
+ * Get container version.
+ * @returns {*}
+ */
 containerSchema.methods.getVersion = function() {
-    return this.content._v;
-}
+    return this.content ? this.content._v || "Unknown" : "Unknown";
+};
 
+/**
+ * Get container name.
+ * @returns {*}
+ */
+containerSchema.methods.getName = function() {
+    return this.content ? this.content._name || "Unknown" : "Unknown";
+};
+
+
+/**
+ * Get container display name.
+ * @returns {*}
+ */
+containerSchema.methods.getDisplayName = function() {
+    return this.content ? this.content._displayName || "Unknown" : "Unknown";
+};
 
 
 module.exports  = mongoose.model('Container', containerSchema);
