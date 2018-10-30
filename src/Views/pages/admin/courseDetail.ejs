@@ -38,7 +38,7 @@ title: container.getName() + " Detail - Admin Dashboard"
 
     <hr/>
     <h4>Tutorials</h4>
-    <button class="btn btn-primary">Create Tutorial</button>
+    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create')%>" class="btn btn-primary">Create Tutorial</a>
     <%if(tutorials.length === 0){%><p class="text-muted mt-2">No tutorials yet...</p><%}%>
 
 

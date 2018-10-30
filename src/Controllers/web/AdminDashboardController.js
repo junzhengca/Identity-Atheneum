@@ -538,4 +538,28 @@ module.exports = class AdminDashboardController {
                 res.redirect(getRealUrl('/admin/courses/detail/' + container.name));
             })
     }
+
+    /**
+     * GET /courses/detail/:name
+     * Render container details page
+     * @param req
+     * @param res
+     */
+    static courseCreateTutorialPage(req, res, next) {
+        let container;
+        Container.findOne({name: req.params.name})
+            .then(result => {
+                container = result;
+                if(container && container.isCourse()) {
+                    res.render('pages/admin/courseCreateTutorial', {
+                        getRealUrl,
+                        container,
+                        ...flattenFlashMessages(req)
+                    });
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .catch(e => next(e));
+    }
 };
