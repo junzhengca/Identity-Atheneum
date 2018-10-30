@@ -1,3 +1,4 @@
+const User = require('./User');
 const mongoose = require('mongoose');
 
 const containerSchema = new mongoose.Schema({
@@ -103,6 +104,58 @@ containerSchema.methods.getAllTutorials = function() {
             .then(tuts => resolve(tuts))
             .catch(e => reject(e));
     });
+};
+
+/**
+ * Get a tutorial by course container name and tutorial container name
+ * Make sure they match and resolve the tutorial container
+ * @param courseContainerName
+ * @param tutorialContainerName
+ * @returns {Promise<any>}
+ */
+containerSchema.statics.getCourseAndTutorialOrFail = function(courseContainerName, tutorialContainerName) {
+    return new Promise((resolve, reject) => {
+        let course, tutorial;
+        this.model('Container').findOne({name: courseContainerName})
+            .then(result => {
+                course = result;
+                if(course && course.isCourse()) {
+                    return course.getAllTutorials();
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .then(tutorials => {
+                for(let i = 0; i < tutorials.length; i++) {
+                    if(tutorials[i].name === tutorialContainerName) {
+                        tutorial = tutorials[i];
+                        break;
+                    }
+                }
+                if(tutorial) {
+                    resolve({course, tutorial});
+                } else {
+                    throw new Error("Tutorial not found.");
+                }
+            })
+            .catch(e => {
+                reject(e);
+            })
+    })
+};
+
+/**
+ * Fetch all users that have access to this container
+ * @returns {Promise<any>}
+ */
+containerSchema.methods.getAllUsers = function() {
+    return new Promise((resolve, reject) => {
+        User.find({groups: {$regex: new RegExp(this.name)}})
+            .then(users => {
+                resolve(users);
+            })
+            .catch(e => reject(e));
+    })
 };
 
 module.exports  = mongoose.model('Container', containerSchema);

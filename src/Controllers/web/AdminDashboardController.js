@@ -34,7 +34,6 @@ module.exports = class AdminDashboardController {
             groups: req.query.group ? {$regex: req.query.group || /.*/} : {$exists: true}
         })
             .then(users => {
-                console.log(users);
                 res.render('pages/admin/users', {
                     title: "Users - Admin Dashboard",
                     users,
@@ -616,34 +615,80 @@ module.exports = class AdminDashboardController {
      */
     static tutorialDetailPage(req, res, next) {
         // First find the course
-        let course, tutorial;
-        Container.findOne({name: req.params.name})
+        let course, tutorial, students;
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
             .then(result => {
-                course = result;
-                if(course && course.isCourse()) {
-                    return course.getAllTutorials();
-                } else {
-                    throw new Error("Course not found.");
-                }
+                course = result.course; tutorial = result.tutorial;
+                return tutorial.getAllUsers();
             })
-            .then(tutorials => {
-                for(let i = 0; i < tutorials.length; i++) {
-                    if(tutorials[i].name === req.params.tutorial_name) {
-                        tutorial = tutorials[i];
-                        break;
-                    }
-                }
-                if(tutorial) {
-                    res.render('pages/admin/tutorialDetail', {
-                        getRealUrl,
-                        course,
-                        tutorial,
-                        ...flattenFlashMessages(req)
-                    });
-                } else {
-                    throw new Error("Course not found.");
-                }
+            .then(users => {
+                res.render('pages/admin/tutorialDetail', {
+                    getRealUrl,
+                    course,
+                    tutorial,
+                    users,
+                    ...flattenFlashMessages(req)
+                });
+            })
+            .catch(e => next(e));
+    };
+
+    /**
+     * Add students to tutorial page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static tutorialAddStudentsPage(req, res, next) {
+        // First find thr course and tutorial
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
+            .then(result => {
+                res.render('pages/admin/tutorialAddStudents', {
+                    getRealUrl,
+                    ...result,
+                    ...flattenFlashMessages(req)
+                });
             })
             .catch(e => next(e));
     }
+
+    /**
+     * Add students to a tutorial
+     * @param req
+     * @param res
+     * @param next
+     */
+    static tutorialAddStudents(req, res, next) {
+        let course, tutorial;
+        // First we find the tutorial
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
+            .then(result => {
+                course = result.course; tutorial = result.tutorial;
+                let promises = [];
+                // Loop through all users
+                req.body.data.split(/\r?\n/).forEach(uid => {
+                    promises.push(new Promise(resolve => {
+                        User.findByIdentifierOrFail(uid)
+                            .then(user => {
+                                return user.addContainer(tutorial).then(() => user.addContainer(course));
+                            })
+                            .then(() => {
+                                req.flash("success", uid + " added to course and tutorial.");
+                                resolve();
+                            })
+                            .catch(e => {
+                                req.flash("error", "Failed to find user. [" + e.message + "] for " + uid);
+                                resolve()
+                            })
+                    }));
+                });
+                return Promise.all(promises);
+            })
+            .then(() => {
+                res.redirect(getRealUrl('/admin/courses/detail/' + course.name + "/tutorials/detail/" + tutorial.name + "/students/add"));
+            })
+            .catch(e => next(e));
+
+    }
+
 };

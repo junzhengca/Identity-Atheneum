@@ -37,6 +37,32 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
         <button class="btn btn-primary">Save</button>
     </form>
 
+    <hr/>
+    <h4>Students</h4>
+    <a href="<%= getRealUrl('/admin/courses/detail/' + course.name + '/tutorials/detail/' + tutorial.name + '/students/add') %>" class="btn btn-primary">Add Students</a>
+    <br/><br/>
+    <table class="table table-light">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Identity Provider</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for(let i = 0; i < users.length; i++){ %>
+        <tr>
+            <th scope="row"><%= users[i]._id %></th>
+            <td><%= users[i].username %></td>
+            <td><%= users[i].idp %></td>
+            <td>
+                <a href="<%= getRealUrl('/admin/users/detail/' + users[i].getReadableId()) %>" class="btn btn-outline-danger btn-sm">Remove</a>
+            </td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
 
     <% include ../../partials/footer.ejs %>
 </div>

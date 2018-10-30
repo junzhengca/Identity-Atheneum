@@ -43,6 +43,22 @@ userSchema.statics.findByIdentifier = function(id) {
 };
 
 /**
+ * Same as findByIdentifier, but throws an error if not found
+ * @param id
+ * @returns {Promise<any>}
+ */
+userSchema.statics.findByIdentifierOrFail = function(id) {
+    return new Promise((resolve, reject) => {
+        this.findByIdentifier(id)
+            .then(user => {
+                if (!user) throw new Error("User not found.");
+                resolve(user);
+            })
+            .catch(e => reject(e))
+    });
+};
+
+/**
  * Create a new user
  * @param idp
  * @param username
@@ -121,6 +137,23 @@ userSchema.methods.isDeveloper = function() {
  */
 userSchema.methods.isAdmin = function() {
     return this.groups && this.groups.indexOf("admin") > -1;
+};
+
+/**
+ * Add new container to user
+ * @param container
+ * @returns {*}
+ */
+userSchema.methods.addContainer = function(container) {
+    return new Promise(resolve => {
+        if(this.groups.indexOf(container.name) < 0) {
+            this.groups.push(container.name);
+            this.save().then(() => resolve());
+        } else {
+            resolve();
+        }
+    });
+
 };
 
 module.exports  = mongoose.model('User', userSchema);
