@@ -81,5 +81,20 @@ containerSchema.methods.isCourse = function() {
     return this.name.match(/^course\..*$/);
 };
 
+/**
+ * Find all tutorials
+ * @returns {Promise<any>}
+ */
+containerSchema.methods.getAllTutorials = function() {
+    return new Promise((resolve, reject) => {
+        if(!this.isCourse()) {
+            return reject("Cannot get tutorials on a non-course container.");
+        }
+        // Find all tutorials
+        this.model('Container').find({name: {$regex: new RegExp("^" + this.name + "\.tutorial\..*$")}})
+            .then(tuts => resolve(tuts))
+            .catch(e => reject(e));
+    });
+};
 
 module.exports  = mongoose.model('Container', containerSchema);

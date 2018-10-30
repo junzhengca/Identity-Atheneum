@@ -485,19 +485,27 @@ module.exports = class AdminDashboardController {
      * @param req
      * @param res
      */
-    static courseDetailPage(req, res) {
+    static courseDetailPage(req, res, next) {
+        let container, tutorials;
         Container.findOne({name: req.params.name})
-            .then(container => {
+            .then(result => {
+                container = result;
                 if(container && container.isCourse()) {
-                    res.render('pages/admin/courseDetail', {
-                        getRealUrl,
-                        container,
-                        ...flattenFlashMessages(req)
-                    });
+                    return container.getAllTutorials();
                 } else {
-                    res.send("Course not found.");
+                    throw new Error("Course not found.");
                 }
             })
+            .then(result => {
+                tutorials = result;
+                res.render('pages/admin/courseDetail', {
+                    getRealUrl,
+                    container,
+                    tutorials,
+                    ...flattenFlashMessages(req)
+                });
+            })
+            .catch(e => next(e));
     }
 
     /**

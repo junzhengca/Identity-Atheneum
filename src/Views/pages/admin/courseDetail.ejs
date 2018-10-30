@@ -38,6 +38,10 @@ title: container.getName() + " Detail - Admin Dashboard"
 
     <hr/>
     <h4>Tutorials</h4>
+    <button class="btn btn-primary">Create Tutorial</button>
+    <%if(tutorials.length === 0){%><p class="text-muted mt-2">No tutorials yet...</p><%}%>
+
+
 
     <% include ../../partials/footer.ejs %>
 </div>
