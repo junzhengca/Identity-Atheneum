@@ -156,4 +156,21 @@ userSchema.methods.addContainer = function(container) {
 
 };
 
+/**
+ * Remove user from container
+ * @param container
+ * @returns {Promise<any>}
+ */
+userSchema.methods.removeContainer = function(container) {
+    return new Promise(resolve => {
+        let index = this.groups.indexOf(container.name);
+        if(index > -1) {
+            this.groups.splice(index, 1);
+            this.save().then(() => resolve());
+        } else {
+            resolve();
+        }
+    })
+};
+
 module.exports  = mongoose.model('User', userSchema);

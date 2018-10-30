@@ -691,4 +691,22 @@ module.exports = class AdminDashboardController {
 
     }
 
+    static tutorialRemoveStudent(req, res, next) {
+        let course, tutorial;
+        // First we find the tutorial
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
+            .then(result => {
+                course = result.course; tutorial = result.tutorial;
+                return User.findByIdentifierOrFail(req.body.name);
+            })
+            .then(user => {
+                return user.removeContainer(tutorial);
+            })
+            .then(() => {
+                req.flash("success", "User removed from tutorial. However the student is still in the course.");
+                res.redirect(getRealUrl('/admin/courses/detail/' + course.name + "/tutorials/detail/" + tutorial.name));
+            })
+            .catch(e => next(e));
+    }
+
 };

@@ -57,7 +57,10 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
             <td><%= users[i].username %></td>
             <td><%= users[i].idp %></td>
             <td>
-                <a href="<%= getRealUrl('/admin/users/detail/' + users[i].getReadableId()) %>" class="btn btn-outline-danger btn-sm">Remove</a>
+                <form method="post" action="<%= getRealUrl('/admin/courses/detail/' + course.name + '/tutorials/detail/' + tutorial.name + '/students/remove') %>">
+                    <input type="hidden" name="name" value="<%=users[i]._id%>" />
+                    <button class="btn btn-outline-danger btn-sm">Remove</button>
+                </form>
             </td>
         </tr>
         <% } %>

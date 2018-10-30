@@ -46,6 +46,7 @@ module.exports = (app) => {
     adminDashboardRouter.get("/courses/detail/:name/tutorials/detail/:tutorial_name", AdminDashboardController.tutorialDetailPage);
     adminDashboardRouter.get("/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", AdminDashboardController.tutorialAddStudentsPage);
     adminDashboardRouter.post("/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", AdminDashboardController.tutorialAddStudents);
+    adminDashboardRouter.post("/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove", AdminDashboardController.tutorialRemoveStudent);
 
 
     adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
