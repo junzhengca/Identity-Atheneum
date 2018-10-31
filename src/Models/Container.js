@@ -1,5 +1,6 @@
 const User = require('./User');
 const mongoose = require('mongoose');
+const isValidMongoID = require('../Util/isValidMongoID');
 
 const containerSchema = new mongoose.Schema({
     name: String,
@@ -191,12 +192,52 @@ containerSchema.statics.getCourseAndTutorialOrFail = function (courseContainerNa
 };
 
 /**
- * Fetch all users that have access to this container
+ * Get a tutorial by course container id and tutorial container id
+ * Make sure they match and resolve the tutorial container
+ * @param courseContainerId
+ * @param tutorialContainerId
  * @returns {Promise<any>}
  */
-containerSchema.methods.getAllUsers = function () {
+containerSchema.statics.getCourseAndTutorialOrFailById = function (courseContainerId, tutorialContainerId) {
+    return new Promise((resolve, reject) => {
+        let course, tutorial;
+        this.model('Container').findOne({_id: courseContainerId})
+            .then(result => {
+                course = result;
+                if (course && course.isCourse()) {
+                    return course.getAllTutorials();
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .then(tutorials => {
+                for (let i = 0; i < tutorials.length; i++) {
+                    if (tutorials[i]._id.toString() === tutorialContainerId.toString()) {
+                        tutorial = tutorials[i];
+                        break;
+                    }
+                }
+                if (tutorial) {
+                    resolve({course, tutorial});
+                } else {
+                    throw new Error("Tutorial not found.");
+                }
+            })
+            .catch(e => {
+                reject(e);
+            })
+    })
+};
+
+/**
+ * Fetch all users that have access to this container
+ * @param fields
+ * @returns {Promise<any>}
+ */
+containerSchema.methods.getAllUsers = function (fields = null) {
     return new Promise((resolve, reject) => {
         User.find({groups: {$regex: new RegExp(this.name)}})
+            .select(fields)
             .then(users => {
                 resolve(users);
             })

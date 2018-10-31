@@ -19,6 +19,11 @@ module.exports = (app) => {
     router.get("/users", UserController.list);
 
     router.get("/courses", CourseController.list);
+    router.get("/courses/:course_id", CourseController.get);
+    router.get("/courses/:course_id/students", CourseController.getStudents);
+    router.get("/courses/:course_id/tutorials", CourseController.getTutorials);
+    router.get("/courses/:course_id/tutorials/:tutorial_id", CourseController.getTutorial);
+    router.get("/courses/:course_id/tutorials/:tutorial_id/students", CourseController.getTutorialStudents);
 
     router.get("/user", UserController.getCurrent);
     router.get("/users/:id", UserController.get);
