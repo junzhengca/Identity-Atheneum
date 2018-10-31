@@ -33,6 +33,8 @@ module.exports = (app) => {
 
     adminDashboardRouter.get("/applications", AdminDashboardController.applicationsPage);
     adminDashboardRouter.post("/applications/:id/delete", AdminDashboardController.deleteApplication);
+    adminDashboardRouter.post("/applications/keys/generate", AdminDashboardController.applicationGenerateKey);
+    adminDashboardRouter.post("/applications/keys/revoke", AdminDashboardController.applicationRevokeKey);
     adminDashboardRouter.get("/applications/import", AdminDashboardController.importApplicationPage);
     adminDashboardRouter.post("/applications/import", AdminDashboardController.importApplication);
 

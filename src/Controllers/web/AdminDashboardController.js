@@ -1,5 +1,6 @@
 const User = require('../../Models/User');
 const Application = require('../../Models/Application');
+const ApplicationKey = require('../../Models/ApplicationKey');
 const Container = require('../../Models/Container');
 const getRealUrl = require('../../Util/getRealUrl');
 const isValidGroupName = require('../../Util/isValidGroupName');
@@ -241,6 +242,8 @@ module.exports = class AdminDashboardController {
      */
     static applicationsPage(req, res, next) {
         Application.find({})
+            .populate('keys')
+            .exec()
             .then(applications => {
                 res.render('pages/admin/applications', {
                     applications,
@@ -272,6 +275,42 @@ module.exports = class AdminDashboardController {
             .catch(e => {
                 req.flash("errors", e.message);
                 res.redirect(getRealUrl('/admin/applications'));
+            })
+    }
+
+    /**
+     * Generate a new application key pair
+     * @param req
+     * @param res
+     */
+    static applicationGenerateKey(req, res) {
+        Application.findOneOrFail({_id: req.body.id})
+            .then(app => {
+                return app.generateKey();
+            })
+            .then(key => {
+                res.redirectBackWithSuccess("Key generated with ID " + key._id);
+            })
+            .catch(e => {
+                res.redirectBackWithError("Failed to generate key. " + e.message);
+            })
+    }
+
+    /**
+     * Revoke an application key
+     * @param req
+     * @param res
+     */
+    static applicationRevokeKey(req, res) {
+        ApplicationKey.findOneOrFail({_id: req.body.id})
+            .then(key => {
+                return key.remove();
+            })
+            .then(() => {
+                res.redirectBackWithSuccess("Key revoked.");
+            })
+            .catch(e => {
+                res.redirectBackWithError("Cannot find key. " + e.message);
             })
     }
 

@@ -4,6 +4,7 @@ const Version = require('./Resources/Version');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const mongoose = require('mongoose');
+mongoose.plugin(require('./MongooseMiddlewares/findOneOrFailPlugin'));
 const path = require('path');
 const flash = require('connect-flash');
 const passport = require('passport');
@@ -78,6 +79,8 @@ class App<Number> {
     _mountAllRoutesAndMiddlewares() {
         // Request logs
         this.app.use(morgan('combined'));
+
+        this.app.use(require('./Middlewares/redirectBackMiddleware')(this));
 
         this.app.use(cookieParser());
         this.app.use(bodyParser.urlencoded({ extended: false }));
