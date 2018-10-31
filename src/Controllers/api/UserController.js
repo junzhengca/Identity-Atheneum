@@ -1,11 +1,18 @@
 const User = require('../../Models/User');
 
 class UserController {
+    /**
+     * List all users
+     * @param req
+     * @param res
+     * @param next
+     */
     static list(req, res, next) {
-        if(req.isMaster) {
+        if(req.application && req.isSecret) {
             User.find({})
+                .select('_id username idp')
                 .then(users => {
-                    res.send(JSON.stringify(users));
+                    res.send(users);
                 })
                 .catch(e => {
                     next(e);
