@@ -10,7 +10,10 @@ module.exports = class AuthStatusController {
     static getAuthStatus(req, res) {
         if (req.application && req.isSecret) {
             res.send({
-                application: req.application,
+                application: {
+                    _id: req.application._id,
+                    name: req.application.name
+                },
                 type: "secret_key"
             })
         } else {

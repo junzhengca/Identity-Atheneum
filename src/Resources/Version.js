@@ -1,5 +1,5 @@
 module.exports = {
     versionName: "Dandelion",
-    versionCode: "0.2",
+    versionCode: "0.3",
     buildNumber: "59"
 };
