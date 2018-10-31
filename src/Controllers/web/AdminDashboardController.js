@@ -486,7 +486,7 @@ module.exports = class AdminDashboardController {
      * @param next
      */
     static courseDetailPage(req, res, next) {
-        let container, tutorials;
+        let container, tutorials, users;
         Container.findOne({name: req.params.name})
             .then(result => {
                 container = result;
@@ -498,10 +498,15 @@ module.exports = class AdminDashboardController {
             })
             .then(result => {
                 tutorials = result;
+                return container.getAllUsers();
+            })
+            .then(result => {
+                users = result;
                 res.render('pages/admin/courseDetail', {
                     getRealUrl,
                     container,
                     tutorials,
+                    users,
                     ...flattenFlashMessages(req)
                 });
             })
@@ -606,6 +611,33 @@ module.exports = class AdminDashboardController {
             .catch(e => next(e));
     }
 
+    /**
+     * Remove a student from course
+     * @param req
+     * @param res
+     * @param next
+     */
+    static courseRemoveStudent(req, res, next) {
+        let course;
+
+        Container.findOneOrFail({name: req.params.name})
+            .then(container => {
+                course = container;
+                if(!course.isCourse()) {
+                    throw new Error("Course not found.");
+                }
+                return User.findByIdentifierOrFail(req.body.name);
+            })
+            .then(user => {
+                return user.removeContainerAndAllSubContainers(course);
+            })
+            .then(() => {
+                req.flash("success", "User removed from course.");
+                res.redirect(getRealUrl('/admin/courses/detail/' + course.name));
+            })
+            .catch(e => next(e));
+    }
+
 
     /**
      * Render tutorial details page
@@ -691,6 +723,12 @@ module.exports = class AdminDashboardController {
 
     }
 
+    /**
+     * Remove a student from the course
+     * @param req
+     * @param res
+     * @param next
+     */
     static tutorialRemoveStudent(req, res, next) {
         let course, tutorial;
         // First we find the tutorial

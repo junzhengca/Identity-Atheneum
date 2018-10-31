@@ -173,4 +173,27 @@ userSchema.methods.removeContainer = function(container) {
     })
 };
 
+userSchema.methods.removeContainerAndAllSubContainers = function(container) {
+    return new Promise(resolve => {
+        let newGroups = [];
+        this.groups.forEach(group => {
+            if(!group.match(new RegExp(container.name))) {
+                newGroups.push(group);
+            }
+        });
+        this.groups = newGroups;
+        this.save().then(() => resolve());
+    })
+};
+
+userSchema.methods.getTutorialNamesByCourseContainerName = function(courseContainerName) {
+    let tuts = [];
+    for(let i = 0; i < this.groups.length; i++) {
+        if(this.groups[i].match(new RegExp(`^${courseContainerName}\.tutorial.*$`))) {
+            tuts.push(this.groups[i].split(".").slice(-1)[0]);
+        }
+    }
+    return tuts;
+};
+
 module.exports  = mongoose.model('User', userSchema);

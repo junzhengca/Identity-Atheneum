@@ -9,6 +9,24 @@ const containerSchema = new mongoose.Schema({
     content: mongoose.SchemaTypes.Mixed
 }, {timestamps: true});
 
+/**
+ * Find one container or fail
+ * @param filter
+ * @returns {Promise<any>}
+ */
+containerSchema.statics.findOneOrFail = function(filter) {
+    return new Promise((resolve, reject) => {
+        this.findOne(filter)
+            .then(container => {
+                if(container) {
+                    resolve(container);
+                } else {
+                    throw new Error("Container not found.");
+                }
+            })
+            .catch(e => reject(e));
+    });
+};
 
 /**
  * Create a new container
