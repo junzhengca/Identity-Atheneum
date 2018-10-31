@@ -14,6 +14,7 @@ const SamlIdentityProvider = require('./IdentityProvider/SamlIdentityProvider');
 const User = require('./Models/User');
 const Input = require('prompt-input');
 const randStr = require('./Util/randStr');
+const morgan = require('morgan');
 
 passport.serializeUser(function(user, done) {
     done(null, user._id);
@@ -75,6 +76,9 @@ class App<Number> {
      * @private
      */
     _mountAllRoutesAndMiddlewares() {
+        // Request logs
+        this.app.use(morgan('combined'));
+
         this.app.use(cookieParser());
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
