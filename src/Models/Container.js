@@ -6,8 +6,22 @@ const containerSchema = new mongoose.Schema({
     writeGroups: String,
     readGroups: String,
     deleteGroups: String,
-    content: mongoose.SchemaTypes.Mixed
-}, {timestamps: true});
+    content: mongoose.SchemaTypes.Mixed,
+}, {
+    timestamps: true,
+    toObject: {
+        virtuals: true
+    },
+    toJSON: {
+        virtuals: true
+    }
+});
+
+containerSchema.virtual('tutorials').get(function () {
+    return this._tutorials;
+}).set(function (v) {
+    this._tutorials = v;
+});
 
 /**
  * Create a new container
@@ -18,14 +32,14 @@ const containerSchema = new mongoose.Schema({
  * @param content
  * @returns {Promise<any>}
  */
-containerSchema.statics.create = function(name, readGroups, writeGroups, deleteGroups, content = {}) {
+containerSchema.statics.create = function (name, readGroups, writeGroups, deleteGroups, content = {}) {
     return new Promise((resolve, reject) => {
-        if(!name.match(/^[0-9a-z.]+$/)) {
+        if (!name.match(/^[0-9a-z.]+$/)) {
             return reject(new Error("Invalid container name."));
         }
         this.findOne({name})
             .then(container => {
-                if(container) {
+                if (container) {
                     throw new Error("Container already exists.");
                 }
                 let newContainer = new this({name, writeGroups, readGroups, deleteGroups, content});
@@ -38,21 +52,52 @@ containerSchema.statics.create = function(name, readGroups, writeGroups, deleteG
     })
 };
 
+containerSchema.virtual('courseName').get(function () {
+    return this.getName();
+});
+
+containerSchema.virtual('courseDisplayName').get(function () {
+    return this.getDisplayName();
+});
+
 /**
  * Fetch all containers starts with course.
  * @returns {*}
  */
-containerSchema.statics.getAllCourses = function() {
+containerSchema.statics.getAllCourses = function () {
     return this.find({
         name: {$regex: /^course\.((?!\.).)*$/}
-    })
+    });
+};
+
+/**
+ * Get a list of courses, populate them with tutorials
+ * @param courses
+ * @param fields
+ * @returns {Promise<any[]>}
+ */
+containerSchema.statics.populateCoursesWithTutorials = function (courses, fields = null) {
+    let chain = [];
+    Object.keys(courses).forEach(key => {
+        if (courses[key].isCourse()) {
+            chain.push(new Promise((resolve, reject) => {
+                courses[key].getAllTutorials(fields)
+                    .then(tuts => {
+                        courses[key].set('tutorials', tuts);
+                        resolve();
+                    })
+                    .catch(e => reject(e));
+            }))
+        }
+    });
+    return Promise.all(chain);
 };
 
 /**
  * Get container version.
  * @returns {*}
  */
-containerSchema.methods.getVersion = function() {
+containerSchema.methods.getVersion = function () {
     return this.content ? this.content._v || "Unknown" : "Unknown";
 };
 
@@ -60,8 +105,8 @@ containerSchema.methods.getVersion = function() {
  * Get container name.
  * @returns {*}
  */
-containerSchema.methods.getName = function() {
-    return this.content ? this.content._name || "Unknown" : "Unknown";
+containerSchema.methods.getName = function () {
+    return this.content ? (this.content._name || "Unknown") : "Unknown";
 };
 
 
@@ -69,7 +114,7 @@ containerSchema.methods.getName = function() {
  * Get container display name.
  * @returns {*}
  */
-containerSchema.methods.getDisplayName = function() {
+containerSchema.methods.getDisplayName = function () {
     return this.content ? this.content._displayName || "Unknown" : "Unknown";
 };
 
@@ -77,7 +122,7 @@ containerSchema.methods.getDisplayName = function() {
  * Return if this container is a course container
  * @returns {*}
  */
-containerSchema.methods.isCourse = function() {
+containerSchema.methods.isCourse = function () {
     return this.name.match(/^course\.((?!\.).)*$/);
 };
 
@@ -85,7 +130,7 @@ containerSchema.methods.isCourse = function() {
  * Return if this container is a tutorial container
  * @returns {*}
  */
-containerSchema.methods.isTutorial = function() {
+containerSchema.methods.isTutorial = function () {
     return this.name.match(/^course\..*\.tutorial\..*$/);
 };
 
@@ -93,13 +138,15 @@ containerSchema.methods.isTutorial = function() {
  * Find all tutorials
  * @returns {Promise<any>}
  */
-containerSchema.methods.getAllTutorials = function() {
+containerSchema.methods.getAllTutorials = function (fields = null) {
     return new Promise((resolve, reject) => {
-        if(!this.isCourse()) {
+        if (!this.isCourse()) {
             return reject("Cannot get tutorials on a non-course container.");
         }
         // Find all tutorials
-        this.model('Container').find({name: {$regex: new RegExp("^" + this.name + "\.tutorial\..*$")}})
+        this.model('Container')
+            .find({name: {$regex: new RegExp("^" + this.name + "\.tutorial\..*$")}})
+            .select(fields)
             .then(tuts => resolve(tuts))
             .catch(e => reject(e));
     });
@@ -112,26 +159,26 @@ containerSchema.methods.getAllTutorials = function() {
  * @param tutorialContainerName
  * @returns {Promise<any>}
  */
-containerSchema.statics.getCourseAndTutorialOrFail = function(courseContainerName, tutorialContainerName) {
+containerSchema.statics.getCourseAndTutorialOrFail = function (courseContainerName, tutorialContainerName) {
     return new Promise((resolve, reject) => {
         let course, tutorial;
         this.model('Container').findOne({name: courseContainerName})
             .then(result => {
                 course = result;
-                if(course && course.isCourse()) {
+                if (course && course.isCourse()) {
                     return course.getAllTutorials();
                 } else {
                     throw new Error("Course not found.");
                 }
             })
             .then(tutorials => {
-                for(let i = 0; i < tutorials.length; i++) {
-                    if(tutorials[i].name === tutorialContainerName) {
+                for (let i = 0; i < tutorials.length; i++) {
+                    if (tutorials[i].name === tutorialContainerName) {
                         tutorial = tutorials[i];
                         break;
                     }
                 }
-                if(tutorial) {
+                if (tutorial) {
                     resolve({course, tutorial});
                 } else {
                     throw new Error("Tutorial not found.");
@@ -147,7 +194,7 @@ containerSchema.statics.getCourseAndTutorialOrFail = function(courseContainerNam
  * Fetch all users that have access to this container
  * @returns {Promise<any>}
  */
-containerSchema.methods.getAllUsers = function() {
+containerSchema.methods.getAllUsers = function () {
     return new Promise((resolve, reject) => {
         User.find({groups: {$regex: new RegExp(this.name)}})
             .then(users => {
@@ -157,4 +204,4 @@ containerSchema.methods.getAllUsers = function() {
     })
 };
 
-module.exports  = mongoose.model('Container', containerSchema);
+module.exports = mongoose.model('Container', containerSchema);

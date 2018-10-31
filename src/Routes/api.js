@@ -1,5 +1,6 @@
 const express = require('express');
 const UserController = require('../Controllers/api/UserController');
+const CourseController = require('../Controllers/api/CourseController');
 const AuthStatusController = require('../Controllers/api/AuthStatusController');
 const bearerAuthMiddleware = require('../Middlewares/bearerAuthMiddleware')();
 
@@ -16,6 +17,8 @@ module.exports = (app) => {
     router.get("/auth_status", AuthStatusController.getAuthStatus);
 
     router.get("/users", UserController.list);
+
+    router.get("/courses", CourseController.list);
 
     router.get("/user", UserController.getCurrent);
     router.get("/users/:id", UserController.get);
