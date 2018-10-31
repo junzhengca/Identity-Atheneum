@@ -15,6 +15,7 @@ module.exports = (app) => {
     });
 
     router.get("/auth_status", AuthStatusController.getAuthStatus);
+    router.get("/auth_tokens/:token_body", AuthStatusController.populateAuthToken);
 
     router.get("/users", UserController.list);
 
