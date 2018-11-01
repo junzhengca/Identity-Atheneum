@@ -196,4 +196,64 @@ userSchema.methods.getTutorialNamesByCourseContainerName = function(courseContai
     return tuts;
 };
 
+userSchema.methods.getAllCourses = function(fields = null) {
+    return new Promise((resolve, reject) => {
+        let result = [];
+        this.model('Container').getAllCourses(fields)
+            .then(courses => {
+                courses.forEach(course => {
+                    this.groups.some(group => {
+                        console.log(group, course.name);
+                        if(group.match(course.name)) {
+                            result.push(course);
+                            return true;
+                        }
+                    })
+                });
+                resolve(result);
+            })
+            .catch(e => reject(e));
+    })
+};
+
+userSchema.methods.getCourseOrFail = function(courseId, fields = null) {
+    return new Promise((resolve, reject) => {
+        let result;
+        this.getAllCourses(fields)
+            .then(courses => {
+                courses.some(course => {
+                    if(course._id.toString() === courseId.toString()) {
+                        result = course;
+                        return true;
+                    }
+                });
+                if(result) resolve(result);
+                else throw new Error("Course not found.");
+            })
+            .catch(e => reject(e));
+    });
+};
+
+userSchema.methods.getEnrolledTutorialsForCourse = function(courseId, fields = null) {
+    return new Promise((resolve, reject) => {
+        let result = [];
+        this.getCourseOrFail(courseId)
+            .then(course => {
+                return course.getAllTutorials(fields);
+            })
+            .then(tutorials => {
+                tutorials.forEach(tutorial => {
+                    this.groups.some(group => {
+                        if(group.match(tutorial.name)) {
+                            result.push(tutorial);
+                            return true;
+                        }
+                    });
+                });
+                resolve(result);
+            })
+            .catch(e => reject(e));
+    })
+};
+
 module.exports  = mongoose.model('User', userSchema);

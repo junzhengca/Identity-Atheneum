@@ -18,6 +18,9 @@ module.exports = (app) => {
     router.get("/auth_tokens/:token_body", AuthStatusController.populateAuthToken);
 
     router.get("/users", UserController.list);
+    router.get("/users/:user_id", UserController.get);
+    router.get("/users/:user_id/courses", UserController.getCourses);
+    router.get("/users/:user_id/courses/:course_id/tutorials", UserController.getCourseTutorials);
 
     router.get("/courses", CourseController.list);
     router.get("/courses/:course_id", CourseController.get);
@@ -27,7 +30,6 @@ module.exports = (app) => {
     router.get("/courses/:course_id/tutorials/:tutorial_id/students", CourseController.getTutorialStudents);
 
     router.get("/user", UserController.getCurrent);
-    router.get("/users/:id", UserController.get);
     router.get("/users/:id/groups", UserController.getGroups);
     router.post("/users/:id/groups", UserController.addGroup);
 

@@ -65,10 +65,10 @@ containerSchema.virtual('courseDisplayName').get(function () {
  * Fetch all containers starts with course.
  * @returns {*}
  */
-containerSchema.statics.getAllCourses = function () {
+containerSchema.statics.getAllCourses = function (fields = null) {
     return this.find({
         name: {$regex: /^course\.((?!\.).)*$/}
-    });
+    }).select(fields).exec();
 };
 
 /**
@@ -149,6 +149,30 @@ containerSchema.methods.getAllTutorials = function (fields = null) {
             .find({name: {$regex: new RegExp("^" + this.name + "\.tutorial\..*$")}})
             .select(fields)
             .then(tuts => resolve(tuts))
+            .catch(e => reject(e));
+    });
+};
+
+/**
+ * Get one tutorial or fail
+ * @param tutorialId
+ * @param fields
+ * @returns {Promise<any>}
+ */
+containerSchema.methods.getTutorialOrFail = function(tutorialId, fields = null) {
+    return new Promise((resolve, reject) => {
+        let result;
+        this.getAllTutorials(fields)
+            .then(tutorials => {
+                tutorials.some(tutorial => {
+                    if(tutorial._id.toString() === tutorialId) {
+                        result = tutorial;
+                        return true;
+                    }
+                })
+                if(result) resolve(tutorial);
+                else throw new Error("Tutorial not found.");
+            })
             .catch(e => reject(e));
     });
 };

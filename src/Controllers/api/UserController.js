@@ -24,16 +24,59 @@ class UserController {
     }
 
 
+    /**
+     * Get one user
+     * @param req
+     * @param res
+     * @param next
+     */
     static get(req, res, next) {
-        if(req.isMaster) {
-            User.findOne({_id: req.params.id})
+        if(req.application && req.isSecret) {
+            User.findOneOrFail({_id: req.params.user_id})
                 .then(user => {
-                    if(user) {
-                        res.send(JSON.stringify(user));
-                    } else {
-                        res.status(404);
-                        res.send("404");
-                    }
+                    res.send(user);
+                })
+                .catch(e => {
+                    next(e);
+                })
+        } else {
+            res.status(401);
+            res.send("401");
+        }
+    }
+
+    /**
+     * Get all courses
+     * @param req
+     * @param res
+     * @param next
+     */
+    static getCourses(req, res, next) {
+        if(req.application && req.isSecret) {
+            User.findOneOrFail({_id: req.params.user_id})
+                .then(user => {
+                    return user.getAllCourses('-__v');
+                })
+                .then(courses => {
+                    res.send(courses);
+                })
+                .catch(e => {
+                    next(e);
+                })
+        } else {
+            res.status(401);
+            res.send("401");
+        }
+    }
+
+    static getCourseTutorials(req, res, next) {
+        if(req.application && req.isSecret) {
+            User.findOneOrFail({_id: req.params.user_id})
+                .then(user => {
+                    return user.getEnrolledTutorialsForCourse(req.params.course_id, '-__v');
+                })
+                .then(tutorials => {
+                    res.send(tutorials);
                 })
                 .catch(e => {
                     next(e);
