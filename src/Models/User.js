@@ -201,16 +201,21 @@ userSchema.methods.getAllCourses = function(fields = null) {
         let result = [];
         this.model('Container').getAllCourses(fields)
             .then(courses => {
-                courses.forEach(course => {
-                    this.groups.some(group => {
-                        console.log(group, course.name);
-                        if(group.match(course.name)) {
-                            result.push(course);
-                            return true;
-                        }
-                    })
-                });
-                resolve(result);
+                if(this.isAdmin()) {
+                    // If user is a global admin, then user is enrolled in all courses
+                    resolve(courses);
+                } else {
+                    // Otherwise fetch courses that user is actually enrolled in
+                    courses.forEach(course => {
+                        this.groups.some(group => {
+                            if(group.match(course.name)) {
+                                result.push(course);
+                                return true;
+                            }
+                        })
+                    });
+                    resolve(result);
+                }
             })
             .catch(e => reject(e));
     })
