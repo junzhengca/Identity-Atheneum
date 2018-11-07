@@ -12,7 +12,7 @@ module.exports = class TutorialController {
                 })
                 .then(() => {
                     courses.forEach(course => {
-                        tutorials.concat(course.tutorials);
+                        tutorials = tutorials.concat(course.tutorials);
                     });
                     res.send(tutorials);
                 })
