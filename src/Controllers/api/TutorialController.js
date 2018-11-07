@@ -1,3 +1,5 @@
+const Container = require('../../Models/Container');
+
 module.exports = class TutorialController {
     static list(req, res, next) {
         if(req.application && req.isSecret) {
