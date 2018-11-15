@@ -1,10 +1,16 @@
 // @flow
+/*-------------------------------------
+ * Application entry point, initializes
+ * new App instance.
+ *
+ * Author(s): Jun Zheng
+ --------------------------------------*/
+
 const App = require('./App');
 // $FlowFixMe
 const colors = require('colors');
 
 // First read the configuration file
-
 const config = require('./config');
 
 process.on('SIGINT', function() {

@@ -1,17 +1,35 @@
+// @flow
+/*-------------------------------------
+ * All API endpoints.
+ *
+ * Author(s): Jun Zheng
+ --------------------------------------*/
+
+// Dependencies
 const express = require('express');
+
+// Controllers
 const UserController = require('../Controllers/api/UserController');
 const TutorialController = require('../Controllers/api/TutorialController');
 const CourseController = require('../Controllers/api/CourseController');
 const AuthStatusController = require('../Controllers/api/AuthStatusController');
+
+// Middlewares
 const bearerAuthMiddleware = require('../Middlewares/bearerAuthMiddleware')();
 
+// Flow type imports
+const App = require('../App');
 
-module.exports = (app) => {
-    const router = express.Router();
+/**
+ * Function to mount all routes
+ * @param app
+ */
+module.exports = (app: App<any>) => {
+    const router: express$Router = express.Router();
 
     router.use(bearerAuthMiddleware);
 
-    router.get("/ping", (req, res) => {
+    router.get("/ping", (req: Request, res: express$Response) => {
         res.send("PONG");
     });
 
@@ -38,4 +56,3 @@ module.exports = (app) => {
 
     app.app.use('/api', router);
 };
-

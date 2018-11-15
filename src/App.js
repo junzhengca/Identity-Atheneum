@@ -156,10 +156,10 @@ class App<Number> {
 
     /**
      * Resolve once setup has already been done or finished
-     * @returns {Promise<any>}
+     * @returns {Promise<void>}
      * @private
      */
-    _firstRunSetup() {
+    _firstRunSetup(): Promise<void> {
         return new Promise((resolve, reject) => {
             let defaultProvider = this._getDefaultLocalProvider();
             if(!defaultProvider) {

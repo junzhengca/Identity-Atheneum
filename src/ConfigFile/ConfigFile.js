@@ -19,12 +19,12 @@ class ConfigFile {
     /**
      * Parse the configuration
      */
-    parse(): ?mixed {}
+    parse(): any {}
 
     /**
      * Validate the configuration file
      */
-    validate(): {errors: [String]} {
+    validate(): {errors: string[]} {
         let parsedData = this.parse();
         let errors = [];
         // Validate port

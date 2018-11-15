@@ -1,5 +1,17 @@
+// @flow
+/*-------------------------------------
+ * Controller for Course
+ *
+ * Author(s): Jun Zheng
+ --------------------------------------*/
+
+// Models
 const Container = require('../../Models/Container');
 
+/**
+ * Controller instance, mostly static
+ * @type {module.CourseController}
+ */
 module.exports = class CourseController {
     /**
      * List all courses
@@ -7,7 +19,7 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static list(req, res, next) {
+    static list(req: Request, res: express$Response, next: express$NextFunction) {
         if(req.application && req.isSecret) {
             let courses;
             Container.getAllCourses('_id name content._name content._displayName tutorials')
@@ -33,7 +45,7 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static get(req, res, next) {
+    static get(req: Request, res: express$Response, next: express$NextFunction) {
         if(req.application && req.isSecret) {
             // Find a course
             let course;
@@ -61,7 +73,7 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static getStudents(req, res, next) {
+    static getStudents(req: Request, res: express$Response, next: express$NextFunction) {
         if(req.application && req.isSecret) {
             // Find a course
             let course;
@@ -89,7 +101,7 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static getTutorials(req, res, next) {
+    static getTutorials(req: Request, res: express$Response, next: express$NextFunction) {
         if(req.application && req.isSecret) {
             // Find a course
             let course;
@@ -117,7 +129,7 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static getTutorial(req, res, next) {
+    static getTutorial(req: Request, res: express$Response, next: express$NextFunction) {
         if(req.application && req.isSecret) {
             // Find a course
             let course;
@@ -140,7 +152,7 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static getTutorialStudents(req, res, next) {
+    static getTutorialStudents(req: Request, res: express$Response, next: express$NextFunction) {
         if(req.application && req.isSecret) {
             // Find a course
             let course;
