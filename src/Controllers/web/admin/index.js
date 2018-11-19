@@ -8,5 +8,6 @@
 module.exports = {
     HomeController: require('./HomeController'),
     UserController: require('./UserController'),
-    CourseController: require('./CourseController')
+    CourseController: require('./CourseController'),
+    ApplicationController: require('./ApplicationController')
 };

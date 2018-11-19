@@ -20,7 +20,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async usersPage(req: Request, res: express$Response) {
+    static async usersPage(req: Request, res: Response) {
         let users = await User.find({
             idp: {$regex: req.query.idp || /.*/},
             groups: req.query.group ? {$regex: req.query.group || /.*/} : {$exists: true}
@@ -36,7 +36,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static createNewUsersPage(req: Request, res: express$Response) {
+    static createNewUsersPage(req: Request, res: Response) {
         res.render('pages/admin/createUsers', {
             title: "Create New Users - Admin Dashboard"
         })
@@ -47,7 +47,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async exportUsersJSON(req: Request, res: express$Response) {
+    static async exportUsersJSON(req: Request, res: Response) {
         let users = await User.find({});
         res.header('content-type', 'application/json');
         res.send(JSON.stringify(users));
@@ -59,7 +59,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async userDetailPage(req: Request, res: express$Response) {
+    static async userDetailPage(req: Request, res: Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if (user) {
             res.render('pages/admin/userDetail', {
@@ -76,7 +76,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async createUsers(req: Request, res: express$Response) {
+    static async createUsers(req: Request, res: Response) {
         // First get all users
         if (!req.body.users) {
             req.flash("errors", "You must have at least one user.");
@@ -107,7 +107,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async addGroupToUser(req: Request, res: express$Response) {
+    static async addGroupToUser(req: Request, res: Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if (user) {
             if (!req.body.name) {
@@ -133,7 +133,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async deleteGroupFromUser(req: Request, res: express$Response) {
+    static async deleteGroupFromUser(req: Request, res: Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if (user) {
             if (!req.body.name) {
@@ -160,7 +160,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async deleteUser(req: Request, res: express$Response) {
+    static async deleteUser(req: Request, res: Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if(user) {
             await user.remove();

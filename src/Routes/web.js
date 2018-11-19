@@ -54,7 +54,8 @@ module.exports = (app) => {
             ["/courses/detail/:name/tutorials/detail/:tutorial_name", admin.CourseController.tutorialDetailPage],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudentsPage],
             // Applications
-            ["/applications", AdminDashboardController.applicationsPage]
+            ["/applications", admin.ApplicationController.applicationsPage],
+            ["/applications/import", admin.ApplicationController.importApplicationPage]
         ],
         post: [
             // User
@@ -68,18 +69,17 @@ module.exports = (app) => {
             ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorial],
             ["/courses/detail/:name/students/remove", admin.CourseController.courseRemoveStudent],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudents],
-            ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove", admin.CourseController.tutorialRemoveStudent]
+            ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove", admin.CourseController.tutorialRemoveStudent],
+            // Applications
+            ["/applications/:id/delete", admin.ApplicationController.deleteApplication],
+            ["/applications/import", admin.ApplicationController.importApplication],
+            ["/applications/keys/generate", admin.ApplicationController.applicationGenerateKey],
+            ["/applications/keys/revoke", admin.ApplicationController.applicationRevokeKey]
         ]
     });
 
     adminDashboardRouter.use(require('../Middlewares/adminAuthMiddleware')());
 
-    adminDashboardRouter.get("/applications", AdminDashboardController.applicationsPage);
-    adminDashboardRouter.post("/applications/:id/delete", AdminDashboardController.deleteApplication);
-    adminDashboardRouter.post("/applications/keys/generate", AdminDashboardController.applicationGenerateKey);
-    adminDashboardRouter.post("/applications/keys/revoke", AdminDashboardController.applicationRevokeKey);
-    adminDashboardRouter.get("/applications/import", AdminDashboardController.importApplicationPage);
-    adminDashboardRouter.post("/applications/import", AdminDashboardController.importApplication);
 
     adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
 
