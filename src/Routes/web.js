@@ -45,14 +45,28 @@ module.exports = (app) => {
             ["/users", admin.UserController.usersPage],
             ["/users/create_users", admin.UserController.createNewUsersPage],
             ["/users/export_users/json", admin.UserController.exportUsersJSON],
-            ["/users/detail/:identifier", admin.UserController.userDetailPage]
+            ["/users/detail/:identifier", admin.UserController.userDetailPage],
+            // Course
+            ["/courses", admin.CourseController.coursesPage],
+            ["/courses/create", admin.CourseController.createCoursePage],
+            ["/courses/detail/:name", admin.CourseController.courseDetailPage],
+            ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorialPage],
+            ["/courses/detail/:name/tutorials/detail/:tutorial_name", admin.CourseController.tutorialDetailPage],
+            ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudentsPage]
         ],
         post: [
             // User
             ["/users/create_users", admin.UserController.createUsers],
             ["/users/detail/:identifier/add_group", admin.UserController.addGroupToUser],
             ["/users/detail/:identifier/delete_group", admin.UserController.deleteGroupFromUser],
-            ["/users/detail/:identifier/delete", admin.UserController.deleteUser]
+            ["/users/detail/:identifier/delete", admin.UserController.deleteUser],
+            // Course
+            ["/courses/create", admin.CourseController.createCourse],
+            ["/courses/detail/:name", admin.CourseController.updateCourseDetail],
+            ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorial],
+            ["/courses/detail/:name/students/remove", admin.CourseController.courseRemoveStudent],
+            ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudents],
+            ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove", admin.CourseController.tutorialRemoveStudent]
         ]
     });
 
@@ -64,20 +78,6 @@ module.exports = (app) => {
     adminDashboardRouter.post("/applications/keys/revoke", AdminDashboardController.applicationRevokeKey);
     adminDashboardRouter.get("/applications/import", AdminDashboardController.importApplicationPage);
     adminDashboardRouter.post("/applications/import", AdminDashboardController.importApplication);
-
-    adminDashboardRouter.get("/courses", AdminDashboardController.coursesPage);
-    adminDashboardRouter.get("/courses/create", AdminDashboardController.createCoursePage);
-    adminDashboardRouter.post("/courses/create", AdminDashboardController.createCourse);
-    adminDashboardRouter.get("/courses/detail/:name", AdminDashboardController.courseDetailPage);
-    adminDashboardRouter.post("/courses/detail/:name", AdminDashboardController.updateCourseDetail);
-    adminDashboardRouter.get("/courses/detail/:name/tutorials/create", AdminDashboardController.courseCreateTutorialPage);
-    adminDashboardRouter.post("/courses/detail/:name/tutorials/create", AdminDashboardController.courseCreateTutorial);
-    adminDashboardRouter.post("/courses/detail/:name/students/remove", AdminDashboardController.courseRemoveStudent);
-    adminDashboardRouter.get("/courses/detail/:name/tutorials/detail/:tutorial_name", AdminDashboardController.tutorialDetailPage);
-    adminDashboardRouter.get("/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", AdminDashboardController.tutorialAddStudentsPage);
-    adminDashboardRouter.post("/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", AdminDashboardController.tutorialAddStudents);
-    adminDashboardRouter.post("/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove", AdminDashboardController.tutorialRemoveStudent);
-
 
     adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
 
