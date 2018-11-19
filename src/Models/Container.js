@@ -1,3 +1,4 @@
+// @flow
 const User = require('./User');
 const mongoose = require('mongoose');
 const isValidMongoID = require('../Util/isValidMongoID');
@@ -7,7 +8,7 @@ const containerSchema = new mongoose.Schema({
     writeGroups: String,
     readGroups: String,
     deleteGroups: String,
-    content: mongoose.SchemaTypes.Mixed,
+    content: mongoose.Schema.Types.Mixed,
 }, {
     timestamps: true,
     toObject: {
@@ -154,30 +155,6 @@ containerSchema.methods.getAllTutorials = function (fields = null) {
 };
 
 /**
- * Get one tutorial or fail
- * @param tutorialId
- * @param fields
- * @returns {Promise<any>}
- */
-containerSchema.methods.getTutorialOrFail = function(tutorialId, fields = null) {
-    return new Promise((resolve, reject) => {
-        let result;
-        this.getAllTutorials(fields)
-            .then(tutorials => {
-                tutorials.some(tutorial => {
-                    if(tutorial._id.toString() === tutorialId) {
-                        result = tutorial;
-                        return true;
-                    }
-                })
-                if(result) resolve(tutorial);
-                else throw new Error("Tutorial not found.");
-            })
-            .catch(e => reject(e));
-    });
-};
-
-/**
  * Get a tutorial by course container name and tutorial container name
  * Make sure they match and resolve the tutorial container
  * @param courseContainerName
@@ -267,6 +244,15 @@ containerSchema.methods.getAllUsers = function (fields = null) {
             })
             .catch(e => reject(e));
     })
+};
+
+/**
+ * Get all students enrolled in the course
+ * @param fields
+ * @returns {Promise<User[]>}
+ */
+containerSchema.methods.getAllStudents = async function(fields : ?String = null): Promise<User[]> {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}$`)}}).select(fields);
 };
 
 module.exports = mongoose.model('Container', containerSchema);

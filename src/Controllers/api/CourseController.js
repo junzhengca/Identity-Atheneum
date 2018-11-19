@@ -50,7 +50,7 @@ module.exports = class CourseController {
         if (!course.isCourse()) {
             throw new BadRequestError("Container is not a course.");
         }
-        let users = await course.getAllUsers('-attributes -__v');
+        let users = await course.getAllStudents('-attributes -__v');
         res.send(users);
     }
 
@@ -88,7 +88,7 @@ module.exports = class CourseController {
      */
     static async getTutorialStudents(req: Request, res: express$Response, next: express$NextFunction) {
         let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
-        let users = await result.tutorial.getAllUsers('-attributes -__v');
+        let users = await result.tutorial.getAllStudents('-attributes -__v');
         res.send(users);
     }
 };

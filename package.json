@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "development": "BUILD=`git rev-parse --short HEAD` flow-node ./src",
+    "development": "NODE_ENV=development BUILD=`git rev-parse --short HEAD` flow-node ./src",
     "production": "NODE_ENV=production BUILD=`git rev-parse --short HEAD` node ./lib",
     "test:coverage": "nyc mocha",
     "test": "flow-remove-types ./src/ -d ./lib/ --all --pretty && mocha",

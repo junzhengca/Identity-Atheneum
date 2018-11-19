@@ -148,7 +148,7 @@ class App<Number> {
 |\\  \\    |\\   __  \\        
 \\ \\  \\   \\ \\  \\|\\  \\       
  \\ \\  \\   \\ \\   __  \\      
-  \\ \\  \\ __\\ \\  \\ \\  \\ ___    Build ${Version.buildNumber}
+  \\ \\  \\ __\\ \\  \\ \\  \\ ___    Build ${Version.buildNumber} [${process.env.NODE_ENV || 'dvelopment'}]
    \\ \\__\\\\__\\ \\__\\ \\__\\\\__\\   ${Version.versionCode}
     \\|__\\|__|\\|__|\\|__\\|__|   ${Version.versionName}
     `.bold.red)
