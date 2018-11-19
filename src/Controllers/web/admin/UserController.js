@@ -20,7 +20,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async usersPage(req, res) {
+    static async usersPage(req: Request, res: express$Response) {
         let users = await User.find({
             idp: {$regex: req.query.idp || /.*/},
             groups: req.query.group ? {$regex: req.query.group || /.*/} : {$exists: true}
@@ -36,7 +36,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static createNewUsersPage(req, res) {
+    static createNewUsersPage(req: Request, res: express$Response) {
         res.render('pages/admin/createUsers', {
             title: "Create New Users - Admin Dashboard"
         })
@@ -47,7 +47,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async exportUsersJSON(req, res) {
+    static async exportUsersJSON(req: Request, res: express$Response) {
         let users = await User.find({});
         res.header('content-type', 'application/json');
         res.send(JSON.stringify(users));
@@ -58,9 +58,8 @@ module.exports = class UserController {
      * Get user details page
      * @param req
      * @param res
-     * @param next
      */
-    static async userDetailPage(req, res, next) {
+    static async userDetailPage(req: Request, res: express$Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if (user) {
             res.render('pages/admin/userDetail', {
@@ -77,7 +76,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async createUsers(req, res) {
+    static async createUsers(req: Request, res: express$Response) {
         // First get all users
         if (!req.body.users) {
             req.flash("errors", "You must have at least one user.");
@@ -107,9 +106,8 @@ module.exports = class UserController {
      * Add a new group to user
      * @param req
      * @param res
-     * @param next
      */
-    static async addGroupToUser(req, res, next) {
+    static async addGroupToUser(req: Request, res: express$Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if (user) {
             if (!req.body.name) {
@@ -134,9 +132,8 @@ module.exports = class UserController {
      * Remove a group from user
      * @param req
      * @param res
-     * @param next
      */
-    static async deleteGroupFromUser(req, res, next) {
+    static async deleteGroupFromUser(req: Request, res: express$Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if (user) {
             if (!req.body.name) {
@@ -162,9 +159,8 @@ module.exports = class UserController {
      * Delete an user
      * @param req
      * @param res
-     * @param next
      */
-    static async deleteUser(req, res, next) {
+    static async deleteUser(req: Request, res: express$Response) {
         let user = await User.findByIdentifier(req.params.identifier);
         if(user) {
             await user.remove();

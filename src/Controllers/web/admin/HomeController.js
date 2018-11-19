@@ -17,7 +17,7 @@ module.exports = class HomeController {
      * @param req
      * @param res
      */
-    static async homePage(req, res) {
+    static async homePage(req: Request, res: express$Response) {
         let users = await User.find({});
         res.render('pages/admin/home', {
             title: "Admin Dashboard",
