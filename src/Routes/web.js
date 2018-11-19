@@ -1,11 +1,16 @@
-const express = require('express');
-const ApplicationController = require('../Controllers/web/ApplicationController');
-const DeveloperDashboardController = require('../Controllers/web/DeveloperDashboardController');
-const AdminDashboardController = require('../Controllers/web/AdminDashboardController');
+const express                       = require('express');
+const ApplicationController         = require('../Controllers/web/ApplicationController');
+const DeveloperDashboardController  = require('../Controllers/web/DeveloperDashboardController');
+const AdminDashboardController      = require('../Controllers/web/AdminDashboardController');
 const AdminDashboardIFCATController = require('../Controllers/web/AdminDashboardIFCATController');
-const LoginController = require('../Controllers/web/LoginController');
-const LogoutController = require('../Controllers/web/LogoutController');
-const SessionController = require('../Controllers/web/SessionController');
+const LoginController               = require('../Controllers/web/LoginController');
+const LogoutController              = require('../Controllers/web/LogoutController');
+const SessionController             = require('../Controllers/web/SessionController');
+const getRealUrl                    = require('../Util/getRealUrl');
+const flattenFlashMessages          = require('../Util/flattenFlashMessages');
+const applyRoutesToRouter           = require('../Util/applyRoutesToRouter');
+const admin                         = require('../Controllers/web/admin');
+
 
 module.exports = (app) => {
 
@@ -19,17 +24,39 @@ module.exports = (app) => {
     app.app.use("/developer", developerDashboardRouter);
 
     // Admin dashboard Routes
-    const adminDashboardRouter = express.Router();
+    let adminDashboardRouter = express.Router();
+
+    // Admin locals
+    adminDashboardRouter.use((req, res, next) => {
+        res.locals = {
+            ...res.locals,
+            getRealUrl,
+            req,
+            ...flattenFlashMessages(req)
+        };
+        next();
+    });
+
+    applyRoutesToRouter(adminDashboardRouter, {
+        middlewares: [require('../Middlewares/adminAuthMiddleware')()],
+        get: [
+            ["/", admin.HomeController.homePage],
+            // User
+            ["/users", admin.UserController.usersPage],
+            ["/users/create_users", admin.UserController.createNewUsersPage],
+            ["/users/export_users/json", admin.UserController.exportUsersJSON],
+            ["/users/detail/:identifier", admin.UserController.userDetailPage]
+        ],
+        post: [
+            // User
+            ["/users/create_users", admin.UserController.createUsers],
+            ["/users/detail/:identifier/add_group", admin.UserController.addGroupToUser],
+            ["/users/detail/:identifier/delete_group", admin.UserController.deleteGroupFromUser],
+            ["/users/detail/:identifier/delete", admin.UserController.deleteUser]
+        ]
+    });
+
     adminDashboardRouter.use(require('../Middlewares/adminAuthMiddleware')());
-    adminDashboardRouter.get("/", AdminDashboardController.homePage);
-    adminDashboardRouter.get("/users", AdminDashboardController.usersPage);
-    adminDashboardRouter.get("/users/create_users", AdminDashboardController.createNewUsersPage);
-    adminDashboardRouter.post("/users/create_users", AdminDashboardController.createUsers);
-    adminDashboardRouter.get("/users/export_users/json", AdminDashboardController.exportUsersJSON);
-    adminDashboardRouter.get("/users/detail/:identifier", AdminDashboardController.userDetailPage);
-    adminDashboardRouter.post("/users/detail/:identifier/add_group", AdminDashboardController.addGroupToUser);
-    adminDashboardRouter.post("/users/detail/:identifier/delete_group", AdminDashboardController.deleteGroupFromUser);
-    adminDashboardRouter.post("/users/detail/:identifier/delete", AdminDashboardController.deleteUser);
 
     adminDashboardRouter.get("/applications", AdminDashboardController.applicationsPage);
     adminDashboardRouter.post("/applications/:id/delete", AdminDashboardController.deleteApplication);

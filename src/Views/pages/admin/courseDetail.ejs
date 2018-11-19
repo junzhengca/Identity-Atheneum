@@ -78,15 +78,15 @@ title: container.getName() + " Detail - Admin Dashboard"
         </tr>
         </thead>
         <tbody>
-        <% for(let i = 0; i < users.length; i++){ %>
+        <% for(let i = 0; i < students.length; i++){ %>
         <tr>
-            <th scope="row"><%= users[i]._id %></th>
-            <td><%= users[i].username %></td>
-            <td><%= users[i].idp %></td>
-            <td><%= JSON.stringify(users[i].getTutorialNamesByCourseContainerName(container.name)) %></td>
+            <th scope="row"><%= students[i]._id %></th>
+            <td><%= students[i].username %></td>
+            <td><%= students[i].idp %></td>
+            <td><%= JSON.stringify(students[i].getTutorialNamesByCourseContainerName(container.name)) %></td>
             <td>
                 <form method="post" action="<%= getRealUrl('/admin/courses/detail/' + container.name + '/students/remove') %>">
-                    <input type="hidden" name="name" value="<%=users[i]._id%>" />
+                    <input type="hidden" name="name" value="<%=students[i]._id%>" />
                     <button class="btn btn-outline-danger btn-sm">Remove</button>
                 </form>
             </td>

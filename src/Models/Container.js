@@ -231,22 +231,6 @@ containerSchema.statics.getCourseAndTutorialOrFailById = function (courseContain
 };
 
 /**
- * Fetch all users that have access to this container
- * @param fields
- * @returns {Promise<any>}
- */
-containerSchema.methods.getAllUsers = function (fields = null) {
-    return new Promise((resolve, reject) => {
-        User.find({groups: {$regex: new RegExp(this.name)}})
-            .select(fields)
-            .then(users => {
-                resolve(users);
-            })
-            .catch(e => reject(e));
-    })
-};
-
-/**
  * Get all students enrolled in the course
  * @param fields
  * @returns {Promise<User[]>}
