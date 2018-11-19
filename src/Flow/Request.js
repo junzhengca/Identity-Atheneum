@@ -3,7 +3,7 @@ declare class Request extends http$IncomingMessage mixins express$RequestRespons
     application: Mongoose$Document;
     isSecret: boolean;
     user: any;
-    flash: function,
+    flash: (string, string) => void,
     // Directly fetched from flow-typed
     baseUrl: string;
     body: any;
