@@ -52,7 +52,9 @@ module.exports = (app) => {
             ["/courses/detail/:name", admin.CourseController.courseDetailPage],
             ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorialPage],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name", admin.CourseController.tutorialDetailPage],
-            ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudentsPage]
+            ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudentsPage],
+            // Applications
+            ["/applications", AdminDashboardController.applicationsPage]
         ],
         post: [
             // User
