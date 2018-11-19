@@ -1,7 +1,8 @@
 declare class Request extends http$IncomingMessage mixins express$RequestResponseBase {
     // Custom fields
-    application: Mongoose$Document,
-    isSecret: boolean,
+    application: Mongoose$Document;
+    isSecret: boolean;
+    user: any;
     // Directly fetched from flow-typed
     baseUrl: string;
     body: mixed;

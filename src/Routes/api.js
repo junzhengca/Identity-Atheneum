@@ -40,17 +40,15 @@ module.exports = (app: App<any>) => {
     router.get("/auth_status", AuthStatusController.getAuthStatus);
     router.get("/auth_tokens/:token_body", AuthStatusController.populateAuthToken);
 
-    router.get("/users", UserController.list);
-    router.get("/users/:user_id", UserController.get);
-    router.get("/users/:user_id/courses", UserController.getCourses);
-    router.get("/users/:user_id/courses/:course_id/tutorials", UserController.getCourseTutorials);
-
     // All routes that require application secret authentication
     applyRoutesToRouter(router, {
         middlewares: [applicationSecretAuthMiddleware],
         get: [
             // User
             ["/users", UserController.list],
+            ["/users/:user_id", UserController.get],
+            ["/users/:user_id/courses", UserController.getCourses],
+            ["/users/:user_id/courses/:course_id/tutorials", UserController.getCourseTutorials],
             // Tutorial
             ["/tutorials", TutorialController.list],
             ["/tutorials/:tutorial_id", TutorialController.get],
@@ -65,8 +63,6 @@ module.exports = (app: App<any>) => {
     });
 
     router.get("/user", UserController.getCurrent);
-    router.get("/users/:id/groups", UserController.getGroups);
-    router.post("/users/:id/groups", UserController.addGroup);
 
     // Custom error handler
     // $FlowFixMe
