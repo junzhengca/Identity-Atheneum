@@ -2,20 +2,24 @@
 /*-------------------------------------
  * All API endpoints.
  *
- * Author(s): Jun Zheng
+ * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
 // Dependencies
-const express = require('express');
+const express             = require('express');
+const applyRoutesToRouter = require('../Util/applyRoutesToRouter');
+const NotFoundError       = require('../Errors/NotFoundError');
+const BadRequestError     = require('../Errors/BadRequestError');
 
 // Controllers
-const UserController = require('../Controllers/api/UserController');
-const TutorialController = require('../Controllers/api/TutorialController');
-const CourseController = require('../Controllers/api/CourseController');
+const UserController       = require('../Controllers/api/UserController');
+const TutorialController   = require('../Controllers/api/TutorialController');
+const CourseController     = require('../Controllers/api/CourseController');
 const AuthStatusController = require('../Controllers/api/AuthStatusController');
 
 // Middlewares
-const bearerAuthMiddleware = require('../Middlewares/bearerAuthMiddleware')();
+const bearerAuthMiddleware            = require('../Middlewares/bearerAuthMiddleware')();
+const applicationSecretAuthMiddleware = require('../Middlewares/applicationSecretAuthMiddleware')();
 
 // Flow type imports
 const App = require('../App');
@@ -41,18 +45,31 @@ module.exports = (app: App<any>) => {
     router.get("/users/:user_id/courses", UserController.getCourses);
     router.get("/users/:user_id/courses/:course_id/tutorials", UserController.getCourseTutorials);
 
-    router.get("/tutorials", TutorialController.list);
-
-    router.get("/courses", CourseController.list);
-    router.get("/courses/:course_id", CourseController.get);
-    router.get("/courses/:course_id/students", CourseController.getStudents);
-    router.get("/courses/:course_id/tutorials", CourseController.getTutorials);
-    router.get("/courses/:course_id/tutorials/:tutorial_id", CourseController.getTutorial);
-    router.get("/courses/:course_id/tutorials/:tutorial_id/students", CourseController.getTutorialStudents);
+    // All routes that require application secret authentication
+    applyRoutesToRouter(router, {
+        middlewares: [applicationSecretAuthMiddleware],
+        get: [
+            ["/tutorials", TutorialController.list],
+            ["/tutorials/:tutorial_id", TutorialController.get],
+            ["/courses", CourseController.list],
+            ["/courses/:course_id", CourseController.get],
+            ["/courses/:course_id/students", CourseController.getStudents],
+            ["/courses/:course_id/tutorials", CourseController.getTutorials],
+            ["/courses/:course_id/tutorials/:tutorial_id", CourseController.getTutorial],
+            ["/courses/:course_id/tutorials/:tutorial_id/students", CourseController.getTutorialStudents]
+        ]
+    });
 
     router.get("/user", UserController.getCurrent);
     router.get("/users/:id/groups", UserController.getGroups);
     router.post("/users/:id/groups", UserController.addGroup);
+
+    // Custom error handler
+    router.use((err, req, res, next) => {
+        if (err instanceof NotFoundError) res.status(404);
+        if (err instanceof BadRequestError) res.status(400);
+        res.send({msg: err.message})
+    });
 
     app.app.use('/api', router);
 };

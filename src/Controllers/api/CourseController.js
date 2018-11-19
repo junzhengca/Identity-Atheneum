@@ -2,11 +2,12 @@
 /*-------------------------------------
  * Controller for Course
  *
- * Author(s): Jun Zheng
+ * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
-// Models
-const Container = require('../../Models/Container');
+const Container       = require('../../Models/Container');
+const BadRequestError = require('../../Errors/BadRequestError');
+
 
 /**
  * Controller instance, mostly static
@@ -17,53 +18,25 @@ module.exports = class CourseController {
      * List all courses
      * @param req
      * @param res
-     * @param next
      */
-    static list(req: Request, res: express$Response, next: express$NextFunction) {
-        if(req.application && req.isSecret) {
-            let courses;
-            Container.getAllCourses('_id name content._name content._displayName tutorials')
-                .then(result => {
-                    courses = result;
-                    return Container.populateCoursesWithTutorials(courses, "_id name content._name content._displayName");
-                })
-                .then(() => {
-                    res.send(courses);
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
-        }
+    static async list(req: Request, res: express$Response) {
+        let courses = await Container.getAllCourses('_id name content._name content._displayName tutorials');
+        await Container.populateCoursesWithTutorials(courses, "_id name content._name content._displayName");
+        res.send(courses);
     }
 
     /**
      * Get one course
      * @param req
      * @param res
-     * @param next
      */
-    static get(req: Request, res: express$Response, next: express$NextFunction) {
-        if(req.application && req.isSecret) {
-            // Find a course
-            let course;
-            Container.findOneOrFail({_id: req.params.course_id})
-                .then(result => {
-                    course = result;
-                    if(!course.isCourse()) throw new Error("Container is not a course.");
-                    return Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
-                })
-                .then(() => {
-                    res.send(course);
-                })
-                .catch(e => {
-                    next(e);
-                })
+    static async get(req: Request, res: express$Response) {
+        let course = await Container.findOneOrFail({_id: req.params.course_id});
+        if (!course.isCourse()) {
+            throw new BadRequestError("Container is not a course.");
         } else {
-            res.status(401);
-            res.send("401");
+            await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
+            res.send(course);
         }
     }
 
@@ -71,28 +44,14 @@ module.exports = class CourseController {
      * Get a list of students enrolled within the course
      * @param req
      * @param res
-     * @param next
      */
-    static getStudents(req: Request, res: express$Response, next: express$NextFunction) {
-        if(req.application && req.isSecret) {
-            // Find a course
-            let course;
-            Container.findOneOrFail({_id: req.params.course_id})
-                .then(result => {
-                    course = result;
-                    if(!course.isCourse()) throw new Error("Container is not a course.");
-                    return course.getAllUsers('-attributes -__v');
-                })
-                .then(users => {
-                    res.send(users);
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
+    static async getStudents(req: Request, res: express$Response) {
+        let course = await Container.findOneOrFail({_id: req.params.course_id});
+        if (!course.isCourse()) {
+            throw new BadRequestError("Container is not a course.");
         }
+        let users = await course.getAllUsers('-attributes -__v');
+        res.send(users);
     }
 
     /**
@@ -101,26 +60,13 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static getTutorials(req: Request, res: express$Response, next: express$NextFunction) {
-        if(req.application && req.isSecret) {
-            // Find a course
-            let course;
-            Container.findOneOrFail({_id: req.params.course_id})
-                .then(result => {
-                    course = result;
-                    if(!course.isCourse()) throw new Error("Container is not a course.");
-                    return Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
-                })
-                .then(() => {
-                    res.send(course.tutorials);
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
+    static async getTutorials(req: Request, res: express$Response, next: express$NextFunction) {
+        let course = await Container.findOneOrFail({_id: req.params.course_id});
+        if (!course.isCourse()) {
+            throw new BadRequestError("Container is not a course.");
         }
+        await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
+        res.send(course.tutorials);
     }
 
     /**
@@ -130,7 +76,7 @@ module.exports = class CourseController {
      * @param next
      */
     static getTutorial(req: Request, res: express$Response, next: express$NextFunction) {
-        if(req.application && req.isSecret) {
+        if (req.application && req.isSecret) {
             // Find a course
             let course;
             Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id)
@@ -153,7 +99,7 @@ module.exports = class CourseController {
      * @param next
      */
     static getTutorialStudents(req: Request, res: express$Response, next: express$NextFunction) {
-        if(req.application && req.isSecret) {
+        if (req.application && req.isSecret) {
             // Find a course
             let course;
             Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id)
