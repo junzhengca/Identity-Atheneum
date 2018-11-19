@@ -49,8 +49,12 @@ module.exports = (app: App<any>) => {
     applyRoutesToRouter(router, {
         middlewares: [applicationSecretAuthMiddleware],
         get: [
+            // User
+            ["/users", UserController.list],
+            // Tutorial
             ["/tutorials", TutorialController.list],
             ["/tutorials/:tutorial_id", TutorialController.get],
+            // Course
             ["/courses", CourseController.list],
             ["/courses/:course_id", CourseController.get],
             ["/courses/:course_id/students", CourseController.getStudents],
@@ -65,6 +69,7 @@ module.exports = (app: App<any>) => {
     router.post("/users/:id/groups", UserController.addGroup);
 
     // Custom error handler
+    // $FlowFixMe
     router.use((err, req, res, next) => {
         if (err instanceof NotFoundError) res.status(404);
         if (err instanceof BadRequestError) res.status(400);

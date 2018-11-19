@@ -75,21 +75,9 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static getTutorial(req: Request, res: express$Response, next: express$NextFunction) {
-        if (req.application && req.isSecret) {
-            // Find a course
-            let course;
-            Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id)
-                .then(result => {
-                    res.send(result.tutorial);
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
-        }
+    static async getTutorial(req: Request, res: express$Response, next: express$NextFunction) {
+        let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
+        res.send(result.tutorial);
     }
 
     /**
@@ -98,23 +86,9 @@ module.exports = class CourseController {
      * @param res
      * @param next
      */
-    static getTutorialStudents(req: Request, res: express$Response, next: express$NextFunction) {
-        if (req.application && req.isSecret) {
-            // Find a course
-            let course;
-            Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id)
-                .then(result => {
-                    return result.tutorial.getAllUsers('-attributes -__v');
-                })
-                .then(users => {
-                    res.send(users);
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
-        }
+    static async getTutorialStudents(req: Request, res: express$Response, next: express$NextFunction) {
+        let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
+        let users = await result.tutorial.getAllUsers('-attributes -__v');
+        res.send(users);
     }
 };
