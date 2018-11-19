@@ -33,14 +33,25 @@ module.exports = (app) => {
 
     adminDashboardRouter.get("/applications", AdminDashboardController.applicationsPage);
     adminDashboardRouter.post("/applications/:id/delete", AdminDashboardController.deleteApplication);
+    adminDashboardRouter.post("/applications/keys/generate", AdminDashboardController.applicationGenerateKey);
+    adminDashboardRouter.post("/applications/keys/revoke", AdminDashboardController.applicationRevokeKey);
     adminDashboardRouter.get("/applications/import", AdminDashboardController.importApplicationPage);
     adminDashboardRouter.post("/applications/import", AdminDashboardController.importApplication);
 
     adminDashboardRouter.get("/courses", AdminDashboardController.coursesPage);
     adminDashboardRouter.get("/courses/create", AdminDashboardController.createCoursePage);
     adminDashboardRouter.post("/courses/create", AdminDashboardController.createCourse);
-    
-    
+    adminDashboardRouter.get("/courses/detail/:name", AdminDashboardController.courseDetailPage);
+    adminDashboardRouter.post("/courses/detail/:name", AdminDashboardController.updateCourseDetail);
+    adminDashboardRouter.get("/courses/detail/:name/tutorials/create", AdminDashboardController.courseCreateTutorialPage);
+    adminDashboardRouter.post("/courses/detail/:name/tutorials/create", AdminDashboardController.courseCreateTutorial);
+    adminDashboardRouter.post("/courses/detail/:name/students/remove", AdminDashboardController.courseRemoveStudent);
+    adminDashboardRouter.get("/courses/detail/:name/tutorials/detail/:tutorial_name", AdminDashboardController.tutorialDetailPage);
+    adminDashboardRouter.get("/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", AdminDashboardController.tutorialAddStudentsPage);
+    adminDashboardRouter.post("/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", AdminDashboardController.tutorialAddStudents);
+    adminDashboardRouter.post("/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove", AdminDashboardController.tutorialRemoveStudent);
+
+
     adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
 
     adminDashboardRouter.get("/containers", AdminDashboardController.containersPage);

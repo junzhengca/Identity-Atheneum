@@ -1,3 +1,4 @@
+// @flow
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const util = require('util');
@@ -40,6 +41,22 @@ userSchema.statics.findByIdentifier = function(id) {
             }
         }
     })
+};
+
+/**
+ * Same as findByIdentifier, but throws an error if not found
+ * @param id
+ * @returns {Promise<any>}
+ */
+userSchema.statics.findByIdentifierOrFail = function(id) {
+    return new Promise((resolve, reject) => {
+        this.findByIdentifier(id)
+            .then(user => {
+                if (!user) throw new Error("User not found.");
+                resolve(user);
+            })
+            .catch(e => reject(e))
+    });
 };
 
 /**
@@ -121,6 +138,128 @@ userSchema.methods.isDeveloper = function() {
  */
 userSchema.methods.isAdmin = function() {
     return this.groups && this.groups.indexOf("admin") > -1;
+};
+
+/**
+ * Add new container to user
+ * @param container
+ * @returns {*}
+ */
+userSchema.methods.addContainer = function(container) {
+    return new Promise(resolve => {
+        if(this.groups.indexOf(container.name) < 0) {
+            this.groups.push(container.name);
+            this.save().then(() => resolve());
+        } else {
+            resolve();
+        }
+    });
+
+};
+
+/**
+ * Remove user from container
+ * @param container
+ * @returns {Promise<any>}
+ */
+userSchema.methods.removeContainer = function(container) {
+    return new Promise(resolve => {
+        let index = this.groups.indexOf(container.name);
+        if(index > -1) {
+            this.groups.splice(index, 1);
+            this.save().then(() => resolve());
+        } else {
+            resolve();
+        }
+    })
+};
+
+userSchema.methods.removeContainerAndAllSubContainers = function(container) {
+    return new Promise(resolve => {
+        let newGroups = [];
+        this.groups.forEach(group => {
+            if(!group.match(new RegExp(container.name))) {
+                newGroups.push(group);
+            }
+        });
+        this.groups = newGroups;
+        this.save().then(() => resolve());
+    })
+};
+
+userSchema.methods.getTutorialNamesByCourseContainerName = function(courseContainerName) {
+    let tuts = [];
+    for(let i = 0; i < this.groups.length; i++) {
+        if(this.groups[i].match(new RegExp(`^${courseContainerName}\.tutorial.*$`))) {
+            tuts.push(this.groups[i].split(".").slice(-1)[0]);
+        }
+    }
+    return tuts;
+};
+
+userSchema.methods.getAllCourses = function(fields = null) {
+    return new Promise((resolve, reject) => {
+        let result = [];
+        this.model('Container').getAllCourses(fields)
+            .then(courses => {
+                if(this.isAdmin()) {
+                    // If user is a global admin, then user is enrolled in all courses
+                    resolve(courses);
+                } else {
+                    // Otherwise fetch courses that user is actually enrolled in
+                    courses.forEach(course => {
+                        this.groups.some(group => {
+                            if(group.match(course.name)) {
+                                result.push(course);
+                                return true;
+                            }
+                        })
+                    });
+                    resolve(result);
+                }
+            })
+            .catch(e => reject(e));
+    })
+};
+
+userSchema.methods.getCourseOrFail = function(courseId, fields = null) {
+    return new Promise((resolve, reject) => {
+        let result;
+        this.getAllCourses(fields)
+            .then(courses => {
+                courses.some(course => {
+                    if(course._id.toString() === courseId.toString()) {
+                        result = course;
+                        return true;
+                    }
+                });
+                if(result) resolve(result);
+                else throw new Error("Course not found.");
+            })
+            .catch(e => reject(e));
+    });
+};
+
+userSchema.methods.getEnrolledTutorialsForCourse = function(courseId, fields = null) {
+    return new Promise((resolve, reject) => {
+        let result = [];
+        this.getCourseOrFail(courseId)
+            .then(course => {
+                return course.getAllTutorials(fields);
+            })
+            .then(tutorials => {
+                tutorials.forEach(tutorial => {
+                    this.groups.some(group => {
+                        if(group.match(tutorial.name)) {
+                            result.push(tutorial);
+                            return true;
+                        }
+                    });
+                });
+                resolve(result);
+            })
+            .catch(e => reject(e));
+    })
 };
 
 module.exports  = mongoose.model('User', userSchema);

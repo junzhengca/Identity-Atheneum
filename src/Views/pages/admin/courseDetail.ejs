@@ -1,0 +1,99 @@
+<%- include('../../partials/header.ejs', {
+title: container.getName() + " Detail - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/courses') %>">Courses</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%=container.getName()%></li>
+        </ol>
+    </nav>
+
+    <h2><%=container.getName()%> Detail</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <hr/>
+    <h4>Basic Information</h4>
+
+    <form method="post">
+        <label>
+            Container Name<br/>
+            <small class="text-muted">Container's name for this course.</small>
+        </label>
+        <input type="text" class="form-control" value="<%=container.name%>" disabled/>
+        <label class="mt-2">
+            Course Name<br/>
+            <small class="text-muted">Display name for the course.</small>
+        </label>
+        <input type="text" class="form-control" value="<%=container.getDisplayName()%>" name="name"/>
+
+        <br/>
+        <button class="btn btn-primary">Save</button>
+    </form>
+
+    <hr/>
+    <h4>Tutorials (<%=tutorials.length%>)</h4>
+    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create')%>" class="btn btn-primary">Create Tutorial</a>
+    <%if(tutorials.length === 0){%><p class="text-muted mt-2">No tutorials yet...</p><%}%>
+    <%for(let i = 0; i < tutorials.length; i++){%>
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">
+                        <%=tutorials[i].getName()%><br/>
+                        <small class="text-muted"><%=tutorials[i].getDisplayName()%></small>
+                    </h5>
+                    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/detail/' + tutorials[i].name)%>" class="btn btn-primary">Manage</a>
+                    <a href="<%=getRealUrl('/admin/containers/detail/' + tutorials[i].name)%>" class="btn btn-light">View Container</a><br/><br/>
+                </div>
+                <div class="col-md-6">
+                    <b>Version: </b> <%=tutorials[i].getVersion()%>
+                </div>
+                <div class="col-md-12">
+                    <small class="text-muted">Created At <%=tutorials[i].createdAt%></small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%}%>
+
+    <hr/>
+    <h4>Students</h4>
+    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create')%>" class="btn btn-primary">Add Students</a>
+    <br/><br/>
+    <table class="table table-light">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Identity Provider</th>
+            <th scope="col">Tutorials</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for(let i = 0; i < users.length; i++){ %>
+        <tr>
+            <th scope="row"><%= users[i]._id %></th>
+            <td><%= users[i].username %></td>
+            <td><%= users[i].idp %></td>
+            <td><%= JSON.stringify(users[i].getTutorialNamesByCourseContainerName(container.name)) %></td>
+            <td>
+                <form method="post" action="<%= getRealUrl('/admin/courses/detail/' + container.name + '/students/remove') %>">
+                    <input type="hidden" name="name" value="<%=users[i]._id%>" />
+                    <button class="btn btn-outline-danger btn-sm">Remove</button>
+                </form>
+            </td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+    <% include ../../partials/footer.ejs %>
+</div>

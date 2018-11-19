@@ -6,4 +6,5 @@
 [include]
 [libs]
 flow-typed
+src/Flow
 

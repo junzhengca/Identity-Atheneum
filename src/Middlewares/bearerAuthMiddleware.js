@@ -1,24 +1,24 @@
-const AuthToken = require('../Models/AuthToken');
-const User = require('../Models/User');
+const ApplicationKey = require('../Models/ApplicationKey');
+const Application = require('../Models/Application');
 
 module.exports = function() {
     return function(req, res, next) {
         if(req.header("Authorization")) {
             let token = req.header("Authorization").split(" ")[1];
-            console.log(token);
-            AuthToken.findOne({tokenBody: token})
-                .then(authToken => {
-                    if(authToken) {
-                        return User.findOne({_id: authToken.userId});
-                    }
+            ApplicationKey.findOneOrFail({secretKey: token})
+                .then(key => {
+                    return Application.findOne({_id: key.applicationId});
                 })
-                .then(user => {
-                    req.user = user;
+                .then(application => {
+                    req.application = application;
+                    req.isSecret = true;
                     next();
                 })
-                .catch(e => {
-                    next(e);
+                .catch(() => {
+                    next();
                 })
+        } else {
+            next();
         }
     }
 };

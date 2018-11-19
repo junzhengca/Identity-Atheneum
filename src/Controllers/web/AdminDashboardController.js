@@ -1,5 +1,6 @@
 const User = require('../../Models/User');
 const Application = require('../../Models/Application');
+const ApplicationKey = require('../../Models/ApplicationKey');
 const Container = require('../../Models/Container');
 const getRealUrl = require('../../Util/getRealUrl');
 const isValidGroupName = require('../../Util/isValidGroupName');
@@ -34,7 +35,6 @@ module.exports = class AdminDashboardController {
             groups: req.query.group ? {$regex: req.query.group || /.*/} : {$exists: true}
         })
             .then(users => {
-                console.log(users);
                 res.render('pages/admin/users', {
                     title: "Users - Admin Dashboard",
                     users,
@@ -242,6 +242,8 @@ module.exports = class AdminDashboardController {
      */
     static applicationsPage(req, res, next) {
         Application.find({})
+            .populate('keys')
+            .exec()
             .then(applications => {
                 res.render('pages/admin/applications', {
                     applications,
@@ -273,6 +275,42 @@ module.exports = class AdminDashboardController {
             .catch(e => {
                 req.flash("errors", e.message);
                 res.redirect(getRealUrl('/admin/applications'));
+            })
+    }
+
+    /**
+     * Generate a new application key pair
+     * @param req
+     * @param res
+     */
+    static applicationGenerateKey(req, res) {
+        Application.findOneOrFail({_id: req.body.id})
+            .then(app => {
+                return app.generateKey();
+            })
+            .then(key => {
+                res.redirectBackWithSuccess("Key generated with ID " + key._id);
+            })
+            .catch(e => {
+                res.redirectBackWithError("Failed to generate key. " + e.message);
+            })
+    }
+
+    /**
+     * Revoke an application key
+     * @param req
+     * @param res
+     */
+    static applicationRevokeKey(req, res) {
+        ApplicationKey.findOneOrFail({_id: req.body.id})
+            .then(key => {
+                return key.remove();
+            })
+            .then(() => {
+                res.redirectBackWithSuccess("Key revoked.");
+            })
+            .catch(e => {
+                res.redirectBackWithError("Cannot find key. " + e.message);
             })
     }
 
@@ -419,6 +457,7 @@ module.exports = class AdminDashboardController {
     }
 
     /**
+     * GET /courses
      * Get the courses page
      * @param req
      * @param res
@@ -435,6 +474,7 @@ module.exports = class AdminDashboardController {
     }
 
     /**
+     * GET /courses/create
      * Render create course page
      * @param req
      * @param res
@@ -447,6 +487,7 @@ module.exports = class AdminDashboardController {
     }
 
     /**
+     * POST /courses/create
      * Create all resources for a new course
      * @param req
      * @param res
@@ -475,4 +516,274 @@ module.exports = class AdminDashboardController {
             })
 
     }
+
+    /**
+     * GET /courses/detail/:name
+     * Render container details page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static courseDetailPage(req, res, next) {
+        let container, tutorials, users;
+        Container.findOne({name: req.params.name})
+            .then(result => {
+                container = result;
+                if(container && container.isCourse()) {
+                    return container.getAllTutorials();
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .then(result => {
+                tutorials = result;
+                return container.getAllUsers();
+            })
+            .then(result => {
+                users = result;
+                res.render('pages/admin/courseDetail', {
+                    getRealUrl,
+                    container,
+                    tutorials,
+                    users,
+                    ...flattenFlashMessages(req)
+                });
+            })
+            .catch(e => next(e));
+    }
+
+    /**
+     * POST /courses/detail/:name
+     * Update an course
+     * @param req
+     * @param res
+     */
+    static updateCourseDetail(req, res) {
+        Container.findOne({name: req.params.name})
+            .then(container => {
+                if(container && container.isCourse()) {
+                    if(req.body.name) {
+                        container.content = {
+                            ...container.content,
+                            _displayName: req.body.name
+                        };
+                    }
+                    return container.save();
+                } else {
+                    res.send("Course not found.");
+                }
+            })
+            .then(container => {
+                req.flash("success", "Course updated.");
+                res.redirect(getRealUrl('/admin/courses/detail/' + container.name));
+            })
+            .catch(e => {
+                req.flash("error", e.message);
+                res.redirect(getRealUrl('/admin/courses/detail/' + container.name));
+            })
+    }
+
+    /**
+     * GET /courses/detail/:name/tutorials/create
+     * Render container details page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static courseCreateTutorialPage(req, res, next) {
+        let container;
+        Container.findOne({name: req.params.name})
+            .then(result => {
+                container = result;
+                if(container && container.isCourse()) {
+                    res.render('pages/admin/courseCreateTutorial', {
+                        getRealUrl,
+                        container,
+                        ...flattenFlashMessages(req)
+                    });
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .catch(e => next(e));
+    }
+
+    /**
+     * POST /courses/detail/:name/tutorials/create
+     * Render container details page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static courseCreateTutorial(req, res, next) {
+        if(!req.body.code.match(/^[a-z0-9]+$/)) {
+            req.flash("error", "Invalid tutorial code.");
+            return res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name + '/tutorials/create'));
+        }
+        if(!req.body.name) {
+            req.flash("error", "Invalid tutorial name.");
+            return res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name + '/tutorials/create'));
+        }
+        let container;
+        Container.findOne({name: req.params.name})
+            .then(result => {
+                container = result;
+                if(container && container.isCourse()) {
+                    // Create the tutorial container
+                    return Container.create(
+                        container.name + ".tutorial." + req.body.code,
+                        "admin", "admin", "admin",
+                        {
+                            _v: 1,
+                            _name: req.body.code,
+                            _displayName: req.body.name
+                        }
+                    );
+                } else {
+                    throw new Error("Course not found.");
+                }
+            })
+            .then(container => {
+                req.flash("success", "Container created with ID " + container._id);
+                res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name));
+            })
+            .catch(e => next(e));
+    }
+
+    /**
+     * Remove a student from course
+     * @param req
+     * @param res
+     * @param next
+     */
+    static courseRemoveStudent(req, res, next) {
+        let course;
+
+        Container.findOneOrFail({name: req.params.name})
+            .then(container => {
+                course = container;
+                if(!course.isCourse()) {
+                    throw new Error("Course not found.");
+                }
+                return User.findByIdentifierOrFail(req.body.name);
+            })
+            .then(user => {
+                return user.removeContainerAndAllSubContainers(course);
+            })
+            .then(() => {
+                req.flash("success", "User removed from course.");
+                res.redirect(getRealUrl('/admin/courses/detail/' + course.name));
+            })
+            .catch(e => next(e));
+    }
+
+
+    /**
+     * Render tutorial details page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static tutorialDetailPage(req, res, next) {
+        // First find the course
+        let course, tutorial, students;
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
+            .then(result => {
+                course = result.course; tutorial = result.tutorial;
+                return tutorial.getAllUsers();
+            })
+            .then(users => {
+                res.render('pages/admin/tutorialDetail', {
+                    getRealUrl,
+                    course,
+                    tutorial,
+                    users,
+                    ...flattenFlashMessages(req)
+                });
+            })
+            .catch(e => next(e));
+    };
+
+    /**
+     * Add students to tutorial page
+     * @param req
+     * @param res
+     * @param next
+     */
+    static tutorialAddStudentsPage(req, res, next) {
+        // First find thr course and tutorial
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
+            .then(result => {
+                res.render('pages/admin/tutorialAddStudents', {
+                    getRealUrl,
+                    ...result,
+                    ...flattenFlashMessages(req)
+                });
+            })
+            .catch(e => next(e));
+    }
+
+    /**
+     * Add students to a tutorial
+     * @param req
+     * @param res
+     * @param next
+     */
+    static tutorialAddStudents(req, res, next) {
+        let course, tutorial;
+        // First we find the tutorial
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
+            .then(result => {
+                course = result.course; tutorial = result.tutorial;
+                let promises = [];
+                // Loop through all users
+                req.body.data.split(/\r?\n/).forEach(uid => {
+                    promises.push(new Promise(resolve => {
+                        User.findByIdentifierOrFail(uid)
+                            .then(user => {
+                                return user.addContainer(tutorial).then(() => user.addContainer(course));
+                            })
+                            .then(() => {
+                                req.flash("success", uid + " added to course and tutorial.");
+                                resolve();
+                            })
+                            .catch(e => {
+                                req.flash("error", "Failed to find user. [" + e.message + "] for " + uid);
+                                resolve()
+                            })
+                    }));
+                });
+                return Promise.all(promises);
+            })
+            .then(() => {
+                res.redirect(getRealUrl('/admin/courses/detail/' + course.name + "/tutorials/detail/" + tutorial.name + "/students/add"));
+            })
+            .catch(e => next(e));
+
+    }
+
+    /**
+     * Remove a student from the course
+     * @param req
+     * @param res
+     * @param next
+     */
+    static tutorialRemoveStudent(req, res, next) {
+        let course, tutorial;
+        // First we find the tutorial
+        Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name)
+            .then(result => {
+                course = result.course; tutorial = result.tutorial;
+                return User.findByIdentifierOrFail(req.body.name);
+            })
+            .then(user => {
+                return user.removeContainer(tutorial);
+            })
+            .then(() => {
+                req.flash("success", "User removed from tutorial. However the student is still in the course.");
+                res.redirect(getRealUrl('/admin/courses/detail/' + course.name + "/tutorials/detail/" + tutorial.name));
+            })
+            .catch(e => next(e));
+    }
+
 };

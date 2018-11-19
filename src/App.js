@@ -1,26 +1,29 @@
 // @flow
-const express = require('express');
-const Version = require('./Resources/Version');
-const session = require('express-session');
+const express    = require('express');
+const Version    = require('./Resources/Version');
+const session    = require('express-session');
 const RedisStore = require('connect-redis')(session);
-const mongoose = require('mongoose');
-const path = require('path');
-const flash = require('connect-flash');
-const passport = require('passport');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const mongoose   = require('mongoose');
+// $FlowFixMe
+mongoose.plugin(require('./MongooseMiddlewares/findOneOrFailPlugin'));
+const path                  = require('path');
+const flash                 = require('connect-flash');
+const passport              = require('passport');
+const cookieParser          = require('cookie-parser');
+const bodyParser            = require('body-parser');
 const LocalIdentityProvider = require('./IdentityProvider/LocalIdentityProvider');
-const SamlIdentityProvider = require('./IdentityProvider/SamlIdentityProvider');
-const User = require('./Models/User');
-const Input = require('prompt-input');
-const randStr = require('./Util/randStr');
+const SamlIdentityProvider  = require('./IdentityProvider/SamlIdentityProvider');
+const User                  = require('./Models/User');
+const Input                 = require('prompt-input');
+const randStr               = require('./Util/randStr');
+const morgan                = require('morgan');
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user._id);
 });
 
-passport.deserializeUser(function(user, done) {
-    User.findOne({_id: user}, function(err, user) {
+passport.deserializeUser(function (user, done) {
+    User.findOne({_id: user}, function (err, user) {
         done(err, user);
     });
 });
@@ -45,8 +48,8 @@ class App<Number> {
      */
     _getDefaultLocalProvider() {
         let provider;
-        for(let i = 0; i < this.config.identity_providers.length; i++) {
-            if(this.config.identity_providers[i].type === 'local') {
+        for (let i = 0; i < this.config.identity_providers.length; i++) {
+            if (this.config.identity_providers[i].type === 'local') {
                 provider = this.config.identity_providers[i];
             }
         }
@@ -75,8 +78,13 @@ class App<Number> {
      * @private
      */
     _mountAllRoutesAndMiddlewares() {
+        // Request logs
+        this.app.use(morgan('combined'));
+
+        this.app.use(require('./Middlewares/redirectBackMiddleware')(this));
+
         this.app.use(cookieParser());
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(bodyParser.urlencoded({extended: false}));
         this.app.use(bodyParser.json());
 
         this.app.use(session({
@@ -97,15 +105,15 @@ class App<Number> {
         // Mount all identity providers within the configuration file
         this.config.identity_providers.forEach(idp => {
             let provider;
-            if(idp.type === 'local') {
+            if (idp.type === 'local') {
                 provider = new LocalIdentityProvider(idp);
-            } else if(idp.type === 'saml') {
+            } else if (idp.type === 'saml') {
                 // Saml requires host_root to function
                 idp.host_root = this.config.host_root;
-                provider = new SamlIdentityProvider(idp);
+                provider      = new SamlIdentityProvider(idp);
             }
 
-            if(provider) {
+            if (provider) {
                 provider.initialize();
                 provider.mount(this.app);
             }
@@ -149,20 +157,20 @@ class App<Number> {
 
     /**
      * Resolve once setup has already been done or finished
-     * @returns {Promise<any>}
+     * @returns {Promise<void>}
      * @private
      */
-    _firstRunSetup() {
+    _firstRunSetup(): Promise<void> {
         return new Promise((resolve, reject) => {
             let defaultProvider = this._getDefaultLocalProvider();
-            if(!defaultProvider) {
+            if (!defaultProvider) {
                 console.warn("[WARNING] Unable to find default local provider, cannot run setup, system will start without default local IdP.");
                 resolve();
             } else {
                 let password;
                 User.find({idp: defaultProvider.name})
                     .then(users => {
-                        if(users.length === 0) {
+                        if (users.length === 0) {
                             // Run setup
                             console.log("Seems like you don't have a user in your local provider yet, let's create one!");
                             console.warn("[WARNING] New user will have admin privilege to the system.");
@@ -172,7 +180,7 @@ class App<Number> {
                             });
                             usernameInput.run()
                                 .then(answer => {
-                                    password = randStr(16);
+                                    password     = randStr(16);
                                     let username = answer;
                                     // Create a new user
                                     return User.create(defaultProvider.name, username, password, "", ["admin"], {});
@@ -204,7 +212,9 @@ class App<Number> {
 
         this._firstRunSetup()
             .then(() => this._bindPort())
-            .catch(e => {throw new Error(e)});
+            .catch(e => {
+                throw new Error(e)
+            });
 
     }
 }

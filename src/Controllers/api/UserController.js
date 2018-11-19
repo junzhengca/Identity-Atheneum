@@ -1,98 +1,66 @@
+// @flow
+/*-------------------------------------
+ * Controller for User
+ *
+ * Author(s): Jun Zheng (me at jackzh dot com)
+ --------------------------------------*/
+
 const User = require('../../Models/User');
 
-class UserController {
-    static list(req, res, next) {
-        if(req.isMaster) {
-            User.find({})
-                .then(users => {
-                    res.send(JSON.stringify(users));
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
-        }
+/**
+ * Controller instance, mostly static
+ * @type {module.UserController}
+ */
+module.exports = class UserController {
+    /**
+     * List all users
+     * @param req
+     * @param res
+     */
+    static async list(req: Request, res: express$Response) {
+        let users = await User.find({}).select('_id username idp');
+        res.send(users);
     }
 
-
-    static get(req, res, next) {
-        if(req.isMaster) {
-            User.findOne({_id: req.params.id})
-                .then(user => {
-                    if(user) {
-                        res.send(JSON.stringify(user));
-                    } else {
-                        res.status(404);
-                        res.send("404");
-                    }
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
-        }
+    /**
+     * Get one user
+     * @param req
+     * @param res
+     */
+    static async get(req: Request, res: express$Response) {
+        let user = await User.findOneOrFail({_id: req.params.user_id});
+        res.send(user);
     }
 
-    static getGroups(req, res, next) {
-        if(req.isMaster) {
-            User.findOne({_id: req.params.id})
-                .then(user => {
-                    if(user) {
-                        let groups = user.groups || [];
-                        res.send(JSON.stringify(groups));
-                    } else {
-                        res.status(404);
-                        res.send("404");
-                    }
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("401");
-        }
+    /**
+     * Get all courses
+     * @param req
+     * @param res
+     */
+    static async getCourses(req: Request, res: express$Response) {
+        let user = await User.findOneOrFail({_id: req.params.user_id});
+        let courses = await user.getAllCourses('-__v');
+        res.send(courses);
     }
 
-    static addGroup(req, res, next) {
-        if(req.isMaster) {
-            if(!req.body.group) {
-                res.status(400); res.send("You must pass 'group' as an argument to this endpoint.");
-                return;
-            }
-            User.findOne({_id: req.params.id})
-                .then(user => {
-                    if(user) {
-                        let groups = user.groups || [];
-                        if(groups.indexOf(req.body.group) < 0) {
-                            groups.push(req.body.group);
-                        }
-                        user.set({groups});
-                        return user.save();
-                    } else {
-                        res.status(404); res.send("We cannot find the user you requested.");
-                    }
-                })
-                .then(user => {
-                    if(user) res.send(JSON.stringify({status: "ok"}));
-                })
-                .catch(e => {
-                    next(e);
-                })
-        } else {
-            res.status(401);
-            res.send("Only master can access this endpoint.");
-        }
+    /**
+     * Get all enrolled tutorials for a course
+     * @param req
+     * @param res
+     */
+    static async getCourseTutorials(req: Request, res: express$Response) {
+        let user = await User.findOneOrFail({_id: req.params.user_id});
+        let tutorials = await user.getEnrolledTutorialsForCourse(req.params.course_id, '-__v');
+        res.send(tutorials);
     }
 
-    static getCurrent(req, res, next) {
+    /**
+     * Get current user
+     * @param req
+     * @param res
+     */
+    static getCurrent(req: Request, res: express$Response) {
         res.send(JSON.stringify(req.user));
     }
 
-}
-
-module.exports = UserController;
+};
