@@ -1,7 +1,5 @@
 // @flow
 
-const config = require('../config');
-
 /**
  * Returns the real absolute URL
  * @param url
@@ -9,5 +7,5 @@ const config = require('../config');
  * @returns {*}
  */
 module.exports = function(url: string, _config: any = null): string {
-    return (_config || config).host_root + url;
+    return (_config || require('../config')).host_root + url;
 };
