@@ -1,7 +1,6 @@
 const express                       = require('express');
 const ApplicationController         = require('../Controllers/web/ApplicationController');
 const DeveloperDashboardController  = require('../Controllers/web/DeveloperDashboardController');
-const AdminDashboardController      = require('../Controllers/web/AdminDashboardController');
 const AdminDashboardIFCATController = require('../Controllers/web/AdminDashboardIFCATController');
 const LoginController               = require('../Controllers/web/LoginController');
 const LogoutController              = require('../Controllers/web/LogoutController');
@@ -57,7 +56,12 @@ module.exports = (app) => {
             ["/applications", admin.ApplicationController.applicationsPage],
             ["/applications/import", admin.ApplicationController.importApplicationPage],
             // System
-            ["/system", admin.SystemController.systemPage]
+            ["/system", admin.SystemController.systemPage],
+            // Containers
+            ["/containers", admin.ContainerController.containersPage],
+            ["/containers/create_container", admin.ContainerController.createContainerPage],
+            ["/containers/detail/:name", admin.ContainerController.containerDetailPage],
+            ["/containers/detail/:name/export/json", admin.ContainerController.exportContainerJSON]
         ],
         post: [
             // User
@@ -76,18 +80,13 @@ module.exports = (app) => {
             ["/applications/:id/delete", admin.ApplicationController.deleteApplication],
             ["/applications/import", admin.ApplicationController.importApplication],
             ["/applications/keys/generate", admin.ApplicationController.applicationGenerateKey],
-            ["/applications/keys/revoke", admin.ApplicationController.applicationRevokeKey]
+            ["/applications/keys/revoke", admin.ApplicationController.applicationRevokeKey],
+            // Container
+            ["/containers/create_container", admin.ContainerController.createContainer]
         ]
     });
 
     adminDashboardRouter.use(require('../Middlewares/adminAuthMiddleware')());
-
-
-    adminDashboardRouter.get("/containers", AdminDashboardController.containersPage);
-    adminDashboardRouter.get("/containers/create_container", AdminDashboardController.createContainerPage);
-    adminDashboardRouter.post("/containers/create_container", AdminDashboardController.createContainer);
-    adminDashboardRouter.get("/containers/detail/:name", AdminDashboardController.containerDetailPage);
-    adminDashboardRouter.get("/containers/detail/:name/export/json", AdminDashboardController.exportContainerJSON);
 
     // IFCAT Management Routes
     const adminDashboardIFCATRouter = express.Router();

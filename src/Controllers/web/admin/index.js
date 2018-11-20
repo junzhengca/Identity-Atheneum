@@ -10,5 +10,6 @@ module.exports = {
     UserController: require('./UserController'),
     CourseController: require('./CourseController'),
     ApplicationController: require('./ApplicationController'),
-    SystemController: require('./SystemController')
+    SystemController: require('./SystemController'),
+    ContainerController: require('./ContainerController')
 };
