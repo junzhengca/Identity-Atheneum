@@ -67,4 +67,19 @@ module.exports = class ContainerController {
         res.header('content-type', 'application/json');
         res.send(JSON.stringify(container));
     }
+
+    /**
+     * Update container detail
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async updateContainerDetail(req: Request, res: Response): Promise<void> {
+        let container: Container = await Container.findOneOrFail({name: req.params.name});
+        if (req.body.readGroups) container.readGroups = req.body.readGroups;
+        if (req.body.writeGroups) container.writeGroups = req.body.writeGroups;
+        if (req.body.deleteGroups) container.deleteGroups = req.body.deleteGroups;
+        await container.save();
+        res.redirectBackWithSuccess("Container updated.");
+    }
 };

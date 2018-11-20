@@ -84,7 +84,8 @@ module.exports = (app) => {
             ["/applications/keys/generate", admin.ApplicationController.applicationGenerateKey],
             ["/applications/keys/revoke", admin.ApplicationController.applicationRevokeKey],
             // Container
-            ["/containers/create_container", admin.ContainerController.createContainer]
+            ["/containers/create_container", admin.ContainerController.createContainer],
+            ["/containers/detail/:name", admin.ContainerController.updateContainerDetail]
         ]
     });
 
