@@ -76,6 +76,7 @@ module.exports = (app) => {
             ["/courses/detail/:name/students/add", admin.CourseController.courseAddStudents],
             ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorial],
             ["/courses/detail/:name/students/remove", admin.CourseController.courseRemoveStudent],
+            ["/courses/detail/:name/tutorials/detail/:tutorial_name", admin.CourseController.updateTutorialDetail],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudents],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove", admin.CourseController.tutorialRemoveStudent],
             // Applications

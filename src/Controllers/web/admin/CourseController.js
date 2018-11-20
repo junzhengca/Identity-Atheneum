@@ -266,4 +266,23 @@ module.exports = class CourseController {
         res.redirect(getRealUrl(`/admin/courses/detail/${course.name}/students/add`));
     }
 
+    /**
+     * Update tutorial details
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async updateTutorialDetail(req: Request, res: Response): Promise<void> {
+        let {tutorial} = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
+        // Update tutorial name
+        if (req.body.name) {
+            tutorial.content = {
+                ...tutorial.content,
+                _displayName: req.body.name
+            };
+        }
+        await tutorial.save();
+        res.redirectBackWithSuccess("Tutorial updated.");
+    }
+
 };
