@@ -1,7 +1,6 @@
 const express                       = require('express');
 const ApplicationController         = require('../Controllers/web/ApplicationController');
 const DeveloperDashboardController  = require('../Controllers/web/DeveloperDashboardController');
-const AdminDashboardIFCATController = require('../Controllers/web/AdminDashboardIFCATController');
 const LoginController               = require('../Controllers/web/LoginController');
 const LogoutController              = require('../Controllers/web/LogoutController');
 const SessionController             = require('../Controllers/web/SessionController');
@@ -88,17 +87,6 @@ module.exports = (app) => {
             ["/containers/create_container", admin.ContainerController.createContainer]
         ]
     });
-
-    adminDashboardRouter.use(require('../Middlewares/adminAuthMiddleware')());
-
-    // IFCAT Management Routes
-    const adminDashboardIFCATRouter = express.Router();
-
-    adminDashboardIFCATRouter.use("/:id/ifcat*", require('../Middlewares/ensureIFCATMiddleware')());
-    adminDashboardIFCATRouter.get("/:id/ifcat", AdminDashboardIFCATController.homePage);
-
-    adminDashboardRouter.use("/applications", adminDashboardIFCATRouter);
-
 
     app.app.use("/admin", adminDashboardRouter);
 

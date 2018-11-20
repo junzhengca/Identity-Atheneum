@@ -45,25 +45,6 @@ applicationSchema.statics.create = function(userId, name, assertionEndpoint, gro
     });
 };
 
-applicationSchema.methods.isPreset = function() {
-    if(this.name.match(/^ifcat.*$/)) {
-        return true;
-    }
-    return false;
-};
-
-applicationSchema.methods.getPresetName = function() {
-    if(this.name.match(/^ifcat.*$/)) {
-        return "IFCAT";
-    }
-};
-
-applicationSchema.methods.getPresetType = function() {
-    if(this.name.match(/^ifcat.*$/)) {
-        return "ifcat";
-    }
-};
-
 /**
  * Generate a new key pair
  * @returns {Promise<any>}
@@ -79,6 +60,6 @@ applicationSchema.methods.generateKey = function() {
             .then(key => resolve(key))
             .catch(e => reject(e));
     });
-}
+};
 
 module.exports  = mongoose.model('Application', applicationSchema);

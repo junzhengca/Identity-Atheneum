@@ -33,14 +33,6 @@ title: "Applications - Admin Dashboard"
                 Assertion Endpoint: <code><%= applications[i].assertionEndpoint %></code><br>
                 Application ID: <code><%= applications[i]._id %></code>
             </p>
-
-            <% if(applications[i].isPreset()){ %>
-            <hr/>
-            <p>Seems like this is <%= applications[i].getPresetName() %>. Management dashboard available.</p>
-            <a href="<%= getRealUrl('/admin/applications/' + applications[i]._id + '/' + applications[i].getPresetType()) %>"
-               class="btn btn-primary">Manage <%= applications[i].getPresetName() %></a>
-            <% } %>
-
             <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#keys-panel-<%= i %>"
                     aria-expanded="false">
                 Application Keys
