@@ -228,4 +228,42 @@ module.exports = class CourseController {
         req.flash("success", "User removed from tutorial. However the student is still in the course.");
         res.redirect(getRealUrl('/admin/courses/detail/' + course.name + "/tutorials/detail/" + tutorial.name));
     }
+
+    /**
+     * Get add students to course page
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async courseAddStudentsPage(req: Request, res: Response): Promise<void> {
+        let course: Container = await Container.findOneOrFail({name: req.params.name});
+        if(course.isCourse()) {
+            res.render('pages/admin/courseAddStudents', {course});
+        } else {
+            throw new NotFoundError("Course not found.");
+        }
+    }
+
+    /**
+     * Add students to course
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async courseAddStudents(req: Request, res: Response): Promise<void> {
+        let course: Container = await Container.findOneOrFail({name: req.params.name});
+        if (!course.isCourse()) throw new NotFoundError("Course not found.");
+        let uids: string[]     = req.body.data.split(/\r?\n/);
+        for (let i = 0; i < uids.length; i++) {
+            try {
+                let user: User = await User.findByIdentifierOrFail(uids[i]);
+                await user.addContainer(course);
+                req.flash("success", uids[i] + " added to course.");
+            } catch (e) {
+                req.flash("error", "Failed to find user. [" + e.message + "] for " + uids[i]);
+            }
+        }
+        res.redirect(getRealUrl(`/admin/courses/detail/${course.name}/students/add`));
+    }
+
 };

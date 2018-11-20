@@ -65,7 +65,7 @@ title: container.getName() + " Detail - Admin Dashboard"
 
     <hr/>
     <h4>Students</h4>
-    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create')%>" class="btn btn-primary">Add Students</a>
+    <a href="<%= getRealUrl(`/admin/courses/detail/${container.name}/students/add`) %>" class="btn btn-primary">Add Students</a>
     <br/><br/>
     <table class="table table-light">
         <thead>
