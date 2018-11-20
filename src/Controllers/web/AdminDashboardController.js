@@ -1,28 +1,8 @@
-const User                 = require('../../Models/User');
-const Application          = require('../../Models/Application');
-const ApplicationKey       = require('../../Models/ApplicationKey');
 const Container            = require('../../Models/Container');
 const getRealUrl           = require('../../Util/getRealUrl');
-const isValidGroupName     = require('../../Util/isValidGroupName');
 const flattenFlashMessages = require('../../Util/flattenFlashMessages');
-const config               = require('../../config');
-const NotFoundError        = require('../../Errors/NotFoundError');
 
 module.exports = class AdminDashboardController {
-
-    /**
-     * GET /system
-     * Get systems page
-     * @param req
-     * @param res
-     */
-    static systemPage(req, res) {
-        res.render('pages/admin/system', {
-            getRealUrl,
-            config,
-            ...flattenFlashMessages(req)
-        });
-    }
 
     /**
      * GET /containers

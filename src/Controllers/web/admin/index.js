@@ -9,5 +9,6 @@ module.exports = {
     HomeController: require('./HomeController'),
     UserController: require('./UserController'),
     CourseController: require('./CourseController'),
-    ApplicationController: require('./ApplicationController')
+    ApplicationController: require('./ApplicationController'),
+    SystemController: require('./SystemController')
 };

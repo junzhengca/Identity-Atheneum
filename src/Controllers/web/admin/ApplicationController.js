@@ -78,7 +78,7 @@ module.exports = class ApplicationController {
      */
     static async applicationGenerateKey(req: Request, res: Response): Promise<void> {
         let application: Application = await Application.findOneOrFail({_id: req.body.id});
-        let key                      = await application.generateKey();
+        let key: ApplicationKey      = await application.generateKey();
         res.redirectBackWithSuccess("Key generated with ID " + key._id);
     }
 

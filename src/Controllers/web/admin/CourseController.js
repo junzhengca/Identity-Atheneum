@@ -21,8 +21,8 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async coursesPage(req: Request, res: Response) {
-        let containers = await Container.getAllCourses();
+    static async coursesPage(req: Request, res: Response): Promise<void> {
+        let containers: Container = await Container.getAllCourses();
         res.render('pages/admin/courses', {
             containers
         });
@@ -34,7 +34,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static createCoursePage(req: Request, res: Response) {
+    static createCoursePage(req: Request, res: Response): void {
         res.render('pages/admin/createCourse');
     }
 
@@ -44,19 +44,19 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async createCourse(req: Request, res: Response) {
+    static async createCourse(req: Request, res: Response): Promise<void> {
         if (!req.body.code.match(/^[a-z0-9]+$/)) {
             req.flash("error", "Invalid course code.");
         } else if (!req.body.name) {
             req.flash("error", "Invalid course name.");
         } else {
-            let container = await Container.create("course." + req.body.code, "admin", "admin", "admin", {
+            let container: Container = await Container.create("course." + req.body.code, "admin", "admin", "admin", {
                 _v: 1,
                 _name: req.body.code,
                 _displayName: req.body.name
             });
             req.flash("success", "Container created with ID " + container._id);
-            return res.redirect(getRealUrl('/admin/courses'));
+            res.redirect(getRealUrl('/admin/courses')); return;
         }
         res.redirect(getRealUrl('/admin/courses/create'));
     }
@@ -67,13 +67,13 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async courseDetailPage(req: Request, res: Response) {
-        let container = await Container.findOne({name: req.params.name});
+    static async courseDetailPage(req: Request, res: Response): Promise<void> {
+        let container: Container = await Container.findOne({name: req.params.name});
         if (!container || !container.isCourse()) {
             throw new NotFoundError("Course not found.");
         }
-        let tutorials = await container.getAllTutorials();
-        let students  = await container.getAllStudents();
+        let tutorials: Container[] = await container.getAllTutorials();
+        let students: User[]       = await container.getAllStudents();
         res.render('pages/admin/courseDetail', {
             container,
             tutorials,
@@ -87,8 +87,8 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async updateCourseDetail(req: Request, res: Response) {
-        let container = await Container.findOne({name: req.params.name});
+    static async updateCourseDetail(req: Request, res: Response): Promise<void> {
+        let container: Container = await Container.findOne({name: req.params.name});
         if (container && container.isCourse()) {
             // Update course name
             if (req.body.name) {
@@ -111,8 +111,8 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async courseCreateTutorialPage(req: Request, res: Response) {
-        let container = await Container.findOne({name: req.params.name});
+    static async courseCreateTutorialPage(req: Request, res: Response): Promise<void> {
+        let container: Container = await Container.findOne({name: req.params.name});
         if (container && container.isCourse()) {
             res.render('pages/admin/courseCreateTutorial', {
                 container
@@ -128,16 +128,16 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async courseCreateTutorial(req: Request, res: Response) {
+    static async courseCreateTutorial(req: Request, res: Response): Promise<void> {
         if (!req.body.code.match(/^[a-z0-9]+$/)) {
             req.flash("error", "Invalid tutorial code.");
         } else if (!req.body.name) {
             req.flash("error", "Invalid tutorial name.");
         } else {
-            let container = await Container.findOne({name: req.params.name});
+            let container: Container = await Container.findOne({name: req.params.name});
             if (container && container.isCourse()) {
                 // Create the tutorial container
-                await Container.create(
+                let tutorial: Container = await Container.create(
                     container.name + ".tutorial." + req.body.code,
                     "admin", "admin", "admin",
                     {
@@ -146,8 +146,8 @@ module.exports = class CourseController {
                         _displayName: req.body.name
                     }
                 );
-                req.flash("success", "Container created with ID " + container._id);
-                return res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name));
+                req.flash("success", "Container created with ID " + tutorial._id);
+                res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name)); return;
             } else {
                 throw new NotFoundError("Course not found.");
             }
@@ -160,10 +160,10 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async courseRemoveStudent(req: Request, res: Response) {
-        let course = await Container.findOneOrFail({name: req.params.name});
+    static async courseRemoveStudent(req: Request, res: Response): Promise<void> {
+        let course: Container = await Container.findOneOrFail({name: req.params.name});
         if (!course.isCourse()) throw new NotFoundError("Course not found.");
-        let user = await User.findByIdentifierOrFail(req.body.name);
+        let user: User = await User.findByIdentifierOrFail(req.body.name);
         await user.removeContainerAndAllSubContainers(course);
         req.flash("success", "User removed from course.");
         res.redirect(getRealUrl('/admin/courses/detail/' + course.name));
@@ -174,10 +174,10 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialDetailPage(req: Request, res: Response) {
+    static async tutorialDetailPage(req: Request, res: Response): Promise<void> {
         // First find the course
         let {course, tutorial} = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
-        let students           = await tutorial.getAllStudents();
+        let students: User[]   = await tutorial.getAllStudents();
         res.render('pages/admin/tutorialDetail', {
             course,
             tutorial,
@@ -190,7 +190,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialAddStudentsPage(req: Request, res: Response) {
+    static async tutorialAddStudentsPage(req: Request, res: Response): Promise<void> {
         let {course, tutorial} = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
         res.render('pages/admin/tutorialAddStudents', {course, tutorial});
     }
@@ -200,12 +200,12 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialAddStudents(req: Request, res: Response) {
+    static async tutorialAddStudents(req: Request, res: Response): Promise<void> {
         let {course, tutorial} = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
-        let uids               = req.body.data.split(/\r?\n/);
+        let uids: string[]     = req.body.data.split(/\r?\n/);
         for (let i = 0; i < uids.length; i++) {
             try {
-                let user = await User.findByIdentifierOrFail(uids[i]);
+                let user: User = await User.findByIdentifierOrFail(uids[i]);
                 await user.addContainer(tutorial);
                 await user.addContainer(course);
                 req.flash("success", uids[i] + " added to course and tutorial.");
@@ -221,9 +221,9 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialRemoveStudent(req: Request, res: Response) {
+    static async tutorialRemoveStudent(req: Request, res: Response): Promise<void> {
         let {course, tutorial} = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
-        let user = await User.findByIdentifierOrFail(req.body.name);
+        let user: User         = await User.findByIdentifierOrFail(req.body.name);
         await user.removeContainer(tutorial);
         req.flash("success", "User removed from tutorial. However the student is still in the course.");
         res.redirect(getRealUrl('/admin/courses/detail/' + course.name + "/tutorials/detail/" + tutorial.name));

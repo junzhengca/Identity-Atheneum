@@ -55,7 +55,9 @@ module.exports = (app) => {
             ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudentsPage],
             // Applications
             ["/applications", admin.ApplicationController.applicationsPage],
-            ["/applications/import", admin.ApplicationController.importApplicationPage]
+            ["/applications/import", admin.ApplicationController.importApplicationPage],
+            // System
+            ["/system", admin.SystemController.systemPage]
         ],
         post: [
             // User
@@ -80,8 +82,6 @@ module.exports = (app) => {
 
     adminDashboardRouter.use(require('../Middlewares/adminAuthMiddleware')());
 
-
-    adminDashboardRouter.get("/system", AdminDashboardController.systemPage);
 
     adminDashboardRouter.get("/containers", AdminDashboardController.containersPage);
     adminDashboardRouter.get("/containers/create_container", AdminDashboardController.createContainerPage);
