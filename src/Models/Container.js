@@ -236,7 +236,35 @@ containerSchema.statics.getCourseAndTutorialOrFailById = function (courseContain
  * @returns {Promise<User[]>}
  */
 containerSchema.methods.getAllStudents = async function(fields : ?String = null): Promise<User[]> {
-    return await User.find({groups: {$regex: new RegExp(`^${this.name}$`)}}).select(fields);
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}\.student$`)}}).select(fields);
 };
+
+/**
+ * Get all TAs enrolled in the course
+ * @param fields
+ * @returns {Promise<*>}
+ */
+containerSchema.methods.getAllTAs = async function(fields = null) {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}\.ta$`)}}).select(fields);
+};
+
+/**
+ * Get all instructors enrolled in the course
+ * @param fields
+ * @returns {Promise<*>}
+ */
+containerSchema.methods.getAllInstructors = async function(fields = null) {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}\.instructor$`)}}).select(fields);
+};
+
+/**
+ * Get all users enrolled in the course
+ * @param fields
+ * @returns {Promise<User[]>}
+ */
+containerSchema.methods.getAllUsers = async function(fields : ?String = null): Promise<User[]> {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}.*$`)}}).select(fields);
+};
+
 
 module.exports = mongoose.model('Container', containerSchema);

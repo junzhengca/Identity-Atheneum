@@ -31,12 +31,9 @@ module.exports = class CourseController {
      */
     static async get(req: Request, res: Response): Promise<void> {
         let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) {
-            throw new BadRequestError("Container is not a course.");
-        } else {
-            await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
-            res.send(course);
-        }
+        if (!course.isCourse()) throw new BadRequestError("Container is not a course.");
+        await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
+        res.send(course);
     }
 
     /**
@@ -46,9 +43,7 @@ module.exports = class CourseController {
      */
     static async getStudents(req: Request, res: Response): Promise<void> {
         let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) {
-            throw new BadRequestError("Container is not a course.");
-        }
+        if (!course.isCourse()) throw new BadRequestError("Container is not a course.");
         let users = await course.getAllStudents('-attributes -__v');
         res.send(users);
     }
@@ -60,9 +55,7 @@ module.exports = class CourseController {
      */
     static async getTutorials(req: Request, res: Response): Promise<void> {
         let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) {
-            throw new BadRequestError("Container is not a course.");
-        }
+        if (!course.isCourse()) throw new BadRequestError("Container is not a course.");
         await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
         res.send(course.tutorials);
     }

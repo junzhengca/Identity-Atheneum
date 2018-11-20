@@ -102,6 +102,10 @@ class App<Number> {
 
         this.app.use(flash());
 
+        this.app.locals = {
+            version: require('./Resources/Version')
+        };
+
         // Mount all identity providers within the configuration file
         this.config.identity_providers.forEach(idp => {
             let provider;

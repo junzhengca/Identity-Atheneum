@@ -5,10 +5,12 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
-const Container     = require('../../../Models/Container');
-const User          = require('../../../Models/User');
-const getRealUrl    = require('../../../Util/getRealUrl');
-const NotFoundError = require('../../../Errors/NotFoundError');
+const Container             = require('../../../Models/Container');
+const User                  = require('../../../Models/User');
+const getRealUrl            = require('../../../Util/getRealUrl');
+const NotFoundError         = require('../../../Errors/NotFoundError');
+const csvStringToJsonObject = require('../../../Util/csvStringToJsonObject');
+
 
 /**
  * Controller for Course
@@ -56,7 +58,8 @@ module.exports = class CourseController {
                 _displayName: req.body.name
             });
             req.flash("success", "Container created with ID " + container._id);
-            res.redirect(getRealUrl('/admin/courses')); return;
+            res.redirect(getRealUrl('/admin/courses'));
+            return;
         }
         res.redirect(getRealUrl('/admin/courses/create'));
     }
@@ -73,11 +76,11 @@ module.exports = class CourseController {
             throw new NotFoundError("Course not found.");
         }
         let tutorials: Container[] = await container.getAllTutorials();
-        let students: User[]       = await container.getAllStudents();
+        let users: User[]          = await container.getAllUsers();
         res.render('pages/admin/courseDetail', {
             container,
             tutorials,
-            students
+            users
         });
     }
 
@@ -147,7 +150,8 @@ module.exports = class CourseController {
                     }
                 );
                 req.flash("success", "Container created with ID " + tutorial._id);
-                res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name)); return;
+                res.redirect(getRealUrl('/admin/courses/detail/' + req.params.name));
+                return;
             } else {
                 throw new NotFoundError("Course not found.");
             }
@@ -206,8 +210,8 @@ module.exports = class CourseController {
         for (let i = 0; i < uids.length; i++) {
             try {
                 let user: User = await User.findByIdentifierOrFail(uids[i]);
-                await user.addContainer(tutorial);
-                await user.addContainer(course);
+                await user.addContainer(tutorial, ".student");
+                await user.addContainer(course, ".student");
                 req.flash("success", uids[i] + " added to course and tutorial.");
             } catch (e) {
                 req.flash("error", "Failed to find user. [" + e.message + "] for " + uids[i]);
@@ -224,7 +228,7 @@ module.exports = class CourseController {
     static async tutorialRemoveStudent(req: Request, res: Response): Promise<void> {
         let {course, tutorial} = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
         let user: User         = await User.findByIdentifierOrFail(req.body.name);
-        await user.removeContainer(tutorial);
+        await user.removeContainer(tutorial, ".student");
         req.flash("success", "User removed from tutorial. However the student is still in the course.");
         res.redirect(getRealUrl('/admin/courses/detail/' + course.name + "/tutorials/detail/" + tutorial.name));
     }
@@ -235,10 +239,10 @@ module.exports = class CourseController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async courseAddStudentsPage(req: Request, res: Response): Promise<void> {
+    static async courseAddMembersPage(req: Request, res: Response): Promise<void> {
         let course: Container = await Container.findOneOrFail({name: req.params.name});
-        if(course.isCourse()) {
-            res.render('pages/admin/courseAddStudents', {course});
+        if (course.isCourse()) {
+            res.render('pages/admin/courseAddMembers', {course});
         } else {
             throw new NotFoundError("Course not found.");
         }
@@ -250,20 +254,34 @@ module.exports = class CourseController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async courseAddStudents(req: Request, res: Response): Promise<void> {
-        let course: Container = await Container.findOneOrFail({name: req.params.name});
-        if (!course.isCourse()) throw new NotFoundError("Course not found.");
-        let uids: string[]     = req.body.data.split(/\r?\n/);
-        for (let i = 0; i < uids.length; i++) {
-            try {
-                let user: User = await User.findByIdentifierOrFail(uids[i]);
-                await user.addContainer(course);
-                req.flash("success", uids[i] + " added to course.");
-            } catch (e) {
-                req.flash("error", "Failed to find user. [" + e.message + "] for " + uids[i]);
+    static async courseAddMembers(req: Request, res: Response): Promise<void> {
+        const data = csvStringToJsonObject(req.body.data);
+        data.forEach(member => {
+            console.log(member);
+
+            // Validate the input
+            if(member.role && member.role.match(/^tutorial\..*\.(student|ta|instructor)$/)) {
+
+            } else if (member.role && member.role.match(/^(ta|student|instructor)$/)) {
+
+            } else {
+                req.flash("error", `Failed to add ${member.idp}.${member.username}, ${member.role} is not a valid role.`);
             }
-        }
-        res.redirect(getRealUrl(`/admin/courses/detail/${course.name}/students/add`));
+        });
+        res.redirectBackWithSuccess("Import finished.");
+        // let course: Container = await Container.findOneOrFail({name: req.params.name});
+        // if (!course.isCourse()) throw new NotFoundError("Course not found.");
+        // let uids: string[] = req.body.data.split(/\r?\n/);
+        // for (let i = 0; i < uids.length; i++) {
+        //     try {
+        //         let user: User = await User.findByIdentifierOrFail(uids[i]);
+        //         await user.addContainer(course, ".student");
+        //         req.flash("success", uids[i] + " added to course.");
+        //     } catch (e) {
+        //         req.flash("error", "Failed to find user. [" + e.message + "] for " + uids[i]);
+        //     }
+        // }
+        // res.redirect(getRealUrl(`/admin/courses/detail/${course.name}/students/add`));
     }
 
     /**

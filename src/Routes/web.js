@@ -48,7 +48,7 @@ module.exports = (app) => {
             ["/courses", admin.CourseController.coursesPage],
             ["/courses/create", admin.CourseController.createCoursePage],
             ["/courses/detail/:name", admin.CourseController.courseDetailPage],
-            ["/courses/detail/:name/students/add", admin.CourseController.courseAddStudentsPage],
+            ["/courses/detail/:name/members/add", admin.CourseController.courseAddMembersPage],
             ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorialPage],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name", admin.CourseController.tutorialDetailPage],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name/students/add", admin.CourseController.tutorialAddStudentsPage],
@@ -72,7 +72,7 @@ module.exports = (app) => {
             // Course
             ["/courses/create", admin.CourseController.createCourse],
             ["/courses/detail/:name", admin.CourseController.updateCourseDetail],
-            ["/courses/detail/:name/students/add", admin.CourseController.courseAddStudents],
+            ["/courses/detail/:name/members/add", admin.CourseController.courseAddMembers],
             ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorial],
             ["/courses/detail/:name/students/remove", admin.CourseController.courseRemoveStudent],
             ["/courses/detail/:name/tutorials/detail/:tutorial_name", admin.CourseController.updateTutorialDetail],
