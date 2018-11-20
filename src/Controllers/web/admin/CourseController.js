@@ -255,20 +255,67 @@ module.exports = class CourseController {
      * @returns {Promise<void>}
      */
     static async courseAddMembers(req: Request, res: Response): Promise<void> {
+        let course: Container = await Container.findOneOrFail({name: req.params.name});
+        if(!course.isCourse()) throw new NotFoundError("Course not found.");
+        let log = `Import finished, please see log below for more details.\n${new Date()}\n================================\n`;
         const data = csvStringToJsonObject(req.body.data);
-        data.forEach(member => {
-            console.log(member);
-
-            // Validate the input
+        for(let i = 0; i < data.length; i++) {
+            let member = data[i];
+            if(!member.idp || !member.username || !member.role || !member.ne_behaviour) {
+                log += `Invalid entry at line ${i}, missing required heading(s).\n`; continue;
+            }
+            // Check if an user with that name already exists
+            let user = await User.findOne({idp: member.idp, username: member.username});
+            if(!user) {
+                if(member.ne_behaviour === 'ignore') {
+                    log += `User indicated on line ${i} does not exist. And behaviour is set to ignore, skipping this record.\n`; continue;
+                }
+                user = await User.create(member.idp, member.username, member.password || "", "", "", {});
+                log += `User indicated on line ${i} does not exist, created with ID ${user._id}.\n`;
+            }
             if(member.role && member.role.match(/^tutorial\..*\.(student|ta|instructor)$/)) {
+                // Get tutorial name
+                let tutorialCode = member.role.split(".")[1];
+                // Try to find the tutorial
+                let tutorial: Container = await Container.findOne({name: course.name + ".tutorial." + tutorialCode});
+                if(!tutorial) {
+                    // Create the tutorial container
+                    tutorial = await Container.create(
+                        course.name + ".tutorial." + tutorialCode,
+                        "admin", "admin", "admin",
+                        {
+                            _v: 1,
+                            _name: tutorialCode,
+                            _displayName: tutorialCode
+                        }
+                    );
+                    log += `Tutorial indicated on line ${i} does not exist, created with ID ${tutorial._id}.\n`;
+                }
+                await user.addContainer(course, "." + member.role);
+                log += `Role ${course.name}.${member.role} added for ${user.idp}.${user.username}.\n`;
+                await user.addContainer(course, "." + member.role.split(".")[2]);
+                log += `Role ${course.name}.${member.role.split(".")[2]} added for ${user.idp}.${user.username}.\n`;
 
             } else if (member.role && member.role.match(/^(ta|student|instructor)$/)) {
-
+                await user.addContainer(course, "." + member.role);
+                log += `Role ${course.name}.${member.role} added for ${user.idp}.${user.username}.\n`;
             } else {
-                req.flash("error", `Failed to add ${member.idp}.${member.username}, ${member.role} is not a valid role.`);
+                log += `[ERROR] Role on line ${i} is invalid [${member.role}], skipping this addition.\n`;
             }
-        });
-        res.redirectBackWithSuccess("Import finished.");
+        }
+        // data.forEach((member, key) => {
+        //
+        //     // Validate the input
+        //     if(member.role && member.role.match(/^tutorial\..*\.(student|ta|instructor)$/)) {
+        //
+        //     } else if (member.role && member.role.match(/^(ta|student|instructor)$/)) {
+        //
+        //     } else {
+        //         req.flash("error", `Failed to add ${member.idp}.${member.username}, ${member.role} is not a valid role.`);
+        //     }
+        // });
+        res.header('content-type', 'text/plain');
+        res.send(log);
         // let course: Container = await Container.findOneOrFail({name: req.params.name});
         // if (!course.isCourse()) throw new NotFoundError("Course not found.");
         // let uids: string[] = req.body.data.split(/\r?\n/);
