@@ -91,10 +91,18 @@ module.exports = (app) => {
 
     app.app.use("/admin", adminDashboardRouter);
 
-    // Authentication routes
-    app.app.get("/login", LoginController.loginPage);
-    app.app.get('/login_success', LoginController.loginSuccess);
-    app.app.get('/logout', LogoutController.logout);
-    app.app.get("/session", SessionController.sessionPage);
+
+    let rootRouter = express.Router();
+    applyRoutesToRouter(rootRouter, {
+        middlewares: [],
+        get: [
+            ["/login", LoginController.loginPage],
+            ["/login_success", LoginController.loginSuccess],
+            ["/session", SessionController.sessionPage],
+            ["/logout", LogoutController.logout]
+        ]
+    });
+
+    app.app.use("/", rootRouter);
 };
 

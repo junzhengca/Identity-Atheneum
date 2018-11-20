@@ -54,6 +54,7 @@
     "passport-saml": "^0.35.0",
     "pbkdf2": "^3.0.17",
     "prompt-input": "^3.0.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "validator": "^10.9.0"
   }
 }
