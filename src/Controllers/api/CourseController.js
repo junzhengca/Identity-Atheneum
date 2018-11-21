@@ -101,4 +101,28 @@ module.exports = class CourseController {
         let users = await result.tutorial.getAllStudents('-attributes -__v');
         res.send(users);
     }
+
+    /**
+     * Get all tutorial instructors
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getTutorialTAs(req: Request, res: Response): Promise<void> {
+        let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
+        let users = await result.tutorial.getAllTAs('-attributes -__v');
+        res.send(users);
+    }
+
+    /**
+     * Get all tutorial instructors
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getTutorialInstructors(req: Request, res: Response): Promise<void> {
+        let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
+        let users = await result.tutorial.getAllInstructors('-attributes -__v');
+        res.send(users);
+    }
 };

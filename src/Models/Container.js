@@ -84,6 +84,17 @@ containerSchema.statics.findOneCourseOrFail = async function (filter) {
 };
 
 /**
+ * Get one tutorial or fail
+ * @param filter
+ * @returns {Promise<Container>}
+ */
+containerSchema.statics.findOneTutorialOrFail = async function (filter) {
+    let tutorial = await this.findOneOrFail(filter);
+    if (!tutorial.isTutorial()) throw new BadRequestError("Tutorial not found.");
+    return tutorial;
+};
+
+/**
  * Get a list of courses, populate them with tutorials
  * @param courses
  * @param fields
