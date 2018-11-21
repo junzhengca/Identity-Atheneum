@@ -5,6 +5,8 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
+import type User from '../../Models/User';
+
 const Container       = require('../../Models/Container');
 
 /**
