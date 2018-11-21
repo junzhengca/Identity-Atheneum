@@ -33,39 +33,12 @@ title: container.getName() + " Detail - Admin Dashboard"
         <input type="text" class="form-control" value="<%=container.getDisplayName()%>" name="name"/>
 
         <br/>
-        <button class="btn btn-primary">Save</button>
+        <button class="btn btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
     </form>
 
     <hr/>
-    <h4>Tutorials (<%=tutorials.length%>)</h4>
-    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create')%>" class="btn btn-primary">Create Tutorial</a>
-    <%if(tutorials.length === 0){%><p class="text-muted mt-2">No tutorials yet...</p><%}%>
-    <%for(let i = 0; i < tutorials.length; i++){%>
-    <div class="card mt-2">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5 class="card-title">
-                        <%=tutorials[i].getName()%><br/>
-                        <small class="text-muted"><%=tutorials[i].getDisplayName()%></small>
-                    </h5>
-                    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/detail/' + tutorials[i].name)%>" class="btn btn-primary">Manage</a>
-                    <a href="<%=getRealUrl('/admin/containers/detail/' + tutorials[i].name)%>" class="btn btn-light">View Container</a><br/><br/>
-                </div>
-                <div class="col-md-6">
-                    <b>Version: </b> <%=tutorials[i].getVersion()%>
-                </div>
-                <div class="col-md-12">
-                    <small class="text-muted">Created At <%=tutorials[i].createdAt%></small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <%}%>
-
-    <hr/>
-    <h4>Members</h4>
-    <a href="<%= getRealUrl(`/admin/courses/detail/${container.name}/members/add`) %>" class="btn btn-primary">Add Members</a>
+    <h4><i class="fa fa-user" aria-hidden="true"></i> Members (<%= users.length %>)</h4>
+    <a href="<%= getRealUrl(`/admin/courses/detail/${container.name}/members/add`) %>" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Add Members</a>
     <br/><br/>
     <table class="table table-light">
         <thead>
@@ -91,13 +64,40 @@ title: container.getName() + " Detail - Admin Dashboard"
             <td>
                 <form method="post" action="<%= getRealUrl('/admin/courses/detail/' + container.name + '/students/remove') %>">
                     <input type="hidden" name="name" value="<%= user._id %>" />
-                    <button class="btn btn-outline-danger btn-sm">Remove</button>
+                    <button class="btn btn-outline-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> Remove</button>
                 </form>
             </td>
         </tr>
         <% }) %>
         </tbody>
     </table>
+
+    <hr/>
+    <h4><i class="fa fa-flask" aria-hidden="true"></i> Tutorials (<%=tutorials.length%>)</h4>
+    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create')%>" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Create Tutorial</a>
+    <%if(tutorials.length === 0){%><p class="text-muted mt-2">No tutorials yet...</p><%}%>
+    <%for(let i = 0; i < tutorials.length; i++){%>
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">
+                        <%=tutorials[i].getName()%><br/>
+                        <small class="text-muted"><%=tutorials[i].getDisplayName()%></small>
+                    </h5>
+                    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/detail/' + tutorials[i].name)%>" class="btn btn-outline-primary">Manage</a>
+                    <a href="<%=getRealUrl('/admin/containers/detail/' + tutorials[i].name)%>" class="btn btn-light">View Container</a><br/><br/>
+                </div>
+                <div class="col-md-6">
+                    <b>Version: </b> <%=tutorials[i].getVersion()%>
+                </div>
+                <div class="col-md-12">
+                    <small class="text-muted">Created At <%=tutorials[i].createdAt%></small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%}%>
 
     <% include ../../partials/footer.ejs %>
 </div>

@@ -257,7 +257,7 @@ module.exports = class CourseController {
     static async courseAddMembers(req: Request, res: Response): Promise<void> {
         let course: Container = await Container.findOneOrFail({name: req.params.name});
         if(!course.isCourse()) throw new NotFoundError("Course not found.");
-        let log = `Import finished, please see log below for more details.\n${new Date()}\n================================\n`;
+        let log = `Import finished, please see log below for more details.\n${new Date().toString()}\n================================\n`;
         const data = csvStringToJsonObject(req.body.data);
         for(let i = 0; i < data.length; i++) {
             let member = data[i];
@@ -270,7 +270,7 @@ module.exports = class CourseController {
                 if(member.ne_behaviour === 'ignore') {
                     log += `User indicated on line ${i} does not exist. And behaviour is set to ignore, skipping this record.\n`; continue;
                 }
-                user = await User.create(member.idp, member.username, member.password || "", "", "", {});
+                user = await User.create(member.idp, member.username, member.password || "", "", [], {});
                 log += `User indicated on line ${i} does not exist, created with ID ${user._id}.\n`;
             }
             if(member.role && member.role.match(/^tutorial\..*\.(student|ta|instructor)$/)) {
@@ -303,32 +303,8 @@ module.exports = class CourseController {
                 log += `[ERROR] Role on line ${i} is invalid [${member.role}], skipping this addition.\n`;
             }
         }
-        // data.forEach((member, key) => {
-        //
-        //     // Validate the input
-        //     if(member.role && member.role.match(/^tutorial\..*\.(student|ta|instructor)$/)) {
-        //
-        //     } else if (member.role && member.role.match(/^(ta|student|instructor)$/)) {
-        //
-        //     } else {
-        //         req.flash("error", `Failed to add ${member.idp}.${member.username}, ${member.role} is not a valid role.`);
-        //     }
-        // });
         res.header('content-type', 'text/plain');
         res.send(log);
-        // let course: Container = await Container.findOneOrFail({name: req.params.name});
-        // if (!course.isCourse()) throw new NotFoundError("Course not found.");
-        // let uids: string[] = req.body.data.split(/\r?\n/);
-        // for (let i = 0; i < uids.length; i++) {
-        //     try {
-        //         let user: User = await User.findByIdentifierOrFail(uids[i]);
-        //         await user.addContainer(course, ".student");
-        //         req.flash("success", uids[i] + " added to course.");
-        //     } catch (e) {
-        //         req.flash("error", "Failed to find user. [" + e.message + "] for " + uids[i]);
-        //     }
-        // }
-        // res.redirect(getRealUrl(`/admin/courses/detail/${course.name}/students/add`));
     }
 
     /**
