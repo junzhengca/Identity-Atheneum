@@ -56,6 +56,8 @@ module.exports = (app: App<any>) => {
             ["/courses", CourseController.list],
             ["/courses/:course_id", CourseController.get],
             ["/courses/:course_id/students", CourseController.getStudents],
+            ["/courses/:course_id/tas", CourseController.getTAs],
+            ["/courses/:course_id/instructors", CourseController.getInstructors],
             ["/courses/:course_id/tutorials", CourseController.getTutorials],
             ["/courses/:course_id/tutorials/:tutorial_id", CourseController.getTutorial],
             ["/courses/:course_id/tutorials/:tutorial_id/students", CourseController.getTutorialStudents]

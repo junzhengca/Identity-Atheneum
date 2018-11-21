@@ -1,7 +1,7 @@
 // @flow
-const User = require('./User');
-const mongoose = require('mongoose');
-const isValidMongoID = require('../Util/isValidMongoID');
+const User            = require('./User');
+const mongoose        = require('mongoose');
+const BadRequestError = require('../Errors/BadRequestError');
 
 const containerSchema = new mongoose.Schema({
     name: String,
@@ -70,6 +70,17 @@ containerSchema.statics.getAllCourses = function (fields = null) {
     return this.find({
         name: {$regex: /^course\.((?!\.).)*$/}
     }).select(fields).exec();
+};
+
+/**
+ * Get one course or fail
+ * @param filter
+ * @returns {Promise<Container>}
+ */
+containerSchema.statics.findOneCourseOrFail = async function (filter) {
+    let course = await this.findOneOrFail(filter);
+    if (!course.isCourse()) throw new BadRequestError("Course not found.");
+    return course;
 };
 
 /**
@@ -235,7 +246,7 @@ containerSchema.statics.getCourseAndTutorialOrFailById = function (courseContain
  * @param fields
  * @returns {Promise<User[]>}
  */
-containerSchema.methods.getAllStudents = async function(fields : ?String = null): Promise<User[]> {
+containerSchema.methods.getAllStudents = async function (fields: ?String = null): Promise<User[]> {
     return await User.find({groups: {$regex: new RegExp(`^${this.name}\.student$`)}}).select(fields);
 };
 
@@ -244,7 +255,7 @@ containerSchema.methods.getAllStudents = async function(fields : ?String = null)
  * @param fields
  * @returns {Promise<*>}
  */
-containerSchema.methods.getAllTAs = async function(fields = null) {
+containerSchema.methods.getAllTAs = async function (fields = null) {
     return await User.find({groups: {$regex: new RegExp(`^${this.name}\.ta$`)}}).select(fields);
 };
 
@@ -253,7 +264,7 @@ containerSchema.methods.getAllTAs = async function(fields = null) {
  * @param fields
  * @returns {Promise<*>}
  */
-containerSchema.methods.getAllInstructors = async function(fields = null) {
+containerSchema.methods.getAllInstructors = async function (fields = null) {
     return await User.find({groups: {$regex: new RegExp(`^${this.name}\.instructor$`)}}).select(fields);
 };
 
@@ -262,7 +273,7 @@ containerSchema.methods.getAllInstructors = async function(fields = null) {
  * @param fields
  * @returns {Promise<User[]>}
  */
-containerSchema.methods.getAllUsers = async function(fields : ?String = null): Promise<User[]> {
+containerSchema.methods.getAllUsers = async function (fields: ?String = null): Promise<User[]> {
     return await User.find({groups: {$regex: new RegExp(`^${this.name}.*$`)}}).select(fields);
 };
 

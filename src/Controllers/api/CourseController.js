@@ -30,8 +30,7 @@ module.exports = class CourseController {
      * @param res
      */
     static async get(req: Request, res: Response): Promise<void> {
-        let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) throw new BadRequestError("Container is not a course.");
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
         await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
         res.send(course);
     }
@@ -42,9 +41,32 @@ module.exports = class CourseController {
      * @param res
      */
     static async getStudents(req: Request, res: Response): Promise<void> {
-        let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) throw new BadRequestError("Container is not a course.");
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
         let users = await course.getAllStudents('-attributes -__v');
+        res.send(users);
+    }
+
+    /**
+     * Get a list of TAs enrolled within the course
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getTAs(req: Request, res: Response): Promise<void> {
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
+        let users = await course.getAllTAs('-attributes -__v');
+        res.send(users);
+    }
+
+    /**
+     * Get a list of instructors enrolled within the course
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getInstructors(req: Request, res: Response): Promise<void> {
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
+        let users = await course.getAllInstructors('-attributes -__v');
         res.send(users);
     }
 
@@ -54,8 +76,7 @@ module.exports = class CourseController {
      * @param res
      */
     static async getTutorials(req: Request, res: Response): Promise<void> {
-        let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) throw new BadRequestError("Container is not a course.");
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
         await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
         res.send(course.tutorials);
     }
