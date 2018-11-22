@@ -70,19 +70,17 @@ class LoginController {
                         });
                         token.save()
                             .then(token => {
-                                res.render('pages/delayedRedirection', {
-                                    url: app.assertionEndpoint + "?token=" + token.tokenBody
-                                });
+                                res.redirect(app.assertionEndpoint + "?token=" + token.tokenBody);
                             });
                     } else {
                         // Redirect to session page
-                        res.render('pages/delayedRedirection', {url: getRealUrl('/session')});
+                        res.redirect(getRealUrl('/session'));
                     }
                 });
             req.session.applicationId = null;
         } else {
             // Redirect to session page
-            res.render('pages/delayedRedirection', {url: getRealUrl('/session')});
+            res.redirect(getRealUrl('/session'));
         }
     }
 }
