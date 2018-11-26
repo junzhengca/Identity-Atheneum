@@ -69,7 +69,9 @@ class LoginController {
                             applicationId: app._id
                         });
                         token.save()
-                            .then(token => res.redirect(app.assertionEndpoint + "?token=" + token.tokenBody));
+                            .then(token => {
+                                res.redirect(app.assertionEndpoint + "?token=" + token.tokenBody);
+                            });
                     } else {
                         // Redirect to session page
                         res.redirect(getRealUrl('/session'));

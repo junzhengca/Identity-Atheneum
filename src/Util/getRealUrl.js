@@ -1,5 +1,11 @@
-const config = require('../config');
+// @flow
 
-module.exports = function(url) {
-    return config.host_root + url;
+/**
+ * Returns the real absolute URL
+ * @param url
+ * @param _config
+ * @returns {*}
+ */
+module.exports = function(url: string, _config: any = null): string {
+    return (_config || require('../config')).host_root + url;
 };

@@ -1,0 +1,59 @@
+<%- include('../../partials/header.ejs', {
+title: "Add Students " + course.getName() + " - Admin Dashboard"
+}) %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/courses') %>">Courses</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl(`/admin/courses/detail/${course.name}`) %>"><%= course.getName() %></a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add Members</li>
+        </ol>
+    </nav>
+
+    <h2><%= course.getName() %> - Add Members</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <label>
+        Please choose a CSV file to import. Format can be found <a href="https://github.com/junthehacker/Identity-Atheneum/wiki/Course-Member-Import-CSV-Format" target="_blank">here <i class="fa fa-external-link" aria-hidden="true"></i>
+        </a>.
+    </label>
+    <br/>
+
+    <input type="file" id="csvinput" />
+
+    <hr/>
+    <form method="post" id="student-form">
+        <input type="hidden" id="members-input-hidden" name="data" />
+        <label id="read-state-label">You must choose a file.</label>
+        <br/>
+        <button class="btn btn-primary" disabled id="submit-button" onclick="submitForm();">Add</button>
+    </form>
+
+    <% include ../../partials/footer.ejs %>
+</div>
+
+<script>
+
+
+    function readCsvFile(evt) {
+        var f = evt.target.files[0];
+        if (f) {
+            var r = new FileReader();
+            r.readAsText(f);
+            r.onloadend = function() {
+                $("#read-state-label").html(r.result.split("\n").length + " lines read.");
+                $("#submit-button").attr('disabled', false);
+                $("#members-input-hidden").val(r.result);
+            };
+        } else {
+            alert("Failed to load file");
+        }
+    }
+
+    document.getElementById('csvinput').addEventListener('change', readCsvFile, false);
+</script>

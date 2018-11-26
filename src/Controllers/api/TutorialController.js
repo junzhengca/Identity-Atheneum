@@ -5,7 +5,8 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
-const BadRequestError = require('../../Errors/BadRequestError');
+import type User from '../../Models/User';
+
 const Container       = require('../../Models/Container');
 
 /**
@@ -19,7 +20,7 @@ module.exports = class TutorialController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async list(req: Request, res: express$Response) {
+    static async list(req: Request, res: Response): Promise<void> {
         let courses = await Container.getAllCourses('_id name content._name content._displayName tutorials');
         await Container.populateCoursesWithTutorials(courses, "_id name content._name content._displayName");
         let tutorials = [];
@@ -35,11 +36,45 @@ module.exports = class TutorialController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async get(req: Request, res: express$Response) {
-        let tutorial = await Container.findOneOrFail({_id: req.params.tutorial_id});
-        if (!tutorial.isTutorial()) {
-            throw new BadRequestError("Container is not a tutorial.");
-        }
+    static async get(req: Request, res: Response): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
         res.send(tutorial);
     }
+
+    /**
+     * Get all students within a tutorial
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getStudents(req: Request, res: Response): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
+        let users: User[] = await tutorial.getAllStudents();
+        res.send(users);
+    }
+
+    /**
+     * Get all TAs within a tutorial
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getTAs(req: Request, res: Response): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
+        let users: User[] = await tutorial.getAllTAs();
+        res.send(users);
+    }
+
+    /**
+     * Get all TAs within a tutorial
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getInstructors(req: Request, res: Response): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
+        let users: User[] = await tutorial.getAllInstructors();
+        res.send(users);
+    }
+
 };

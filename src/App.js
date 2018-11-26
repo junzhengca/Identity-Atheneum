@@ -102,6 +102,10 @@ class App<Number> {
 
         this.app.use(flash());
 
+        this.app.locals = {
+            version: require('./Resources/Version')
+        };
+
         // Mount all identity providers within the configuration file
         this.config.identity_providers.forEach(idp => {
             let provider;
@@ -148,7 +152,7 @@ class App<Number> {
 |\\  \\    |\\   __  \\        
 \\ \\  \\   \\ \\  \\|\\  \\       
  \\ \\  \\   \\ \\   __  \\      
-  \\ \\  \\ __\\ \\  \\ \\  \\ ___    Build ${Version.buildNumber}
+  \\ \\  \\ __\\ \\  \\ \\  \\ ___    Build ${Version.buildNumber} [${process.env.NODE_ENV || 'dvelopment'}]
    \\ \\__\\\\__\\ \\__\\ \\__\\\\__\\   ${Version.versionCode}
     \\|__\\|__|\\|__|\\|__\\|__|   ${Version.versionName}
     `.bold.red)

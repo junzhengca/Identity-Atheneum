@@ -15,19 +15,19 @@
  */
 module.exports = function (router, routes) {
     // Apply all get routes
-    routes.get.forEach(route => {
+    (routes.get || []).forEach(route => {
         router.get(route[0], __concatMiddlewaresWithHandlers(routes.middlewares, route));
     });
     // Apply all post routes
-    routes.get.forEach(route => {
+    (routes.post || []).forEach(route => {
         router.post(route[0], __concatMiddlewaresWithHandlers(routes.middlewares, route));
     });
     // Apply all put routes
-    routes.get.forEach(route => {
+    (routes.put || []).forEach(route => {
         router.put(route[0], __concatMiddlewaresWithHandlers(routes.middlewares, route));
     });
     // Apply all delete routes
-    routes.get.forEach(route => {
+    (routes.delete || []).forEach(route => {
         router.delete(route[0], __concatMiddlewaresWithHandlers(routes.middlewares, route));
     });
 };

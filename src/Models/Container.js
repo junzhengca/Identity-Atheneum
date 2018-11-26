@@ -1,13 +1,14 @@
-const User = require('./User');
-const mongoose = require('mongoose');
-const isValidMongoID = require('../Util/isValidMongoID');
+// @flow
+const User            = require('./User');
+const mongoose        = require('mongoose');
+const BadRequestError = require('../Errors/BadRequestError');
 
 const containerSchema = new mongoose.Schema({
     name: String,
     writeGroups: String,
     readGroups: String,
     deleteGroups: String,
-    content: mongoose.SchemaTypes.Mixed,
+    content: mongoose.Schema.Types.Mixed,
 }, {
     timestamps: true,
     toObject: {
@@ -69,6 +70,28 @@ containerSchema.statics.getAllCourses = function (fields = null) {
     return this.find({
         name: {$regex: /^course\.((?!\.).)*$/}
     }).select(fields).exec();
+};
+
+/**
+ * Get one course or fail
+ * @param filter
+ * @returns {Promise<Container>}
+ */
+containerSchema.statics.findOneCourseOrFail = async function (filter) {
+    let course = await this.findOneOrFail(filter);
+    if (!course.isCourse()) throw new BadRequestError("Course not found.");
+    return course;
+};
+
+/**
+ * Get one tutorial or fail
+ * @param filter
+ * @returns {Promise<Container>}
+ */
+containerSchema.statics.findOneTutorialOrFail = async function (filter) {
+    let tutorial = await this.findOneOrFail(filter);
+    if (!tutorial.isTutorial()) throw new BadRequestError("Tutorial not found.");
+    return tutorial;
 };
 
 /**
@@ -154,30 +177,6 @@ containerSchema.methods.getAllTutorials = function (fields = null) {
 };
 
 /**
- * Get one tutorial or fail
- * @param tutorialId
- * @param fields
- * @returns {Promise<any>}
- */
-containerSchema.methods.getTutorialOrFail = function(tutorialId, fields = null) {
-    return new Promise((resolve, reject) => {
-        let result;
-        this.getAllTutorials(fields)
-            .then(tutorials => {
-                tutorials.some(tutorial => {
-                    if(tutorial._id.toString() === tutorialId) {
-                        result = tutorial;
-                        return true;
-                    }
-                })
-                if(result) resolve(tutorial);
-                else throw new Error("Tutorial not found.");
-            })
-            .catch(e => reject(e));
-    });
-};
-
-/**
  * Get a tutorial by course container name and tutorial container name
  * Make sure they match and resolve the tutorial container
  * @param courseContainerName
@@ -254,19 +253,40 @@ containerSchema.statics.getCourseAndTutorialOrFailById = function (courseContain
 };
 
 /**
- * Fetch all users that have access to this container
+ * Get all students enrolled in the course
  * @param fields
- * @returns {Promise<any>}
+ * @returns {Promise<User[]>}
  */
-containerSchema.methods.getAllUsers = function (fields = null) {
-    return new Promise((resolve, reject) => {
-        User.find({groups: {$regex: new RegExp(this.name)}})
-            .select(fields)
-            .then(users => {
-                resolve(users);
-            })
-            .catch(e => reject(e));
-    })
+containerSchema.methods.getAllStudents = async function (fields: ?String = null): Promise<User[]> {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}\.student$`)}}).select(fields);
 };
+
+/**
+ * Get all TAs enrolled in the course
+ * @param fields
+ * @returns {Promise<*>}
+ */
+containerSchema.methods.getAllTAs = async function (fields = null) {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}\.ta$`)}}).select(fields);
+};
+
+/**
+ * Get all instructors enrolled in the course
+ * @param fields
+ * @returns {Promise<*>}
+ */
+containerSchema.methods.getAllInstructors = async function (fields = null) {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}\.instructor$`)}}).select(fields);
+};
+
+/**
+ * Get all users enrolled in the course
+ * @param fields
+ * @returns {Promise<User[]>}
+ */
+containerSchema.methods.getAllUsers = async function (fields: ?String = null): Promise<User[]> {
+    return await User.find({groups: {$regex: new RegExp(`^${this.name}.*$`)}}).select(fields);
+};
+
 
 module.exports = mongoose.model('Container', containerSchema);

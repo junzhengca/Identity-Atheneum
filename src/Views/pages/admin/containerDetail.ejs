@@ -20,25 +20,26 @@ title: "Container Detail - Admin Dashboard"
 
     <hr/>
     <h4>Permissions</h4>
-    <label>
-        Read Groups<br/>
-        <small class="text-muted">Groups that can read this container. (Regex)</small>
-    </label>
-    <input type="text" class="form-control" value="<%= container.readGroups %>"/>
-    <label class="mt-2">
-        Write Groups<br/>
-        <small class="text-muted">Groups that can write to this container. (Regex)</small>
-    </label>
-    <input type="text" class="form-control" value="<%= container.writeGroups %>"/>
-    <label class="mt-2">
-        Delete Groups<br/>
-        <small class="text-muted">Groups that can delete from this container. (Regex)</small>
-    </label>
-    <input type="text" class="form-control" value="<%= container.deleteGroups %>"/>
+    <form method="post">
+        <label>
+            Read Groups<br/>
+            <small class="text-muted">Groups that can read this container. (Regex)</small>
+        </label>
+        <input type="text" name="readGroups" class="form-control" value="<%= container.readGroups %>"/>
+        <label class="mt-2">
+            Write Groups<br/>
+            <small class="text-muted">Groups that can write to this container. (Regex)</small>
+        </label>
+        <input type="text" name="writeGroups" class="form-control" value="<%= container.writeGroups %>"/>
+        <label class="mt-2">
+            Delete Groups<br/>
+            <small class="text-muted">Groups that can delete from this container. (Regex)</small>
+        </label>
+        <input type="text" name="deleteGroups" class="form-control" value="<%= container.deleteGroups %>"/>
 
-    <br/>
-    <button class="btn btn-primary">Save</button>
-
+        <br/>
+        <button class="btn btn-primary">Save</button>
+    </form>
     <br/><br/>
     <h4>Data</h4>
 

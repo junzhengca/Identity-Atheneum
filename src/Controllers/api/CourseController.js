@@ -8,7 +8,6 @@
 const Container       = require('../../Models/Container');
 const BadRequestError = require('../../Errors/BadRequestError');
 
-
 /**
  * Controller instance, mostly static
  * @type {module.CourseController}
@@ -19,7 +18,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async list(req: Request, res: express$Response) {
+    static async list(req: Request, res: Response): Promise<void> {
         let courses = await Container.getAllCourses('_id name content._name content._displayName tutorials');
         await Container.populateCoursesWithTutorials(courses, "_id name content._name content._displayName");
         res.send(courses);
@@ -30,14 +29,10 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async get(req: Request, res: express$Response) {
-        let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) {
-            throw new BadRequestError("Container is not a course.");
-        } else {
-            await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
-            res.send(course);
-        }
+    static async get(req: Request, res: Response): Promise<void> {
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
+        await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
+        res.send(course);
     }
 
     /**
@@ -45,12 +40,33 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async getStudents(req: Request, res: express$Response) {
-        let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) {
-            throw new BadRequestError("Container is not a course.");
-        }
-        let users = await course.getAllUsers('-attributes -__v');
+    static async getStudents(req: Request, res: Response): Promise<void> {
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
+        let users = await course.getAllStudents('-attributes -__v');
+        res.send(users);
+    }
+
+    /**
+     * Get a list of TAs enrolled within the course
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getTAs(req: Request, res: Response): Promise<void> {
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
+        let users = await course.getAllTAs('-attributes -__v');
+        res.send(users);
+    }
+
+    /**
+     * Get a list of instructors enrolled within the course
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getInstructors(req: Request, res: Response): Promise<void> {
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
+        let users = await course.getAllInstructors('-attributes -__v');
         res.send(users);
     }
 
@@ -58,13 +74,9 @@ module.exports = class CourseController {
      * Get tutorials with in the course
      * @param req
      * @param res
-     * @param next
      */
-    static async getTutorials(req: Request, res: express$Response, next: express$NextFunction) {
-        let course = await Container.findOneOrFail({_id: req.params.course_id});
-        if (!course.isCourse()) {
-            throw new BadRequestError("Container is not a course.");
-        }
+    static async getTutorials(req: Request, res: Response): Promise<void> {
+        let course = await Container.findOneCourseOrFail({_id: req.params.course_id});
         await Container.populateCoursesWithTutorials([course], "_id name content._name content._displayName");
         res.send(course.tutorials);
     }
@@ -73,9 +85,8 @@ module.exports = class CourseController {
      * Get tutorial detail
      * @param req
      * @param res
-     * @param next
      */
-    static async getTutorial(req: Request, res: express$Response, next: express$NextFunction) {
+    static async getTutorial(req: Request, res: Response): Promise<void> {
         let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
         res.send(result.tutorial);
     }
@@ -84,11 +95,34 @@ module.exports = class CourseController {
      * Get all tutorial students
      * @param req
      * @param res
-     * @param next
      */
-    static async getTutorialStudents(req: Request, res: express$Response, next: express$NextFunction) {
+    static async getTutorialStudents(req: Request, res: Response): Promise<void> {
         let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
-        let users = await result.tutorial.getAllUsers('-attributes -__v');
+        let users = await result.tutorial.getAllStudents('-attributes -__v');
+        res.send(users);
+    }
+
+    /**
+     * Get all tutorial instructors
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getTutorialTAs(req: Request, res: Response): Promise<void> {
+        let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
+        let users = await result.tutorial.getAllTAs('-attributes -__v');
+        res.send(users);
+    }
+
+    /**
+     * Get all tutorial instructors
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async getTutorialInstructors(req: Request, res: Response): Promise<void> {
+        let result = await Container.getCourseAndTutorialOrFailById(req.params.course_id, req.params.tutorial_id);
+        let users = await result.tutorial.getAllInstructors('-attributes -__v');
         res.send(users);
     }
 };

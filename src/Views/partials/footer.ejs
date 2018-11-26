@@ -1,6 +1,10 @@
 <footer>
     <hr class="md-3"/>
-    <small>Identity Atheneum | Dandelion v0.2 Build 0059</small>
+    <small>Identity Atheneum | Dandelion <%= version.versionCode %> <%= process.env.BUILD %> [<%= process.env.NODE_ENV %>]</small>
+    <% if(version.isEdge) { %>
+        <br/>
+        <small>⚠️ You are running an edge release. Some features might not be stable.</small>
+    <% } %>
     <br><br>
 </footer>
 

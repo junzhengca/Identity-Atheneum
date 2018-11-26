@@ -52,13 +52,20 @@ module.exports = (app: App<any>) => {
             // Tutorial
             ["/tutorials", TutorialController.list],
             ["/tutorials/:tutorial_id", TutorialController.get],
+            ["/tutorials/:tutorial_id/students", TutorialController.getStudents],
+            ["/tutorials/:tutorial_id/tas", TutorialController.getTAs],
+            ["/tutorials/:tutorial_id/instructors", TutorialController.getInstructors],
             // Course
             ["/courses", CourseController.list],
             ["/courses/:course_id", CourseController.get],
             ["/courses/:course_id/students", CourseController.getStudents],
+            ["/courses/:course_id/tas", CourseController.getTAs],
+            ["/courses/:course_id/instructors", CourseController.getInstructors],
             ["/courses/:course_id/tutorials", CourseController.getTutorials],
             ["/courses/:course_id/tutorials/:tutorial_id", CourseController.getTutorial],
-            ["/courses/:course_id/tutorials/:tutorial_id/students", CourseController.getTutorialStudents]
+            ["/courses/:course_id/tutorials/:tutorial_id/students", CourseController.getTutorialStudents],
+            ["/courses/:course_id/tutorials/:tutorial_id/tas", CourseController.getTutorialTAs],
+            ["/courses/:course_id/tutorials/:tutorial_id/instructors", CourseController.getTutorialInstructors]
         ]
     });
 

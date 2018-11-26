@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "development": "BUILD=`git rev-parse --short HEAD` flow-node ./src",
+    "development": "NODE_ENV=development BUILD=`git rev-parse --short HEAD` flow-node ./src",
     "production": "NODE_ENV=production BUILD=`git rev-parse --short HEAD` node ./lib",
     "test:coverage": "nyc mocha",
     "test": "flow-remove-types ./src/ -d ./lib/ --all --pretty && mocha",
@@ -43,6 +43,7 @@
     "connect-flash": "^0.1.1",
     "connect-redis": "^3.4.0",
     "cookie-parser": "^1.4.3",
+    "csv-string": "^3.1.5",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
@@ -54,6 +55,7 @@
     "passport-saml": "^0.35.0",
     "pbkdf2": "^3.0.17",
     "prompt-input": "^3.0.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "validator": "^10.9.0"
   }
 }

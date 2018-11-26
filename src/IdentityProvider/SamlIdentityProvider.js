@@ -21,7 +21,8 @@ class SamlIdentityProvider extends IdentityProvider {
                 privateCert: fs.readFileSync(this.config.config.private_key, 'utf8'),
                 decryptionPvk: fs.readFileSync(this.config.config.private_key, 'utf8'),
                 identifierFormat: this.config.config.identifier_format,
-                acceptedClockSkewMs: 180
+                acceptedClockSkewMs: 180,
+                forceAuthn: true
             },
             (profile, done) => {
                 // Ensure a user with nameID exist within the database

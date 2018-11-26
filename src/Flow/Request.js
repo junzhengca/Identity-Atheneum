@@ -3,9 +3,11 @@ declare class Request extends http$IncomingMessage mixins express$RequestRespons
     application: Mongoose$Document;
     isSecret: boolean;
     user: any;
+    flash: (string, string) => void;
+    logout: () => void;
     // Directly fetched from flow-typed
     baseUrl: string;
-    body: mixed;
+    body: any;
     cookies: { [cookie: string]: string };
     connection: Socket;
     fresh: boolean;
