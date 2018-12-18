@@ -9,7 +9,7 @@
     "test:coverage": "nyc mocha",
     "test": "flow-remove-types ./src/ -d ./lib/ --all --pretty && mocha",
     "flow": "flow",
-    "flow:check": "flow check ./src/",
+    "flow:check": "flow check src",
     "flow:build": "flow-remove-types ./src/ -d ./lib/ --all --pretty",
     "flow:deps": "flow-typed install",
     "flow:coverage": "flow-coverage-report --config .flowcoverage.json",

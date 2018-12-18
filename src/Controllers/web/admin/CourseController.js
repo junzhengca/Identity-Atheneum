@@ -47,14 +47,15 @@ module.exports = class CourseController {
      * @param res
      */
     static async createCourse(req: Request, res: Response): Promise<void> {
-        if (!req.body.code.match(/^[a-z0-9]+$/)) {
+        let courseCode = req.body.code.toLowerCase();
+        if (!courseCode.match(/^[a-z0-9]+$/)) {
             req.flash("error", "Invalid course code.");
         } else if (!req.body.name) {
             req.flash("error", "Invalid course name.");
         } else {
-            let container: Container = await Container.create("course." + req.body.code, "admin", "admin", "admin", {
+            let container: Container = await Container.create("course." + courseCode, "admin", "admin", "admin", {
                 _v: 1,
-                _name: req.body.code,
+                _name: courseCode,
                 _displayName: req.body.name
             });
             req.flash("success", "Container created with ID " + container._id);
