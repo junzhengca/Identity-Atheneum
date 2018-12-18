@@ -16,12 +16,23 @@ module.exports = class HomeController {
      * Render home page
      * @param req
      * @param res
+     * @returns {Promise<void>}
      */
     static async homePage(req: Request, res: Response) {
-        let users = await User.find({});
         res.render('pages/admin/home', {
-            title: "Admin Dashboard",
-            users
+            title: "Admin Dashboard"
+        });
+    }
+
+    /**
+     * Render advanced home page
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async homeAdvancedPage(req: Request, res: Response) {
+        res.render('pages/admin/homeAdvanced', {
+            title: "Advanced Options"
         });
     }
 };

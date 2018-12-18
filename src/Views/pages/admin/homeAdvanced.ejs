@@ -1,0 +1,50 @@
+<% include ../../partials/header.ejs %>
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Advanced Options</li>
+        </ol>
+    </nav>
+    <h2>Advanced Options</h2>
+    <hr/>
+    <p>Please choose one of the following:</p>
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card" style="width: 100%; margin: 5px;">
+                <div class="card-body">
+                    <h5 class="card-title">Containers</h5>
+                    <p class="card-text">
+                        Manage all storage containers within the system. This is an advanced feature, you can break things here.
+                    </p>
+                    <a href="<%= getRealUrl('/admin/containers') %>" class="btn btn-primary">Manage Containers</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card" style="width: 100%; margin: 5px;">
+                <div class="card-body">
+                    <h5 class="card-title">Applications</h5>
+                    <p class="card-text">
+                        Manage registered developer applications.
+                    </p>
+                    <a href="<%= getRealUrl('/admin/applications') %>" class="btn btn-primary">Manage Applications</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card" style="width: 100%; margin: 5px;">
+                <div class="card-body">
+                    <h5 class="card-title">System</h5>
+                    <p class="card-text">
+                        Check system status and configurations.
+                    </p>
+                    <a href="<%= getRealUrl('/admin/system') %>" class="btn btn-primary">Manage System</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% include ../../partials/footer.ejs %>
+</div>

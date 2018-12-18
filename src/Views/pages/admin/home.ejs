@@ -8,11 +8,10 @@
         </ol>
     </nav>
     <h2>Admin Dashboard</h2>
-    <a href="<%= getRealUrl('/logout') %>">
-        <button class="btn btn-danger">Logout</button>
-    </a>
+    <a href="<%= getRealUrl('/logout') %>" class="btn btn-danger">Logout</a>
+    <a href="<%= getRealUrl('/admin/advanced') %>" class="btn btn-link">Advanced Options</a>
     <hr/>
-    <h4 class="text-muted" style="font-weight: 100;">Please choose one option...</h4>
+    <p>Please choose one of the following:</p>
     <div class="row">
         <div class="col-md-6 d-flex align-items-stretch">
             <div class="card" style="width: 100%; margin: 5px;">
@@ -35,41 +34,7 @@
                     </p>
                     <a href="<%= getRealUrl('/admin/courses') %>" class="btn btn-primary">Manage Courses</a>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 d-flex align-items-stretch">
-            <div class="card" style="width: 100%; margin: 5px;">
-                <div class="card-body">
-                    <h5 class="card-title">Containers</h5>
-                    <p class="card-text">
-                        Manage all storage containers within the system. This is an advanced feature, you can break things here.
-                    </p>
-                    <a href="<%= getRealUrl('/admin/containers') %>" class="btn btn-primary">Manage Containers</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 d-flex align-items-stretch">
-            <div class="card" style="width: 100%; margin: 5px;">
-                <div class="card-body">
-                    <h5 class="card-title">Applications</h5>
-                    <p class="card-text">
-                        Manage registered developer applications.
-                    </p>
-                    <a href="<%= getRealUrl('/admin/applications') %>" class="btn btn-primary">Manage Applications</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 d-flex align-items-stretch">
-            <div class="card" style="width: 100%; margin: 5px;">
-                <div class="card-body">
-                    <h5 class="card-title">System</h5>
-                    <p class="card-text">
-                        Check system status and configurations.
-                    </p>
-                    <a href="<%= getRealUrl('/admin/system') %>" class="btn btn-primary">Manage System</a>
-                </div>
-            </div>
+             </div>
         </div>
     </div>
     <% include ../../partials/footer.ejs %>

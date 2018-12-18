@@ -41,6 +41,7 @@ module.exports = (app) => {
         middlewares: [require('../Middlewares/adminAuthMiddleware')()],
         get: [
             ["/", admin.HomeController.homePage],
+            ["/advanced", admin.HomeController.homeAdvancedPage],
             // User
             ["/users", admin.UserController.usersPage],
             ["/users/create_users", admin.UserController.createNewUsersPage],
