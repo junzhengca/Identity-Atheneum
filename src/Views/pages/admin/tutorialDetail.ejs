@@ -28,7 +28,7 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
         </label>
         <input type="text" class="form-control" value="<%=tutorial.name%>" disabled/>
         <label class="mt-2">
-            Course Name<br/>
+            Tutorial Name<br/>
             <small class="text-muted">Display name for the tutorial.</small>
         </label>
         <input type="text" class="form-control" value="<%=tutorial.getDisplayName()%>" name="name"/>
@@ -44,18 +44,18 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
     <table class="table table-light">
         <thead>
         <tr>
-            <th scope="col">ID</th>
             <th scope="col">Username</th>
-            <th scope="col">Identity Provider</th>
+            <th scope="col">Misc Info</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
         <% for(let i = 0; i < students.length; i++){ %>
         <tr>
-            <th scope="row"><%= students[i]._id %></th>
-            <td><%= students[i].username %></td>
-            <td><%= students[i].idp %></td>
+            <th scope="row"><%= students[i].username %></th>
+            <td class="text-muted">
+                <%= students[i]._id %>@<%= students[i].idp %>
+            </td>
             <td>
                 <form method="post" action="<%= getRealUrl('/admin/courses/detail/' + course.name + '/tutorials/detail/' + tutorial.name + '/students/remove') %>">
                     <input type="hidden" name="name" value="<%=students[i]._id%>" />
@@ -66,6 +66,15 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
         <% } %>
         </tbody>
     </table>
+
+    <br/>
+    <h4>Danger Zone</h4>
+    <div class="alert alert-danger" role="alert">
+        Once a tutorial is deleted, all data will be lost, you can't recover it, and all user role associations will be removed.
+    </div>
+    <form action="<%= getRealUrl('/admin/courses/detail/' + course.name + '/tutorials/detail/' + tutorial.name + '/delete') %>" method="post">
+        <button class="btn btn-danger">Delete Tutorial</button>
+    </form>
 
     <% include ../../partials/footer.ejs %>
 </div>

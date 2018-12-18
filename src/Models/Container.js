@@ -1,7 +1,9 @@
 // @flow
-const User            = require('./User');
-const mongoose        = require('mongoose');
-const BadRequestError = require('../Errors/BadRequestError');
+const User                   = require('./User');
+const mongoose               = require('mongoose');
+const BadRequestError        = require('../Errors/BadRequestError');
+const asyncForEach           = require('../Util/asyncForEach');
+const removeFromArrayByRegex = require('../Util/removeFromArrayByRegex');
 
 const containerSchema = new mongoose.Schema({
     name: String,
@@ -24,6 +26,15 @@ containerSchema.virtual('tutorials').get(function () {
 }).set(function (v) {
     this._tutorials = v;
 });
+
+containerSchema.virtual('courseName').get(function () {
+    return this.getName();
+});
+
+containerSchema.virtual('courseDisplayName').get(function () {
+    return this.getDisplayName();
+});
+
 
 /**
  * Create a new container
@@ -53,14 +64,6 @@ containerSchema.statics.create = function (name, readGroups, writeGroups, delete
             .catch(e => reject(e));
     })
 };
-
-containerSchema.virtual('courseName').get(function () {
-    return this.getName();
-});
-
-containerSchema.virtual('courseDisplayName').get(function () {
-    return this.getDisplayName();
-});
 
 /**
  * Fetch all containers starts with course.
@@ -288,5 +291,22 @@ containerSchema.methods.getAllUsers = async function (fields: ?String = null): P
     return await User.find({groups: {$regex: new RegExp(`^${this.name}.*$`)}}).select(fields);
 };
 
+
+/**
+ * Remove the container and all its dependencies
+ * @returns {Promise<void>}
+ */
+containerSchema.methods.deleteAndCleanup = async function (): Promise<void> {
+    if (this.isTutorial()) {
+        // Run tutorial removal actions
+        let users = await this.getAllUsers();
+        await asyncForEach(users, async (user) => {
+            // Remove all groups related to this container from this user
+            user.groups = removeFromArrayByRegex(user.groups, new RegExp(`^${this.name}.*$`));
+            await user.save();
+        });
+        this.remove();
+    }
+};
 
 module.exports = mongoose.model('Container', containerSchema);

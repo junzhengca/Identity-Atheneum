@@ -327,4 +327,17 @@ module.exports = class CourseController {
         res.redirectBackWithSuccess("Tutorial updated.");
     }
 
+    /**
+     * Remove a tutorial from the course
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async deleteTutorial(req: Request, res: Response): Promise<void> {
+        let {tutorial} = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
+        await tutorial.deleteAndCleanup();
+        req.flash("success", "Tutorial removed.");
+        res.redirect(getRealUrl(`/admin/courses/detail/${req.params.name}`));
+    }
+
 };
