@@ -12,6 +12,8 @@ const admin                         = require('../Controllers/web/admin');
 
 module.exports = (app) => {
 
+    app.app.get("/", (req, res) => res.redirect(getRealUrl('/login')));
+
     // Developer dashboard Routes
     const developerDashboardRouter = express.Router();
     developerDashboardRouter.use(require('../Middlewares/developerAuthMiddleware')());
