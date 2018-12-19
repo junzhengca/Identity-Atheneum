@@ -340,4 +340,18 @@ module.exports = class CourseController {
         res.redirect(getRealUrl(`/admin/courses/detail/${req.params.name}`));
     }
 
+    /**
+     * Delete a course
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    static async deleteCourse(req: Request, res: Response): Promise<void> {
+        let course: Container = await Container.findOneOrFail({name: req.params.name});
+        if(!course.isCourse()) throw new NotFoundError("Course not found.");
+        await course.deleteAndCleanup();
+        req.flash("success", "Course removed.");
+        res.redirect(getRealUrl(`/admin/courses`));
+    };
+
 };

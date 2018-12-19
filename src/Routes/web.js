@@ -75,6 +75,7 @@ module.exports = (app) => {
             // Course
             ["/courses/create", admin.CourseController.createCourse],
             ["/courses/detail/:name", admin.CourseController.updateCourseDetail],
+            ["/courses/detail/:name/delete", admin.CourseController.deleteCourse],
             ["/courses/detail/:name/members/add", admin.CourseController.courseAddMembers],
             ["/courses/detail/:name/tutorials/create", admin.CourseController.courseCreateTutorial],
             ["/courses/detail/:name/students/remove", admin.CourseController.courseRemoveStudent],

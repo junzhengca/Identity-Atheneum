@@ -305,7 +305,22 @@ containerSchema.methods.deleteAndCleanup = async function (): Promise<void> {
             user.groups = removeFromArrayByRegex(user.groups, new RegExp(`^${this.name}.*$`));
             await user.save();
         });
-        this.remove();
+        await this.remove();
+    } else if (this.isCourse()) {
+        // Run course removal actions
+        let tutorials = await this.getAllTutorials();
+        // Remove all tutorials
+        await asyncForEach(tutorials, async (tutorial) => {
+            await tutorial.deleteAndCleanup();
+        });
+        let users = await this.getAllUsers();
+        // Remove all user group associations
+        await asyncForEach(users, async (user) => {
+            // Remove all groups related to this container from this user
+            user.groups = removeFromArrayByRegex(user.groups, new RegExp(`^${this.name}.*$`));
+            await user.save();
+        });
+        await this.remove();
     }
 };
 

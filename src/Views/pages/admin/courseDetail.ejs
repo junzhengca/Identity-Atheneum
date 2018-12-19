@@ -99,5 +99,14 @@ title: container.getName() + " Detail - Admin Dashboard"
     </div>
     <%}%>
 
+    <br/>
+    <h4>Danger Zone</h4>
+    <div class="alert alert-danger" role="alert">
+        Removing a course will also remove all tutorials, alongside with all user role associations. You can't undo this action.
+    </div>
+    <form action="<%= getRealUrl('/admin/courses/detail/' + container.name + '/delete') %>" method="post">
+        <button class="btn btn-danger">Delete Course</button>
+    </form>
+
     <% include ../../partials/footer.ejs %>
 </div>
