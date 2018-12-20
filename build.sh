@@ -7,6 +7,10 @@ npm run flow:build >/dev/null
 echo "$(date) JavaScript Transpiled."
 
 echo "$(date) Copying views..."
+if [ -d "lib/Views" ]; then
+    echo "lib/Views already exists, removing..."
+    rm -rf lib/Views
+fi
 cp -r src/Views lib/Views &>/dev/null
 echo "$(date) Views copied."
 
