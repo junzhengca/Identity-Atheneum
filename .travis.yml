@@ -1,14 +1,19 @@
 language: node_js
 node_js:
-  - "8"
+- '8'
 install:
-  - npm install
-  - npm run flow:deps
+- npm install
+- npm run flow:deps
 before_script:
-  - npm run flow:check
-  - npm run flow:coverage
+- npm run flow:check
+- npm run flow:coverage
 script:
-  - npm run flow:build
-  - npm run test
+- npm run flow:build
+- npm run test
 after_script:
-  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+- NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly --
+  -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  && rm -rf ./coverage
+notifications:
+  slack:
+    secure: YU8jAJB7DGc8hwSW49WNSi0zFj3bNv3iTsiCjScgtGj873TL1BD2OH8d1aT62zXV9ybOIZ5Rqp5KvXeH7X4YF5irYspV+cGqv200hg4WvWvYLLDe1I7JIizJcegVs5tJUTYOODu28Ruf8XLPS5rvj/swce3Qn9W6RNybauh6UDsHkBtW4bIuZFrwVyxCVx2sHUzLT1q8QO8Dhuyik048gSYpml4cdwFKhrXX2CWG6XSdXB1I150noVRy3kYsKwKm73qwGtgKZDalcA48EL0MDZNFUUPyfdHdqF5NkvYh+ApBe2PGnZWfy1haZG1GoFoBSGlqWtxFKo79AXqyjIJ9tr0DCqJruyMtfjAH4z12PU6rZX6zR6iMfFaW6vhrpMQVMRqWIzhPvxwaPFY6s+OWx0yb/SlTSTJ5vbpd4uw9w518EMQEy0hK8+Mb2/kiHCatLvXCYkr9o2f1MBG1drQP5GbKs2fYolN+cG363/PeTvQloqKp+vCjc+XShjxqHv1qg8deUDmqu75vh+PZt+qIphN53f1fF/gs9qC6PsEq4Rt9flX+S3TipdJpCgklQpHRzwdMi9es7t/a7ZgynfjRpRLPx3C8JIojPOlknteSGVT26DubdFOt1CvONHQPlOsNKr9vVcGeT6zEnY7NW5Favx/IU1jZRIuMaQlUeyVGhU8=
