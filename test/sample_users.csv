@@ -1,0 +1,11 @@
+﻿idp,username,role,ne_behaviour,password
+local_provider,user1,tutorial.tut.student,create,passworduser1
+local_provider,user2,tutorial.tut.student,create,passworduser2
+local_provider,user3,tutorial.tut.student,create,passworduser3
+local_provider,user4,tutorial.tut.student,create,passworduser4
+local_provider,user5,tutorial.tut.student,create,passworduser5
+local_provider,user6,tutorial.tut.student,create,passworduser6
+local_provider,user7,tutorial.tut.student,create,passworduser7
+local_provider,user8,tutorial.tut.student,create,passworduser8
+local_provider,user9,tutorial.tut.student,create,passworduser9
+local_provider,user10,tutorial.tut.student,create,passworduser10

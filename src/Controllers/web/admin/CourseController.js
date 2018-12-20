@@ -304,8 +304,9 @@ module.exports = class CourseController {
                 log += `[ERROR] Role on line ${i} is invalid [${member.role}], skipping this addition.\n`;
             }
         }
-        res.header('content-type', 'text/plain');
-        res.send(log);
+        req.flash('success', "Users imported.");
+        console.log(log);
+        res.redirect(getRealUrl(`/admin/courses/detail/${req.params.name}`));
     }
 
     /**
