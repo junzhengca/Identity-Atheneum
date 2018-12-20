@@ -12,3 +12,11 @@ script:
   - npm run test
 after_script:
   - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/3b275930db30627b9311
+    on_success: always
+    on_failure: always
+    on_start: never
