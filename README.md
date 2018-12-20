@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/junthehacker/Identity-Atheneum.svg?branch=master)](https://travis-ci.org/junthehacker/Identity-Atheneum)
 [![Coverage Status](https://coveralls.io/repos/github/junthehacker/Identity-Atheneum/badge.svg?branch=master)](https://coveralls.io/github/junthehacker/Identity-Atheneum?branch=master)
+[![Slack](https://identity-atheneum-slackin.herokuapp.com/badge.svg)](https://identity-atheneum-slackin.herokuapp.com)
+
 
 Easy to use data storage and authorization service for developers.
 
