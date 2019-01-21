@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "development": "NODE_ENV=development BUILD=`git rev-parse --short HEAD` flow-node ./src",
+        "development": "NODE_ENV=development BUILD=`git rev-parse --short HEAD` babel-node ./src",
         "production": "NODE_ENV=production BUILD=`git rev-parse --short HEAD` node ./lib",
         "test:coverage": "nyc mocha",
         "test": "flow-remove-types ./src/ -d ./lib/ --all --pretty && mocha",
@@ -37,6 +37,11 @@
     },
     "homepage": "https://github.com/junthehacker/Identity-Atheneum#readme",
     "devDependencies": {
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.2.2",
+        "@babel/node": "^7.2.2",
+        "@babel/preset-env": "^7.2.3",
+        "@babel/preset-flow": "^7.0.0",
         "coveralls": "^3.0.2",
         "flow-bin": "^0.82.0",
         "flow-coverage-report": "^0.6.0",

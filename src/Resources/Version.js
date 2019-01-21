@@ -1,6 +1,6 @@
 module.exports = {
-    versionName: "Dandelion",
-    versionCode: "0.4",
+    versionName: 'Sunflower',
+    versionCode: '0.5',
     isEdge: true,
     buildNumber: process.env.BUILD
 };
