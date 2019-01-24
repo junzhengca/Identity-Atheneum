@@ -278,4 +278,4 @@ userSchema.methods.getEnrolledTutorialsForCourse = function(courseId, fields = n
     });
 };
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

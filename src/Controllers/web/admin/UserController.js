@@ -5,7 +5,7 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
-const User = require('../../../Models/User');
+import User from '../../../Models/User';
 const NotFoundError = require('../../../Errors/NotFoundError');
 const getRealUrl = require('../../../Util/getRealUrl');
 const isValidGroupName = require('../../../Util/isValidGroupName');

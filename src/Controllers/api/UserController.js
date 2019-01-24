@@ -5,7 +5,7 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
-const User = require('../../Models/User');
+import User from '../../Models/User';
 
 /**
  * Controller instance, mostly static

@@ -1,6 +1,6 @@
 // @flow
 const AuthToken = require('../../Models/AuthToken');
-const User = require('../../Models/User');
+import User from '../../Models/User';
 
 module.exports = class AuthStatusController {
     /**
