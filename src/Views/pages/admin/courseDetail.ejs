@@ -8,16 +8,18 @@ title: container.getName() + " Detail - Admin Dashboard"
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
             <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/courses') %>">Courses</a></li>
-            <li class="breadcrumb-item active" aria-current="page"><%=container.getName()%></li>
+            <li class="breadcrumb-item active" aria-current="page"><%= container.getName() %></li>
         </ol>
     </nav>
 
-    <h2><%=container.getName()%> Detail</h2>
+    <h2><%= container.getName() %> Detail</h2>
 
     <% include ../../partials/errors.ejs %>
     <% include ../../partials/successes.ejs %>
 
     <hr/>
+
+    <% if(user.isAdmin()) { %>
     <h4>Basic Information</h4>
 
     <form method="post">
@@ -25,12 +27,12 @@ title: container.getName() + " Detail - Admin Dashboard"
             Container Name<br/>
             <small class="text-muted">Container's name for this course.</small>
         </label>
-        <input type="text" class="form-control" value="<%=container.name%>" disabled/>
+        <input type="text" class="form-control" value="<%= container.name %>" disabled/>
         <label class="mt-2">
             Course Name<br/>
             <small class="text-muted">Display name for the course.</small>
         </label>
-        <input type="text" class="form-control" value="<%=container.getDisplayName()%>" name="name"/>
+        <input type="text" class="form-control" value="<%= container.getDisplayName() %>" name="name"/>
 
         <br/>
         <button class="btn btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
@@ -38,7 +40,8 @@ title: container.getName() + " Detail - Admin Dashboard"
 
     <hr/>
     <h4><i class="fa fa-user" aria-hidden="true"></i> Members (<%= users.length %>)</h4>
-    <a href="<%= getRealUrl(`/admin/courses/detail/${container.name}/members/add`) %>" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Add Members</a>
+    <a href="<%= getRealUrl(`/admin/courses/detail/${container.name}/members/add`) %>" class="btn btn-primary"><i
+                class="fa fa-plus" aria-hidden="true"></i> Add Members</a>
     <br/><br/>
     <table class="table table-light">
         <thead>
@@ -52,61 +55,80 @@ title: container.getName() + " Detail - Admin Dashboard"
         </thead>
         <tbody>
         <% users.forEach(user => { %>
-        <tr>
-            <th scope="row"><%= user._id %></th>
-            <td><%= user.username %></td>
-            <td><%= user.idp %></td>
-            <td>
-                <% user.getRolesByContainer(container).forEach(role => { %>
-                    <code><%= role %></code><br/>
-                <% }) %>
-            </td>
-            <td>
-                <form method="post" action="<%= getRealUrl('/admin/courses/detail/' + container.name + '/students/remove') %>">
-                    <input type="hidden" name="name" value="<%= user._id %>" />
-                    <button class="btn btn-outline-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> Remove</button>
-                </form>
-            </td>
-        </tr>
+            <tr>
+                <th scope="row"><%= user._id %></th>
+                <td><%= user.username %></td>
+                <td><%= user.idp %></td>
+                <td>
+                    <% user.getRolesByContainer(container).forEach(role => { %>
+                        <code><%= role %></code><br/>
+                    <% }) %>
+                </td>
+                <td>
+                    <form method="post"
+                          action="<%= getRealUrl('/admin/courses/detail/' + container.name + '/students/remove') %>">
+                        <input type="hidden" name="name" value="<%= user._id %>"/>
+                        <button class="btn btn-outline-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i>
+                            Remove
+                        </button>
+                    </form>
+                </td>
+            </tr>
         <% }) %>
         </tbody>
     </table>
 
     <hr/>
-    <h4><i class="fa fa-flask" aria-hidden="true"></i> Tutorials (<%=tutorials.length%>)</h4>
-    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create')%>" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Create Tutorial</a>
-    <%if(tutorials.length === 0){%><p class="text-muted mt-2">No tutorials yet...</p><%}%>
-    <%for(let i = 0; i < tutorials.length; i++){%>
+
+    <% } %>
+    <h4><i class="fa fa-flask" aria-hidden="true"></i> Tutorials (<%= tutorials.length %>)</h4>
+    <% if(user.isAdmin()) { %>
+    <a href="<%= getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/create') %>"
+       class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Create Tutorial</a>
+    <%}%>
+    <% if(tutorials.length === 0){ %><p class="text-muted mt-2">No tutorials yet...</p>
+    <% } %>
+    <% for(let i = 0; i < tutorials.length; i++){ %>
     <div class="card mt-2">
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     <h5 class="card-title">
-                        <%=tutorials[i].getName()%><br/>
-                        <small class="text-muted"><%=tutorials[i].getDisplayName()%></small>
+                        <%= tutorials[i].getName() %><br/>
+                        <small class="text-muted"><%= tutorials[i].getDisplayName() %></small>
                     </h5>
-                    <a href="<%=getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/detail/' + tutorials[i].name)%>" class="btn btn-outline-primary">Manage</a>
-                    <a href="<%=getRealUrl('/admin/containers/detail/' + tutorials[i].name)%>" class="btn btn-light">View Container</a><br/><br/>
+                    <a href="<%= getRealUrl('/admin/courses/detail/' + container.name + '/tutorials/detail/' + tutorials[i].name) %>"
+                       class="btn btn-outline-primary">Manage</a>
+                    <% if(user.isAdmin()) { %>
+                        <a href="<%= getRealUrl('/admin/containers/detail/' + tutorials[i].name) %>" class="btn btn-light">View
+                        Container</a>
+                    <%}%>
+
+                    <br/>
                 </div>
                 <div class="col-md-6">
-                    <b>Version: </b> <%=tutorials[i].getVersion()%>
+                    <b>Version: </b> <%= tutorials[i].getVersion() %>
                 </div>
                 <div class="col-md-12">
-                    <small class="text-muted">Created At <%=tutorials[i].createdAt%></small>
+                    <small class="text-muted">Created At <%= tutorials[i].createdAt %></small>
                 </div>
             </div>
         </div>
     </div>
-    <%}%>
+    <% } %>
 
+    <% if(user.isAdmin()) { %>
     <br/>
     <h4>Danger Zone</h4>
     <div class="alert alert-danger" role="alert">
-        Removing a course will also remove all tutorials, alongside with all user role associations. You can't undo this action.
+        Removing a course will also remove all tutorials, alongside with all user role associations. You can't undo this
+        action.
     </div>
     <form action="<%= getRealUrl('/admin/courses/detail/' + container.name + '/delete') %>" method="post">
         <button class="btn btn-danger">Delete Course</button>
     </form>
+
+    <%}%>
 
     <% include ../../partials/footer.ejs %>
 </div>

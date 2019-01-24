@@ -72,19 +72,12 @@ module.exports = class CourseController {
         }
         let tutorials: Container[] = await container.getAllTutorials();
         let users: User[] = await container.getAllUsers();
-        if (req.user.isAdmin()) {
-            res.render('pages/admin/courseDetail', {
-                container,
-                tutorials,
-                users
-            });
-        } else {
-            res.render('pages/admin/courseDetailTeachingAssistant', {
-                container,
-                tutorials,
-                users
-            });
-        }
+        res.render('pages/admin/courseDetail', {
+            container,
+            tutorials,
+            users,
+            user: req.user
+        });
     }
 
     /**
@@ -199,7 +192,8 @@ module.exports = class CourseController {
         res.render('pages/admin/tutorialDetail', {
             course,
             tutorial,
-            students
+            students,
+            user: req.user
         });
     }
 

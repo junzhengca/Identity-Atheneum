@@ -19,6 +19,8 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
     <% include ../../partials/successes.ejs %>
 
     <hr/>
+
+    <% if(user.isAdmin()) { %>
     <h4>Basic Information</h4>
 
     <form method="post">
@@ -38,8 +40,13 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
     </form>
 
     <hr/>
+
+    <% } %>
+
     <h4>Students</h4>
-    <a href="<%= getRealUrl('/admin/courses/detail/' + course.name + '/tutorials/detail/' + tutorial.name + '/students/add') %>" class="btn btn-primary">Add Students</a>
+    <a href="<%= getRealUrl('/admin/courses/detail/' + course.name + '/tutorials/detail/' + tutorial.name + '/students/add') %>" class="btn btn-primary">
+        <i class="fa fa-plus" aria-hidden="true"></i> Add Students
+    </a>
     <br/><br/>
     <table class="table table-light">
         <thead>
@@ -67,6 +74,8 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
         </tbody>
     </table>
 
+    <% if(user.isAdmin()) { %>
+
     <br/>
     <h4>Danger Zone</h4>
     <div class="alert alert-danger" role="alert">
@@ -75,6 +84,7 @@ title: tutorial.getName() + " Detail - Admin Dashboard"
     <form action="<%= getRealUrl('/admin/courses/detail/' + course.name + '/tutorials/detail/' + tutorial.name + '/delete') %>" method="post">
         <button class="btn btn-danger">Delete Tutorial</button>
     </form>
+    <% } %>
 
     <% include ../../partials/footer.ejs %>
 </div>

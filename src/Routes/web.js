@@ -56,14 +56,9 @@ module.exports = app => {
                 ensureAdminMiddleware(),
                 admin.CourseController.courseCreateTutorialPage
             ],
-            [
-                '/courses/detail/:name/tutorials/detail/:tutorial_name',
-                ensureAdminMiddleware(),
-                admin.CourseController.tutorialDetailPage
-            ],
+            ['/courses/detail/:name/tutorials/detail/:tutorial_name', admin.CourseController.tutorialDetailPage],
             [
                 '/courses/detail/:name/tutorials/detail/:tutorial_name/students/add',
-                ensureAdminMiddleware(),
                 admin.CourseController.tutorialAddStudentsPage
             ],
             // Applications
@@ -123,12 +118,10 @@ module.exports = app => {
             ],
             [
                 '/courses/detail/:name/tutorials/detail/:tutorial_name/students/add',
-                ensureAdminMiddleware(),
                 admin.CourseController.tutorialAddStudents
             ],
             [
                 '/courses/detail/:name/tutorials/detail/:tutorial_name/students/remove',
-                ensureAdminMiddleware(),
                 admin.CourseController.tutorialRemoveStudent
             ],
             // Applications
