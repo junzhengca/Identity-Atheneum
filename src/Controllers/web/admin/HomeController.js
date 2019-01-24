@@ -20,7 +20,9 @@ module.exports = class HomeController {
      */
     static async homePage(req: any, res: any) {
         res.render('pages/admin/home', {
-            title: 'Admin Dashboard'
+            title: 'Admin Dashboard',
+            user: req.user,
+            hasTeachingAssistantRole: await req.user.hasTeachingAssistantRole()
         });
     }
 

@@ -1,0 +1,25 @@
+<%- include('../../partials/header.ejs', {
+title: container.getName() + " Detail - TA Dashboard"
+}) %>
+
+
+<div class="container">
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin') %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<%= getRealUrl('/admin/courses') %>">Courses</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%= container.getName() %></li>
+        </ol>
+    </nav>
+
+    <h2><%= container.getName() %> Detail</h2>
+
+    <% include ../../partials/errors.ejs %>
+    <% include ../../partials/successes.ejs %>
+
+    <hr/>
+
+
+
+</div>

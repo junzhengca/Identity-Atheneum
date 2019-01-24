@@ -7,30 +7,38 @@
             <li class="breadcrumb-item active" aria-current="page">Home</li>
         </ol>
     </nav>
-    <h2>Admin Dashboard</h2>
+
+    <% if(user.isAdmin()){ %>
+        <h2>Admin Dashboard</h2>
+    <% } else { %>
+        <h2>TA Dashboard</h2>
+    <% } %>
+
     <a href="<%= getRealUrl('/logout') %>" class="btn btn-danger">Logout</a>
-    <a href="<%= getRealUrl('/admin/advanced') %>" class="btn btn-link">Advanced Options</a>
+    <% if(user.isAdmin()){ %> <a href="<%= getRealUrl('/admin/advanced') %>" class="btn btn-link">Advanced Options</a> <% } %>
     <hr/>
     <p>Please choose one of the following:</p>
     <div class="row">
+        <% if(user.isAdmin()){ %>
         <div class="col-md-6 d-flex align-items-stretch">
             <div class="card" style="width: 100%; margin: 5px;">
                 <div class="card-body">
                     <h5 class="card-title">Users</h5>
                     <p class="card-text">
-                        Manage all users within the system.
+                        Manage users within the system.
                     </p>
                     <a href="<%= getRealUrl('/admin/users') %>" class="btn btn-primary">Manage Users</a>
                 </div>
             </div>
         </div>
+        <%}%>
 
         <div class="col-md-6 d-flex align-items-stretch">
             <div class="card" style="width: 100%; margin: 5px;">
                 <div class="card-body">
                     <h5 class="card-title">Courses</h5>
                     <p class="card-text">
-                        Manage all courses within the system.
+                        Manage courses within the system.
                     </p>
                     <a href="<%= getRealUrl('/admin/courses') %>" class="btn btn-primary">Manage Courses</a>
                 </div>

@@ -16,7 +16,9 @@ title: "Courses - Admin Dashboard"
     <% include ../../partials/errors.ejs %>
     <% include ../../partials/successes.ejs %>
 
-    <a href="<%=getRealUrl('/admin/courses/create')%>" class="btn btn-primary">Create Course</a>
+    <a href="<%=getRealUrl('/admin/courses/create')%>" class="btn btn-primary">
+        <i class="fa fa-plus" aria-hidden="true"></i> Create Course
+    </a>
 
     <%for(let i = 0; i < containers.length; i++){%>
     <div class="card mt-4">
@@ -28,7 +30,9 @@ title: "Courses - Admin Dashboard"
                         <small class="text-muted"><%=containers[i].getDisplayName()%></small>
                     </h5>
                     <a href="<%=getRealUrl('/admin/courses/detail/' + containers[i].name)%>" class="btn btn-primary">Manage</a>
+                    <% if(user.isAdmin()) { %>
                     <a href="<%=getRealUrl('/admin/containers/detail/' + containers[i].name)%>" class="btn btn-light">View Container</a><br/><br/>
+                    <% } %>
                 </div>
                 <div class="col-md-6">
                     <b>Version: </b> <%=containers[i].getVersion()%>

@@ -21,9 +21,10 @@ module.exports = class CourseController {
      * Get the courses page
      */
     static async coursesPage(req: any, res: any): Promise<void> {
-        let containers: Container = await Container.getAllCourses();
+        let containers: Container = await req.user.getAllCourses();
         res.render('pages/admin/courses', {
-            containers
+            containers,
+            user: req.user
         });
     }
 
@@ -71,11 +72,19 @@ module.exports = class CourseController {
         }
         let tutorials: Container[] = await container.getAllTutorials();
         let users: User[] = await container.getAllUsers();
-        res.render('pages/admin/courseDetail', {
-            container,
-            tutorials,
-            users
-        });
+        if (req.user.isAdmin()) {
+            res.render('pages/admin/courseDetail', {
+                container,
+                tutorials,
+                users
+            });
+        } else {
+            res.render('pages/admin/courseDetailTeachingAssistant', {
+                container,
+                tutorials,
+                users
+            });
+        }
     }
 
     /**
