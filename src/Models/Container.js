@@ -1,6 +1,5 @@
 // @flow
-import User from './User';
-
+const User = require('./User');
 const BadRequestError = require('../Errors/BadRequestError');
 const asyncForEach = require('../Util/asyncForEach');
 const removeFromArrayByRegex = require('../Util/removeFromArrayByRegex');

@@ -6,7 +6,7 @@
  --------------------------------------*/
 
 const Container = require('../../../Models/Container');
-import User from '../../../Models/User';
+const User = require('../../../Models/User');
 const getRealUrl = require('../../../Util/getRealUrl');
 const NotFoundError = require('../../../Errors/NotFoundError');
 const csvStringToJsonObject = require('../../../Util/csvStringToJsonObject');

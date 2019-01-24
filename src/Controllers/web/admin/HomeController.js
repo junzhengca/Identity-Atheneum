@@ -5,6 +5,8 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
+const User = require('../../../Models/User');
+
 /**
  * Controller for admin dashboard home
  * @type {module.HomeController}

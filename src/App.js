@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const LocalIdentityProvider = require('./IdentityProvider/LocalIdentityProvider');
 const SamlIdentityProvider = require('./IdentityProvider/SamlIdentityProvider');
-import User from './Models/User';
+const User = require('./Models/User');
 const Input = require('prompt-input');
 const randStr = require('./Util/randStr');
 const morgan = require('morgan');
