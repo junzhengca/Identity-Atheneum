@@ -285,7 +285,7 @@ module.exports = class CourseController {
         }
         let user: User = await User.findOne({ idp, username });
         if (!user) {
-            await User.create(idp, username, password || '', '', [], {});
+            user = await User.create(idp, username, password || '', '', [], {});
         }
         if (role && role.match(/^tutorial\..*\.(student|ta|instructor)$/)) {
             // Get tutorial name
