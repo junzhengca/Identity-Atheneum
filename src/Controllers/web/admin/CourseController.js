@@ -232,7 +232,8 @@ module.exports = class CourseController {
                         let username = uid
                             .split('.')
                             .slice(1)
-                            .join('.');
+                            .join('.')
+                            .trim();
                         // Make the user
                         user = await User.create(idp, username, 'iadefaultpwd', '', [], {});
                     }
