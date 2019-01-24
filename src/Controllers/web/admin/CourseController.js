@@ -222,19 +222,27 @@ module.exports = class CourseController {
             req.params.tutorial_name
         );
         let uids: string[] = req.body.data.split(/\r?\n/);
-        for (let i = 0; i < uids.length; i++) {
-            if (uids[i]) {
-                try {
-                    let user: User = await User.findByIdentifierOrFail(uids[i]);
+        for (let uid of uids) {
+            if (uid) {
+                let user = await User.findByIdentifier(uid);
+                if (!user) {
+                    // TODO: Refactor this so it is better designed.
+                    if (!isValidMongoID(uid)) {
+                        let idp = uid.split('.')[0];
+                        let username = uid
+                            .split('.')
+                            .slice(1)
+                            .join('.');
+                        // Make the user
+                        user = await User.create(idp, username, 'iadefaultpwd', '', [], {});
+                    }
+                }
+                if (!user) {
+                    req.flash('error', 'Failed to find user for ' + uid);
+                } else {
                     await user.addContainer(tutorial, '.student');
                     await user.addContainer(course, '.student');
-                    req.flash('success', uids[i] + ' added to course and tutorial.');
-                } catch (e) {
-                    // TODO: THIS IS SO HACKY!!! MUST CHANGE
-                    if (!isValidMongoID(uids[i])) {
-                        // If it is not a valid mongo ID, then it has to be a readable identifier.
-                    }
-                    req.flash('error', 'Failed to find user. [' + e.message + '] for ' + uids[i]);
+                    req.flash('success', uid + ' added to course and tutorial.');
                 }
             }
         }
