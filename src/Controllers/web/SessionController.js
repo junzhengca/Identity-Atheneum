@@ -6,12 +6,13 @@ class SessionController {
      * @param req
      * @param res
      */
-    static sessionPage(req, res) {
-        if(req.user) {
+    static async sessionPage(req, res) {
+        if (req.user) {
             res.render('pages/session', {
-                title: "Current Session",
+                title: 'Current Session',
                 session: req.session,
                 user: req.user,
+                hasTeachingAssistantRole: await req.user.hasTeachingAssistantRole(),
                 getRealUrl
             });
         } else {

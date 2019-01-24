@@ -15,6 +15,12 @@
             Admin Dashboard
         </a>
     <% } %>
+    <% if(hasTeachingAssistantRole){ %>
+        <a href="<%= getRealUrl('/admin') %>"
+           class="btn btn-primary">
+            TA Dashboard
+        </a>
+    <% } %>
     <a href="<%= getRealUrl('/logout') %>">
         <button class="btn btn-link">Logout</button>
     </a>

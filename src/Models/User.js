@@ -227,6 +227,29 @@ userSchema.methods.getAllCourses = async function(fields = null) {
     return result;
 };
 
+/**
+ * Check if user is a teaching assistant for a course.
+ */
+userSchema.methods.isTeachingAssistantForCourse = async function(course): boolean {
+    let roles = this.getRolesByContainer(course);
+    for (let role of roles) {
+        if (role === '.ta') return true;
+    }
+    return false;
+};
+
+/**
+ * Check if user has teaching assistant role. Namely {course}.ta
+ * {course}.{tutorial}.ta will not count as a teaching assistant role.
+ */
+userSchema.methods.hasTeachingAssistantRole = async function(): boolean {
+    let courses = await this.getAllCourses();
+    for (let course of courses) {
+        if (await this.isTeachingAssistantForCourse(course)) return true;
+    }
+    return false;
+};
+
 userSchema.methods.getCourseOrFail = function(courseId, fields = null) {
     return new Promise((resolve, reject) => {
         let result;
