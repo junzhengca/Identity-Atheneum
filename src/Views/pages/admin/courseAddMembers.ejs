@@ -47,11 +47,15 @@ title: "Add Students " + course.getName() + " - Admin Dashboard"
         <div class="row">
             <div class="col-md-6 form-group">
                 <label>Identity Provider</label>
-                <input type="text" class="form-control" placeholder="utoronto" name="idp"/>
+                <select name="idp" class="form-control">
+                    <% for(let idp of config.identity_providers) { %>
+                        <option value="<%= idp.name %>"><%= idp.display_name %></option>
+                    <% } %>
+                </select>
             </div>
             <div class="col-md-6 form-group">
                 <label>Username</label>
-                <input type="text" class="form-control" placeholder="admin" name="username"/>
+                <input type="text" class="form-control" name="username"/>
             </div>
         </div>
         <div class="row">

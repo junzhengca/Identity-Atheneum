@@ -36,13 +36,15 @@ userSchema.statics.findByIdentifier = function(id) {
                 .catch(e => reject(e));
         } else {
             // Otherwise, parse the ID
-            id = id.split('.');
-            if (id.length !== 2) {
-                return reject(
-                    'ID format is invalid, it must be either Mongo ID or idp.username.'
-                );
+            let idp = id.split('.')[0];
+            let username = id
+                .split('.')
+                .slice(1)
+                .join('.');
+            if (!idp || !username) {
+                return reject('ID format is invalid, it must be either Mongo ID or idp.username.');
             } else {
-                this.findOne({ username: id[1], idp: id[0] })
+                this.findOne({ username, idp })
                     .then(user => resolve(user))
                     .catch(e => reject(e));
             }
@@ -76,14 +78,7 @@ userSchema.statics.findByIdentifierOrFail = function(id) {
  * @param attributes
  * @returns {Promise<any>}
  */
-userSchema.statics.create = function(
-    idp,
-    username,
-    password,
-    emailAddress,
-    groups,
-    attributes
-) {
+userSchema.statics.create = function(idp, username, password, emailAddress, groups, attributes) {
     return new Promise((resolve, reject) => {
         let salt = uuidv4();
         let hashedPassword;
@@ -137,7 +132,7 @@ userSchema.methods.verifyPassword = function(password) {
                 if (hashed === this.password) {
                     return resolve();
                 } else {
-                    throw new Error('Password not match.');
+                    throw new Error('Password does not match with our record.');
                 }
             })
             .catch(e => reject(e));
@@ -166,10 +161,7 @@ userSchema.methods.isAdmin = function() {
  * @param suffix
  * @returns {*}
  */
-userSchema.methods.addContainer = async function(
-    container: Container,
-    suffix: string = ''
-): Promise<void> {
+userSchema.methods.addContainer = async function(container: Container, suffix: string = ''): Promise<void> {
     let index: number = this.groups.indexOf(container.name + suffix);
     if (index < 0) {
         this.groups.push(container.name + suffix);
@@ -183,10 +175,7 @@ userSchema.methods.addContainer = async function(
  * @param suffix
  * @returns {Promise<any>}
  */
-userSchema.methods.removeContainer = async function(
-    container: Container,
-    suffix: string = ''
-): Promise<void> {
+userSchema.methods.removeContainer = async function(container: Container, suffix: string = ''): Promise<void> {
     let index: number = this.groups.indexOf(container.name + suffix);
     if (index > -1) {
         this.groups.splice(index, 1);
@@ -207,8 +196,7 @@ userSchema.methods.removeContainerAndAllSubContainers = async function(
 ): Promise<void> {
     let newGroups: string[] = [];
     this.groups.forEach(group => {
-        if (!group.match(new RegExp(container.name + suffix)))
-            newGroups.push(group);
+        if (!group.match(new RegExp(container.name + suffix))) newGroups.push(group);
     });
     this.groups = newGroups;
     await this.save();
@@ -268,10 +256,7 @@ userSchema.methods.getCourseOrFail = function(courseId, fields = null) {
     });
 };
 
-userSchema.methods.getEnrolledTutorialsForCourse = function(
-    courseId,
-    fields = null
-) {
+userSchema.methods.getEnrolledTutorialsForCourse = function(courseId, fields = null) {
     return new Promise((resolve, reject) => {
         let result = [];
         this.getCourseOrFail(courseId)

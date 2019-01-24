@@ -219,13 +219,15 @@ module.exports = class CourseController {
         );
         let uids: string[] = req.body.data.split(/\r?\n/);
         for (let i = 0; i < uids.length; i++) {
-            try {
-                let user: User = await User.findByIdentifierOrFail(uids[i]);
-                await user.addContainer(tutorial, '.student');
-                await user.addContainer(course, '.student');
-                req.flash('success', uids[i] + ' added to course and tutorial.');
-            } catch (e) {
-                req.flash('error', 'Failed to find user. [' + e.message + '] for ' + uids[i]);
+            if (uids[i]) {
+                try {
+                    let user: User = await User.findByIdentifierOrFail(uids[i]);
+                    await user.addContainer(tutorial, '.student');
+                    await user.addContainer(course, '.student');
+                    req.flash('success', uids[i] + ' added to course and tutorial.');
+                } catch (e) {
+                    req.flash('error', 'Failed to find user. [' + e.message + '] for ' + uids[i]);
+                }
             }
         }
         res.redirect(
