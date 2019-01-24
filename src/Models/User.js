@@ -212,30 +212,19 @@ userSchema.methods.getRolesByContainer = function(container) {
     return roles;
 };
 
-userSchema.methods.getAllCourses = function(fields = null) {
-    return new Promise((resolve, reject) => {
-        let result = [];
-        this.model('Container')
-            .getAllCourses(fields)
-            .then(courses => {
-                if (this.isAdmin()) {
-                    // If user is a global admin, then user is enrolled in all courses
-                    resolve(courses);
-                } else {
-                    // Otherwise fetch courses that user is actually enrolled in
-                    courses.forEach(course => {
-                        this.groups.some(group => {
-                            if (group.match(course.name)) {
-                                result.push(course);
-                                return true;
-                            }
-                        });
-                    });
-                    resolve(result);
-                }
-            })
-            .catch(e => reject(e));
-    });
+userSchema.methods.getAllCourses = async function(fields = null) {
+    let courses = await this.model('Container').getAllCourses(fields);
+    if (this.isAdmin()) return courses; // If user is a global admin, then user is enrolled in all courses
+    let result = [];
+    for (let course of courses) {
+        for (let group of this.groups) {
+            if (group.match(course.name)) {
+                result.push(course);
+                break;
+            }
+        }
+    }
+    return result;
 };
 
 userSchema.methods.getCourseOrFail = function(courseId, fields = null) {
