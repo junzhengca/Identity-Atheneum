@@ -5,7 +5,7 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
-const Container  = require('../../../Models/Container');
+const Container = require('../../../Models/Container');
 const getRealUrl = require('../../../Util/getRealUrl');
 
 /**
@@ -19,9 +19,9 @@ module.exports = class ContainerController {
      * @param req
      * @param res
      */
-    static async containersPage(req: Request, res: Response): Promise<void> {
+    static async containersPage(req: any, res: any): Promise<void> {
         let containers: Container[] = await Container.find({});
-        res.render('pages/admin/containers', {containers});
+        res.render('pages/admin/containers', { containers });
     }
 
     /**
@@ -30,7 +30,7 @@ module.exports = class ContainerController {
      * @param req
      * @param res
      */
-    static createContainerPage(req: Request, res: Response): void {
+    static createContainerPage(req: any, res: any): void {
         res.render('pages/admin/createContainer');
     }
 
@@ -40,9 +40,14 @@ module.exports = class ContainerController {
      * @param req
      * @param res
      */
-    static async createContainer(req: Request, res: Response): Promise<void> {
-        let container: Container = await Container.create(req.body.name, req.body.read_groups, req.body.write_groups, req.body.delete_groups);
-        req.flash("success", "Container created " + container._id + ".");
+    static async createContainer(req: any, res: any): Promise<void> {
+        let container: Container = await Container.create(
+            req.body.name,
+            req.body.read_groups,
+            req.body.write_groups,
+            req.body.delete_groups
+        );
+        req.flash('success', 'Container created ' + container._id + '.');
         res.redirect(getRealUrl('/admin/containers'));
     }
 
@@ -52,9 +57,9 @@ module.exports = class ContainerController {
      * @param req
      * @param res
      */
-    static async containerDetailPage(req: Request, res: Response): Promise<void> {
-        let container: Container = await Container.findOneOrFail({name: req.params.name});
-        res.render('pages/admin/containerDetail', {container});
+    static async containerDetailPage(req: any, res: any): Promise<void> {
+        let container: Container = await Container.findOneOrFail({ name: req.params.name });
+        res.render('pages/admin/containerDetail', { container });
     }
 
     /**
@@ -62,8 +67,8 @@ module.exports = class ContainerController {
      * @param req
      * @param res
      */
-    static async exportContainerJSON(req: Request, res: Response): Promise<void> {
-        let container: Container = await Container.findOneOrFail({name: req.params.name});
+    static async exportContainerJSON(req: any, res: any): Promise<void> {
+        let container: Container = await Container.findOneOrFail({ name: req.params.name });
         res.header('content-type', 'application/json');
         res.send(JSON.stringify(container));
     }
@@ -74,12 +79,12 @@ module.exports = class ContainerController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async updateContainerDetail(req: Request, res: Response): Promise<void> {
-        let container: Container = await Container.findOneOrFail({name: req.params.name});
+    static async updateContainerDetail(req: any, res: any): Promise<void> {
+        let container: Container = await Container.findOneOrFail({ name: req.params.name });
         if (req.body.readGroups) container.readGroups = req.body.readGroups;
         if (req.body.writeGroups) container.writeGroups = req.body.writeGroups;
         if (req.body.deleteGroups) container.deleteGroups = req.body.deleteGroups;
         await container.save();
-        res.redirectBackWithSuccess("Container updated.");
+        res.redirectBackWithSuccess('Container updated.');
     }
 };

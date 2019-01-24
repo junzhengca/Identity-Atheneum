@@ -6,7 +6,7 @@ module.exports = class AuthStatusController {
     /**
      * Get application auth status
      */
-    static getAuthStatus(req, res) {
+    static getAuthStatus(req: any, res: any) {
         if (req.application && req.isSecret) {
             res.send({
                 application: {
@@ -25,7 +25,7 @@ module.exports = class AuthStatusController {
     /**
      * Populate an auth token
      */
-    static populateAuthToken(req, res, next) {
+    static populateAuthToken(req: any, res: any, next: any) {
         let token;
         if (req.application && req.isSecret) {
             AuthToken.findOneOrFail({ tokenBody: req.params.token_body, applicationId: req.application._id })

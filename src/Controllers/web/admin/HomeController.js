@@ -18,9 +18,9 @@ module.exports = class HomeController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async homePage(req: Request, res: Response) {
+    static async homePage(req: any, res: any) {
         res.render('pages/admin/home', {
-            title: "Admin Dashboard"
+            title: 'Admin Dashboard'
         });
     }
 
@@ -30,9 +30,9 @@ module.exports = class HomeController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async homeAdvancedPage(req: Request, res: Response) {
+    static async homeAdvancedPage(req: any, res: any) {
         res.render('pages/admin/homeAdvanced', {
-            title: "Advanced Options"
+            title: 'Advanced Options'
         });
     }
 };

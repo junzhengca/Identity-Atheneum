@@ -5,8 +5,8 @@
  * Author(s): Jun Zheng (me at jackzh dot com)
  --------------------------------------*/
 
-const getRealUrl      = require('../../Util/getRealUrl');
-const validator       = require('validator');
+const getRealUrl = require('../../Util/getRealUrl');
+const validator = require('validator');
 const BadRequestError = require('../../Errors/BadRequestError');
 
 /**
@@ -20,7 +20,7 @@ module.exports = class LogoutController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async logout(req: Request, res: Response): Promise<void> {
+    static async logout(req: any, res: any): Promise<void> {
         if (req.query.callback && !validator.isURL(req.query.callback)) {
             throw new BadRequestError('Invalid callback URL provided.');
         }

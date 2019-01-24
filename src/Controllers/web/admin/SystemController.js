@@ -18,7 +18,7 @@ module.exports = class SystemController {
      * @param req
      * @param res
      */
-    static systemPage(req: Request, res: Response): void {
-        res.render('pages/admin/system', {config});
+    static systemPage(req: any, res: any): void {
+        res.render('pages/admin/system', { config });
     }
 };

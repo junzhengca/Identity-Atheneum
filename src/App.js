@@ -1,4 +1,3 @@
-// @flow
 import { ApolloServer } from 'apollo-server-express';
 import typeDefs from './GraphQL/typeDefs';
 

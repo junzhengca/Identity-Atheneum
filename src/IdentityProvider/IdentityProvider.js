@@ -9,7 +9,7 @@ class IdentityProvider {
 
     initialize() {}
 
-    mount(app: express$Application) {}
+    mount(app: any) {}
 }
 
 module.exports = IdentityProvider;

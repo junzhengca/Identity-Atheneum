@@ -20,7 +20,7 @@ module.exports = class CourseController {
      * GET /courses
      * Get the courses page
      */
-    static async coursesPage(req: Request, res: Response): Promise<void> {
+    static async coursesPage(req: any, res: any): Promise<void> {
         let containers: Container = await Container.getAllCourses();
         res.render('pages/admin/courses', {
             containers
@@ -31,7 +31,7 @@ module.exports = class CourseController {
      * GET /courses/create
      * Render create course page
      */
-    static createCoursePage(req: Request, res: Response): void {
+    static createCoursePage(req: any, res: any): void {
         res.render('pages/admin/createCourse');
     }
 
@@ -39,7 +39,7 @@ module.exports = class CourseController {
      * POST /courses/create
      * Create all resources for a new course
      */
-    static async createCourse(req: Request, res: Response): Promise<void> {
+    static async createCourse(req: any, res: any): Promise<void> {
         let courseCode = req.body.code.toLowerCase();
         if (!courseCode.match(/^[a-z0-9]+$/)) {
             req.flash('error', 'Invalid course code.');
@@ -62,7 +62,7 @@ module.exports = class CourseController {
      * GET /courses/detail/:name
      * Render container details page
      */
-    static async courseDetailPage(req: Request, res: Response): Promise<void> {
+    static async courseDetailPage(req: any, res: any): Promise<void> {
         let container: Container = await Container.findOne({
             name: req.params.name
         });
@@ -82,7 +82,7 @@ module.exports = class CourseController {
      * POST /courses/detail/:name
      * Update an course
      */
-    static async updateCourseDetail(req: Request, res: Response): Promise<void> {
+    static async updateCourseDetail(req: any, res: any): Promise<void> {
         let container: Container = await Container.findOne({
             name: req.params.name
         });
@@ -108,7 +108,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async courseCreateTutorialPage(req: Request, res: Response): Promise<void> {
+    static async courseCreateTutorialPage(req: any, res: any): Promise<void> {
         let container: Container = await Container.findOne({
             name: req.params.name
         });
@@ -127,7 +127,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async courseCreateTutorial(req: Request, res: Response): Promise<void> {
+    static async courseCreateTutorial(req: any, res: any): Promise<void> {
         if (!req.body.code.match(/^[a-z0-9]+$/)) {
             req.flash('error', 'Invalid tutorial code.');
         } else if (!req.body.name) {
@@ -164,7 +164,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async courseRemoveStudent(req: Request, res: Response): Promise<void> {
+    static async courseRemoveStudent(req: any, res: any): Promise<void> {
         let course: Container = await Container.findOneOrFail({
             name: req.params.name
         });
@@ -180,7 +180,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialDetailPage(req: Request, res: Response): Promise<void> {
+    static async tutorialDetailPage(req: any, res: any): Promise<void> {
         // First find the course
         let { course, tutorial } = await Container.getCourseAndTutorialOrFail(
             req.params.name,
@@ -199,7 +199,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialAddStudentsPage(req: Request, res: Response): Promise<void> {
+    static async tutorialAddStudentsPage(req: any, res: any): Promise<void> {
         let { course, tutorial } = await Container.getCourseAndTutorialOrFail(
             req.params.name,
             req.params.tutorial_name
@@ -212,7 +212,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialAddStudents(req: Request, res: Response): Promise<void> {
+    static async tutorialAddStudents(req: any, res: any): Promise<void> {
         let { course, tutorial } = await Container.getCourseAndTutorialOrFail(
             req.params.name,
             req.params.tutorial_name
@@ -240,7 +240,7 @@ module.exports = class CourseController {
      * @param req
      * @param res
      */
-    static async tutorialRemoveStudent(req: Request, res: Response): Promise<void> {
+    static async tutorialRemoveStudent(req: any, res: any): Promise<void> {
         let { course, tutorial } = await Container.getCourseAndTutorialOrFail(
             req.params.name,
             req.params.tutorial_name
@@ -257,7 +257,7 @@ module.exports = class CourseController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async courseAddMembersPage(req: Request, res: Response): Promise<void> {
+    static async courseAddMembersPage(req: any, res: any): Promise<void> {
         let course: Container = await Container.findOneOrFail({
             name: req.params.name
         });
@@ -272,7 +272,7 @@ module.exports = class CourseController {
      * Add one student to course.
      * This will create the resources if none is existent.
      */
-    static async courseAddOneMember(req: Request, res: Response): Promise<void> {
+    static async courseAddOneMember(req: any, res: any): Promise<void> {
         let course: Container = await Container.findOneOrFail({
             name: req.params.name
         });
@@ -324,7 +324,7 @@ module.exports = class CourseController {
     /**
      * Add students to course.
      */
-    static async courseAddMembers(req: Request, res: Response): Promise<void> {
+    static async courseAddMembers(req: any, res: any): Promise<void> {
         // TODO: Logic for this function should be separated to other classes.
         let course: Container = await Container.findOneOrFail({
             name: req.params.name
@@ -395,7 +395,7 @@ module.exports = class CourseController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async updateTutorialDetail(req: Request, res: Response): Promise<void> {
+    static async updateTutorialDetail(req: any, res: any): Promise<void> {
         let { tutorial } = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
         // Update tutorial name
         if (req.body.name) {
@@ -414,7 +414,7 @@ module.exports = class CourseController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async deleteTutorial(req: Request, res: Response): Promise<void> {
+    static async deleteTutorial(req: any, res: any): Promise<void> {
         let { tutorial } = await Container.getCourseAndTutorialOrFail(req.params.name, req.params.tutorial_name);
         await tutorial.deleteAndCleanup();
         req.flash('success', 'Tutorial removed.');
@@ -427,7 +427,7 @@ module.exports = class CourseController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async deleteCourse(req: Request, res: Response): Promise<void> {
+    static async deleteCourse(req: any, res: any): Promise<void> {
         let course: Container = await Container.findOneOrFail({
             name: req.params.name
         });

@@ -7,7 +7,7 @@
 
 import type User from '../../Models/User';
 
-const Container       = require('../../Models/Container');
+const Container = require('../../Models/Container');
 
 /**
  * Controller instance, mostly static
@@ -20,9 +20,9 @@ module.exports = class TutorialController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async list(req: Request, res: Response): Promise<void> {
+    static async list(req: any, res: any): Promise<void> {
         let courses = await Container.getAllCourses('_id name content._name content._displayName tutorials');
-        await Container.populateCoursesWithTutorials(courses, "_id name content._name content._displayName");
+        await Container.populateCoursesWithTutorials(courses, '_id name content._name content._displayName');
         let tutorials = [];
         courses.forEach(course => {
             tutorials = tutorials.concat(course.tutorials);
@@ -36,8 +36,8 @@ module.exports = class TutorialController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async get(req: Request, res: Response): Promise<void> {
-        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
+    static async get(req: any, res: any): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({ _id: req.params.tutorial_id });
         res.send(tutorial);
     }
 
@@ -47,8 +47,8 @@ module.exports = class TutorialController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async getStudents(req: Request, res: Response): Promise<void> {
-        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
+    static async getStudents(req: any, res: any): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({ _id: req.params.tutorial_id });
         let users: User[] = await tutorial.getAllStudents();
         res.send(users);
     }
@@ -59,8 +59,8 @@ module.exports = class TutorialController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async getTAs(req: Request, res: Response): Promise<void> {
-        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
+    static async getTAs(req: any, res: any): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({ _id: req.params.tutorial_id });
         let users: User[] = await tutorial.getAllTAs();
         res.send(users);
     }
@@ -71,10 +71,9 @@ module.exports = class TutorialController {
      * @param res
      * @returns {Promise<void>}
      */
-    static async getInstructors(req: Request, res: Response): Promise<void> {
-        let tutorial: Container = await Container.findOneTutorialOrFail({_id: req.params.tutorial_id});
+    static async getInstructors(req: any, res: any): Promise<void> {
+        let tutorial: Container = await Container.findOneTutorialOrFail({ _id: req.params.tutorial_id });
         let users: User[] = await tutorial.getAllInstructors();
         res.send(users);
     }
-
 };

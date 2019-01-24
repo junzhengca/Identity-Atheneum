@@ -17,7 +17,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async list(req: Request, res: express$Response) {
+    static async list(req: any, res: any) {
         let users = await User.find({}).select('_id username idp');
         res.send(users);
     }
@@ -27,7 +27,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async get(req: Request, res: express$Response) {
+    static async get(req: any, res: any) {
         let user = await User.findOneOrFail({ _id: req.params.user_id });
         res.send(user);
     }
@@ -37,7 +37,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async getCourses(req: Request, res: express$Response) {
+    static async getCourses(req: any, res: any) {
         let user = await User.findOneOrFail({ _id: req.params.user_id });
         let courses = await user.getAllCourses('-__v');
         res.send(courses);
@@ -48,12 +48,9 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static async getCourseTutorials(req: Request, res: express$Response) {
+    static async getCourseTutorials(req: any, res: any) {
         let user = await User.findOneOrFail({ _id: req.params.user_id });
-        let tutorials = await user.getEnrolledTutorialsForCourse(
-            req.params.course_id,
-            '-__v'
-        );
+        let tutorials = await user.getEnrolledTutorialsForCourse(req.params.course_id, '-__v');
         res.send(tutorials);
     }
 
@@ -62,7 +59,7 @@ module.exports = class UserController {
      * @param req
      * @param res
      */
-    static getCurrent(req: Request, res: express$Response) {
+    static getCurrent(req: any, res: any) {
         res.send(JSON.stringify(req.user));
     }
 };
