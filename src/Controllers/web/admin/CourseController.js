@@ -10,6 +10,7 @@ const User = require('../../../Models/User');
 const getRealUrl = require('../../../Util/getRealUrl');
 const NotFoundError = require('../../../Errors/NotFoundError');
 const csvStringToJsonObject = require('../../../Util/csvStringToJsonObject');
+const isValidMongoID = require('../../../Util/isValidMongoID');
 
 /**
  * Controller for Course
@@ -229,6 +230,10 @@ module.exports = class CourseController {
                     await user.addContainer(course, '.student');
                     req.flash('success', uids[i] + ' added to course and tutorial.');
                 } catch (e) {
+                    // TODO: THIS IS SO HACKY!!! MUST CHANGE
+                    if (!isValidMongoID(uids[i])) {
+                        // If it is not a valid mongo ID, then it has to be a readable identifier.
+                    }
                     req.flash('error', 'Failed to find user. [' + e.message + '] for ' + uids[i]);
                 }
             }
