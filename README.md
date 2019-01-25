@@ -6,6 +6,16 @@
 
 Easy to use data storage and authorization service for developers.
 
+## Features
+
+-   SAML 2.0 IdP Support.
+-   Distributed tracing support with Zipkin.
+-   Automated error reporting with Sentry.
+-   Easy installation and configuration.
+-   Instructor and TA interface for easy course administration.
+-   REST and GraphQL API support.
+-   Advanced Event emitting interface via Redis Pub/Sub and Socket.io.
+
 ## Installation
 
 ### System Requirements
