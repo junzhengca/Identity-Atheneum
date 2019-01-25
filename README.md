@@ -45,6 +45,9 @@ Before running the service, you must have a valid configuration file, located at
 -   port: Port you wish to run the service on.
 -   host_root: The root URL of the service, for example: https://sample.com (do not include trailing `/`).
 -   app_secret: A random string, used to encrypt sessions.
+-   zipkin: Optional, configure this if you wish to enable distributed tracing
+    -   endpoint: Zipkin endpoint, for example `http://99.79.38.115:9411/api/v2/spans`
+    -   service_name: Name of this service, for example `ia-local`
 -   redis:
     -   host: Redis server host
     -   port: Redis server port

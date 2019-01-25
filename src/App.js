@@ -19,6 +19,14 @@ const User = require('./Models/User');
 const Input = require('prompt-input');
 const randStr = require('./Util/randStr');
 const morgan = require('morgan');
+const {
+    Tracer,
+    BatchRecorder,
+    jsonEncoder: { JSON_V2 }
+} = require('zipkin');
+const zipkinMiddleware = require('zipkin-instrumentation-express').expressMiddleware;
+const { HttpLogger } = require('zipkin-transport-http');
+const CLSContext = require('zipkin-context-cls');
 
 passport.serializeUser(function(user, done) {
     done(null, user._id);
@@ -226,11 +234,29 @@ class App<Number> {
         });
     }
 
+    _initZipkin() {
+        if (this.config.zipkin) {
+            const ctxImpl = new CLSContext();
+            const recorder = new BatchRecorder({
+                logger: new HttpLogger({
+                    endpoint: this.config.zipkin.endpoint,
+                    jsonEncoder: JSON_V2
+                })
+            });
+            const localServiceName = this.config.zipkin.service_name; // name of this application
+            const tracer = new Tracer({ ctxImpl, recorder, localServiceName });
+
+            this.app.use(zipkinMiddleware({ tracer }));
+            console.log('Zipkin tracing initialized...');
+        }
+    }
+
     /**
      * Start the application
      */
     run() {
         this._initExpress();
+        this._initZipkin();
         this._initApollo();
         this._configureViews();
         this._mountAllRoutesAndMiddlewares();

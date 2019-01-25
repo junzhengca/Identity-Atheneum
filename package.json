@@ -75,6 +75,10 @@
         "pbkdf2": "^3.0.17",
         "prompt-input": "^3.0.0",
         "uuid": "^3.3.2",
-        "validator": "^10.9.0"
+        "validator": "^10.9.0",
+        "zipkin": "^0.16.0",
+        "zipkin-context-cls": "^0.16.0",
+        "zipkin-instrumentation-express": "^0.16.0",
+        "zipkin-transport-http": "^0.16.0"
     }
 }
