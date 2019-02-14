@@ -27,12 +27,19 @@ title: "Add Students " + tutorial.getName() + " - Admin Dashboard"
 
     <div id="tut-add-students">
         <div class="row pb-2">
-            <div class="col-md-4">Identity Provider</div>
+            <div class="col-md-2">Role</div>
+            <div class="col-md-2">Identity Provider</div>
             <div class="col-md-8">Username</div>
         </div>
         <div class="form-group" v-for="(student, key) in students">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-2">
+                    <select class="form-control" v-model="student.role">
+                        <option value="student">Student</option>
+                        <option value="ta">TA</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <select class="form-control" v-model="student.idp">
                         <option v-bind:value="idp.name" v-for="idp in config.identity_providers">{{ idp.display_name }}</option>
                     </select>
@@ -72,11 +79,11 @@ title: "Add Students " + tutorial.getName() + " - Admin Dashboard"
         el: '#tut-add-students',
         data: {
             config: <%- JSON.stringify(config) %>,
-            students: [{idp: "", username: ""}]
+            students: [{idp: "", username: "", role: "student"}]
         },
         methods: {
             addNewStudent: function() {
-                this.students.push({idp: "", username: ""})
+                this.students.push({idp: "", username: "", role: "student"})
             },
             removeStudent: function(key) {
                 this.students.splice(key, 1);
@@ -85,7 +92,7 @@ title: "Add Students " + tutorial.getName() + " - Admin Dashboard"
                 let result = "";
                 for(let student of this.students) {
                     if(student.idp && student.username) {
-                        result += student.idp + "." + student.username + "\n";
+                        result += student.role + "." + student.idp + "." + student.username + "\n";
                     }
                 }
                 return result;

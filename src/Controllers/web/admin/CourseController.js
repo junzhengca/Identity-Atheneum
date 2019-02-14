@@ -224,14 +224,22 @@ module.exports = class CourseController {
         let uids: string[] = req.body.data.split(/\r?\n/);
         for (let uid of uids) {
             if (uid) {
-                let user = await User.findByIdentifier(uid);
+                let role = 'student';
+                if (!isValidMongoID(uid)) role = uid.split('.')[0];
+                let user = await User.findByIdentifier(
+                    uid
+                        .split('.')
+                        .slice(1)
+                        .join('.')
+                        .trim()
+                );
                 if (!user) {
                     // TODO: Refactor this so it is better designed.
                     if (!isValidMongoID(uid)) {
-                        let idp = uid.split('.')[0];
+                        let idp = uid.split('.')[1];
                         let username = uid
                             .split('.')
-                            .slice(1)
+                            .slice(2)
                             .join('.')
                             .trim();
                         // Make the user
@@ -241,8 +249,8 @@ module.exports = class CourseController {
                 if (!user) {
                     req.flash('error', 'Failed to find user for ' + uid);
                 } else {
-                    await user.addContainer(tutorial, '.student');
-                    await user.addContainer(course, '.student');
+                    await user.addContainer(tutorial, `.${role}`);
+                    await user.addContainer(course, `.${role}`);
                     req.flash('success', uid + ' added to course and tutorial.');
                 }
             }
